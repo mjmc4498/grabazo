@@ -24,7 +24,7 @@ y usa tu celular como control remoto, teleprompter y cámara con solo escanear u
 | **Tu celular (QR)** | **Control remoto**: grabar, pausar, reiniciar, descartar, elegir herramienta, color y grosor, zoom, foco, clics, difuminar, cámara, micrófono y barra, sin tocar el mouse. **Teleprompter**: tu guion con desplazamiento automático que empieza solo al grabar, velocidad, tamaño de letra y modo espejo. **Cámara**: la cámara y el micrófono del celular como burbuja de la grabación. |
 | **Conexión** | WebRTC directo y cifrado entre el celular y la computadora; retransmisión de Cloudflare para redes restrictivas; reconexión automática; el celular recuerda la computadora. |
 
-Probado de principio a fin con **68 comprobaciones automáticas** (extensión real grabando pestañas, áreas y la cámara; página de ejemplo con la capa encima; celular real conectado por PeerJS como control remoto, teleprompter y cámara) y **51 del estudio** (recortes, cortes, exportación a MP4, WebM y GIF, recuperación).
+Probado de principio a fin con **77 comprobaciones automáticas** (extensión real grabando pestañas, áreas y la cámara; el flujo real de clic en el ícono, popup y «Grabar»; página de ejemplo con la capa encima; celular real conectado por PeerJS como control remoto, teleprompter y cámara) y **51 del estudio** (recortes, cortes, exportación a MP4, WebM y GIF, recuperación).
 
 ## Cómo funciona
 
@@ -157,7 +157,7 @@ Detalles (dominio, redirecciones, cabeceras de seguridad) en [`landing/README.md
 ```bash
 npm install                 # Puppeteer (solo para pruebas y capturas)
 npm run serve               # servidor local en http://localhost:8769 (otra terminal)
-npm run test:e2e            # prueba completa extensión ↔ página ↔ celular (68 comprobaciones)
+npm run test:e2e            # prueba completa extensión ↔ página ↔ celular (77 comprobaciones)
 npm run test:estudio        # estudio: recortes, cortes y exportación (51 comprobaciones)
 npm run textos              # regenera _locales/es/messages.json desde scripts/textos.py y textos_estudio.py
 npm run icons               # regenera íconos y favicon desde design/*.svg
@@ -172,7 +172,7 @@ npm run landing             # copia el ZIP a la landing
 - Página de ejemplo: `design/demo/tutorial.html` (las pruebas la sirven como `https://demo.example.com`).
 - **Particularidades de las pruebas automáticas** (Chrome sin ventana):
   - La extensión se copia a la carpeta temporal del sistema (fuera de iCloud) con `host_permissions` para la página de ejemplo.
-  - Grabar una pestaña exige haber pulsado el ícono (activeTab), algo imposible sin ventana: la copia lleva una clave fija y Chrome se lanza con `--allowlisted-extension-id`. Con ese indicador Chrome no le da cámara ni micrófono normales a la extensión, por eso `e2e.mjs` usa dos sesiones (normal y autorizada).
+  - El clic en el ícono se simula con CDP (`Extensions.triggerAction`), que abre el popup real y da activeTab. Para recorrer muchas acciones seguidas, la segunda sesión usa además una clave fija y `--allowlisted-extension-id` (con ese indicador Chrome no le da cámara ni micrófono normales a la extensión): por eso `e2e.mjs` usa tres sesiones (normal, autorizada y clic real).
   - `--use-fake-ui-for-media-stream` y `--use-file-for-fake-video-capture` dejan sin imagen a la captura de pestañas: los permisos se conceden por CDP (`Browser.setPermission`) y, en las capturas, la cámara del celular se simula con un lienzo.
   - La capa expone su estado en atributos del elemento anfitrión (`data-role`, `data-toolbar`, `data-tool`, `data-shapes`, `data-spotlight`, `data-blur`, `data-bubble`, `data-area`, `data-countdown`) para poder comprobarlo desde fuera del shadow root cerrado. El grabador expone `globalThis.__grabador` y el estudio `window.__estudio` para diagnóstico.
 - La presentación en PDF se exporta desde Keynote o PowerPoint (`presentacion/grabazo.pptx` → Archivo › Exportar a PDF).

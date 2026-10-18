@@ -472,6 +472,24 @@ async function applyCamera() {
   setOutputs(video, phoneAudio());
   pushState();
   if (!want) maybeIdle();
+  // Sin cámara por un error pasajero (permiso aún no dado, cámara ocupada por otra app):
+  // se vuelve a intentar sola mientras alguien la espera.
+  clearTimeout(cameraRetryTimer);
+  if (want && !video && camError && camError !== 'notfound' && settings.camId !== PHONE) {
+    cameraRetryTimer = setTimeout(refreshCamera, 3000);
+  }
+}
+
+let cameraRetryTimer = 0;
+
+// Al dar permiso en los ajustes, la burbuja se enciende enseguida.
+for (const name of ['camera', 'microphone']) {
+  navigator.permissions?.query({ name }).then((status) => {
+    status.addEventListener('change', () => {
+      camError = null;
+      refreshCamera();
+    });
+  }).catch(() => {});
 }
 
 function setOutputs(video, audio) {

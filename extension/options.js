@@ -150,11 +150,14 @@ async function renderDevices() {
   const cams = list.filter((d) => d.kind === 'videoinput' && d.deviceId);
   const mics = list.filter((d) => d.kind === 'audioinput' && d.deviceId && d.deviceId !== 'communications');
   const camSel = $('cam-select');
-  camSel.replaceChildren(option('off', t('noCamera')), ...cams.map((d, i) => option(d.deviceId, d.label || t('cameraN', [String(i + 1)]))), option(PHONE, t('phoneCamera')));
-  camSel.value = !settings.camera ? 'off' : settings.camId === PHONE ? PHONE : cams.some((d) => d.deviceId === settings.camId) ? settings.camId : cams[0]?.deviceId || 'off';
+  // Sin permiso, Chrome no da la lista: se ofrece la cámara predeterminada de la computadora.
+  const camList = cams.length ? cams.map((d, i) => option(d.deviceId, d.label || t('cameraN', [String(i + 1)]))) : [option('', t('pcCamera'))];
+  camSel.replaceChildren(option('off', t('noCamera')), ...camList, option(PHONE, t('phoneCamera')));
+  camSel.value = !settings.camera ? 'off' : settings.camId === PHONE ? PHONE : cams.some((d) => d.deviceId === settings.camId) ? settings.camId : cams[0]?.deviceId ?? '';
   const micSel = $('mic-select');
-  micSel.replaceChildren(option('off', t('noMic')), ...mics.map((d, i) => option(d.deviceId, d.label || t('micN', [String(i + 1)]))), option(PHONE, t('phoneMic')));
-  micSel.value = !settings.mic ? 'off' : settings.micId === PHONE ? PHONE : mics.some((d) => d.deviceId === settings.micId) ? settings.micId : mics[0]?.deviceId || 'off';
+  const micList = mics.length ? mics.map((d, i) => option(d.deviceId, d.label || t('micN', [String(i + 1)]))) : [option('', t('pcMic'))];
+  micSel.replaceChildren(option('off', t('noMic')), ...micList, option(PHONE, t('phoneMic')));
+  micSel.value = !settings.mic ? 'off' : settings.micId === PHONE ? PHONE : mics.some((d) => d.deviceId === settings.micId) ? settings.micId : mics[0]?.deviceId ?? '';
 }
 
 $('cam-select').addEventListener('change', (e) => save(e.target.value === 'off' ? { camera: false } : { camera: true, camId: e.target.value }).then(renderDevices));
@@ -346,3 +349,4 @@ renderLink();
 chrome.permissions.onAdded.addListener(renderSites);
 chrome.permissions.onRemoved.addListener(renderSites);
 if (location.hash) document.querySelector(location.hash)?.scrollIntoView({ block: 'start' });
+if (location.hash === '#permisos' && ((await permState('camera')) !== 'granted' || (await permState('microphone')) !== 'granted')) allowMedia();

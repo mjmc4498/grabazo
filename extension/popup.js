@@ -74,17 +74,15 @@ function option(value, label) {
 async function renderDevices() {
   const [{ cams, mics }, perms] = await Promise.all([devices(), permissions()]);
   const camSel = $('#cam-select');
-  camSel.replaceChildren(option('off', t('noCamera')));
-  cams.forEach((d, i) => camSel.append(option(d.deviceId, d.label || t('cameraN', [String(i + 1)]))));
-  camSel.append(option(PHONE, t('phoneCamera')));
-  camSel.value = !settings.camera ? 'off' : settings.camId === PHONE ? PHONE : cams.some((d) => d.deviceId === settings.camId) ? settings.camId : cams[0]?.deviceId || 'off';
-  if (settings.camera && camSel.value === 'off' && !cams.length) camSel.value = 'off';
+  // Sin permiso, Chrome no da la lista: se ofrece «Cámara de la computadora» (la predeterminada).
+  const camList = cams.length ? cams.map((d, i) => option(d.deviceId, d.label || t('cameraN', [String(i + 1)]))) : [option('', t('pcCamera'))];
+  camSel.replaceChildren(option('off', t('noCamera')), ...camList, option(PHONE, t('phoneCamera')));
+  camSel.value = !settings.camera ? 'off' : settings.camId === PHONE ? PHONE : cams.some((d) => d.deviceId === settings.camId) ? settings.camId : cams[0]?.deviceId ?? '';
 
   const micSel = $('#mic-select');
-  micSel.replaceChildren(option('off', t('noMic')));
-  mics.forEach((d, i) => micSel.append(option(d.deviceId, d.label || t('micN', [String(i + 1)]))));
-  micSel.append(option(PHONE, t('phoneMic')));
-  micSel.value = !settings.mic ? 'off' : settings.micId === PHONE ? PHONE : mics.some((d) => d.deviceId === settings.micId) ? settings.micId : mics.find((d) => d.deviceId === 'default')?.deviceId || mics[0]?.deviceId || 'off';
+  const micList = mics.length ? mics.map((d, i) => option(d.deviceId, d.label || t('micN', [String(i + 1)]))) : [option('', t('pcMic'))];
+  micSel.replaceChildren(option('off', t('noMic')), ...micList, option(PHONE, t('phoneMic')));
+  micSel.value = !settings.mic ? 'off' : settings.micId === PHONE ? PHONE : mics.some((d) => d.deviceId === settings.micId) ? settings.micId : mics.find((d) => d.deviceId === 'default')?.deviceId ?? mics[0]?.deviceId ?? '';
 
   const needs = (settings.camera && settings.camId !== PHONE && perms.camera !== 'granted') || (settings.mic && settings.micId !== PHONE && perms.microphone !== 'granted');
   $('#perm-banner').hidden = !needs;

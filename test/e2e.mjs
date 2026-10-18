@@ -46,6 +46,7 @@ async function waitFor(fn, { timeout = 15000, interval = 150 } = {}) {
 }
 const errors = [];
 const watch = (page, label) => {
+  // pageerror incluye las promesas rechazadas sin atender («Uncaught (in promise)»).
   page.on('pageerror', (e) => errors.push(`${label}: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error' && !/favicon|ERR_|net::|Failed to load resource/.test(m.text())) errors.push(`${label}: ${m.text()}`); });
 };
@@ -56,7 +57,7 @@ const watch = (page, label) => {
 // proyecto está en un Escritorio sincronizado con iCloud, ahí aparecen copias de
 // conflicto («_locales 2») que Chrome no acepta. El acceso a la página de ejemplo se
 // concede desde el manifiesto (el diálogo de Chrome no se puede pulsar sin ventana).
-async function open({ allowlisted }) {
+async function open({ allowlisted, noGrant = false }) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'grabazo-e2e-'));
   const dir = path.join(tmp, 'extension');
   fs.cpSync(path.join(ROOT, 'extension'), dir, { recursive: true });
@@ -91,7 +92,7 @@ async function open({ allowlisted }) {
   const grant = (origin, browserContextId) => Promise.all(['camera', 'microphone'].map((name) =>
     cdp.send('Browser.setPermission', { permission: { name }, setting: 'granted', origin, ...(browserContextId ? { browserContextId } : {}) })));
   // Cámara y micrófono permitidos (como si el usuario los hubiera aceptado en la bienvenida).
-  await grant(`chrome-extension://${extId}`);
+  if (!noGrant) await grant(`chrome-extension://${extId}`);
 
   const welcome = await waitFor(async () => (await browser.pages()).find((p) => p.url().includes('options.html')), { timeout: 8000 });
   // Los permisos rigen para las páginas que se abren después: se abre otra vez.
@@ -149,7 +150,8 @@ async function open({ allowlisted }) {
     await browser.close().catch(() => {});
     fs.rmSync(tmp, { recursive: true, force: true });
   };
-  return { browser, extId, expectedId: id, ext, sw, state, setSettings, connectPhone, openDemo, savedVideo, close };
+  const grantExtension = () => grant(`chrome-extension://${extId}`);
+  return { browser, extId, expectedId: id, ext, sw, state, setSettings, connectPhone, openDemo, savedVideo, grantExtension, close };
 }
 
 const bubbleLive = (demo) => waitFor(async () => {
@@ -383,11 +385,56 @@ try {
   await s?.close();
 }
 
+// ================================================================ flujo real: clic en el ícono
+
+// Chrome permite simular el clic en el ícono por CDP (Extensions.triggerAction): abre el
+// popup real y da activeTab, como un usuario. Se graba la pestaña con la burbuja de la
+// cámara, primero sin permiso de cámara (debe pedirlo con claridad) y luego con permiso
+// (debe encenderse sola, sin recargar).
+s = null;
+try {
+  s = await open({ allowlisted: false, noGrant: true });
+  const { browser, ext, state } = s;
+  const { demo } = await s.openDemo();
+  const cdp = await browser.target().createCDPSession();
+  const { targetInfos } = await cdp.send('Target.getTargets', { filter: [{ type: 'tab' }] });
+  const tab = targetInfos.find((t) => t.url.startsWith('https://demo.example.com/'));
+  await cdp.send('Extensions.triggerAction', { id: s.extId, targetId: tab.targetId });
+  const popupTarget = await browser.waitForTarget((t) => t.url().includes('popup.html'), { timeout: 8000 }).catch(() => null);
+  const popup = popupTarget ? await popupTarget.asPage() : null;
+  check('[clic] el ícono abre el popup sobre la página', !!popup);
+  await waitFor(() => popup.$eval('#modes [data-mode="area"]', (b) => !b.disabled), { timeout: 5000 });
+  check('[clic] sin permiso, el popup avisa y ofrece la cámara de la computadora', await popup.$eval('#perm-banner', (e) => !e.hidden) && await popup.$eval('#cam-select', (sel) => sel.selectedOptions[0]?.value === ''));
+  check('[clic] con el popup abierto aparece la burbuja en la página', await waitFor(() => demo.$eval(HOST, (h) => h.dataset.role === 'prepare' && h.dataset.bubble === 'true'), { timeout: 8000 }));
+  await popup.click('#record');
+  // Al cerrarse el popup, la página vuelve al frente (sin ventana, Chrome no lo hace solo).
+  await demo.bringToFront();
+  check('[clic] «Grabar» graba la pestaña', await waitFor(async () => (await state()).rec.status === 'recording', { timeout: 20000 }), `${(await state()).rec.status} ${(await state()).rec.error || ''}`);
+  check('[clic] la burbuja sigue en la página mientras se graba', await waitFor(() => demo.$eval(HOST, (h) => h.dataset.role === 'live' && h.dataset.bubble === 'true' && h.dataset.toolbar === 'true'), { timeout: 6000 }));
+  const bubbleText = () => {
+    const frame = demo.frames().find((f) => f.url().includes('/camara.html'));
+    return frame ? frame.$eval('body', (b) => `${b.classList.contains('live') ? 'live' : ''}|${b.querySelector('#msg').textContent}`) : null;
+  };
+  check('[clic] sin permiso, la burbuja pide «Permitir» (no queda vacía)', await waitFor(async () => /Permit/.test((await bubbleText()) || ''), { timeout: 8000 }), await bubbleText());
+  await s.grantExtension();
+  check('[clic] al dar el permiso, la cámara aparece sola en la burbuja', await waitFor(async () => (await bubbleText())?.startsWith('live'), { timeout: 12000 }), await bubbleText());
+  await sleep(5000);
+  await s.sw({ type: 'op', op: 'rec:stop' });
+  check('[clic] detener guarda la grabación', await waitFor(async () => (await state()).rec.status === 'idle', { timeout: 20000 }));
+  const vid = await s.savedVideo((await state()).rec.lastId);
+  check('[clic] el video de la pestaña dura lo grabado y tiene imagen', vid && vid.size > 100_000 && vid.duration > 4000, JSON.stringify(vid));
+} catch (err) {
+  check('[clic] el flujo real terminó sin excepciones', false, err.stack || String(err));
+} finally {
+  await s?.close();
+}
+
 // En la sesión autorizada Chrome niega la cámara y el micrófono a propósito (ver arriba).
 // El Worker de retransmisión no acepta el origen local de prueba: el celular usa la
 // conexión directa (en GitHub Pages sí está permitido).
 const real = errors.filter((e) => !/peer-unavailable|Could not connect|WebSocket|Permission denied|NotAllowedError|mando-turn/.test(e));
-check('sin errores en las páginas', real.length === 0, real.slice(0, 5).join(' | '));
+check('sin errores en las páginas (ni «Stream closed» en el grabador)', real.length === 0, real.slice(0, 5).join(' | '));
+if (process.env.ERRORES) console.log(errors.join('\n'));
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} comprobaciones correctas`);

@@ -363,7 +363,7 @@ for i, (t, c) in enumerate([
 s = nueva()
 cabecera(s, "Estado · versión 1.0.0", "Listo para publicar")
 for i, (t, c) in enumerate([
-    ("Probado de punta a punta", "68 comprobaciones con la extensión real y un celular conectado, más 51 del estudio (recortes, cortes y exportación)."),
+    ("Probado de punta a punta", "77 comprobaciones con la extensión real y un celular conectado, más 51 del estudio (recortes, cortes y exportación)."),
     ("Paquete listo", "dist/grabazo-1.0.0.zip para la Chrome Web Store, Manifest V3, con acceso a sitios opcional."),
     ("Ficha completa", "Textos, 5 capturas, 2 mosaicos, política de privacidad, justificación de permisos y landing page."),
 ]):

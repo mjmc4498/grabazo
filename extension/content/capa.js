@@ -212,6 +212,16 @@
     host.remove();
     shown = false;
   }
+  // Vigilante: si la página quita la capa del documento o cierra su popover (algunos sitios
+  // rehacen el DOM o cierran los popovers ajenos), vuelve a ponerla encima.
+  setInterval(() => {
+    if (!shown || !alive()) return;
+    if (!host.isConnected) document.documentElement.append(host);
+    try {
+      if (!host.matches(':popover-open')) host.showPopover();
+    } catch {}
+  }, 1000);
+
   // Al entrar en pantalla completa, la capa vuelve arriba de todo.
   document.addEventListener('fullscreenchange', () => {
     if (!shown) return;

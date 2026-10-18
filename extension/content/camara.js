@@ -27,7 +27,6 @@
       box-shadow: 0 0 0 3px rgba(255,255,255,.92);
     }
     .bubble iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; background: #111113; color-scheme: normal; }
-    .bubble.mirror iframe { transform: scaleX(-1); }
     .bubble.popped .frame { display: none; }
     .bubble.popped { width: 120px !important; height: 44px !important; border-radius: 22px; }
     .bubble .pip-note {
@@ -110,7 +109,6 @@
       bubble.style.height = `${h}px`;
       bubble.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
       bubble.classList.toggle('rect', opts.shape === 'rect');
-      bubble.classList.toggle('mirror', !!opts.mirror);
     }
 
     function ensureFrame() {
@@ -171,7 +169,7 @@
         const win = await window.documentPictureInPicture.requestWindow({ width: Math.max(w, 200), height: Math.max(h, 200) });
         pip = win;
         const style = win.document.createElement('style');
-        style.textContent = `html,body{margin:0;height:100%;background:#111113;overflow:hidden}iframe{width:100%;height:100%;border:0;display:block}${opts.mirror ? 'iframe{transform:scaleX(-1)}' : ''}`;
+        style.textContent = 'html,body{margin:0;height:100%;background:#111113;overflow:hidden}iframe{width:100%;height:100%;border:0;display:block}';
         win.document.head.append(style);
         const inner = win.document.createElement('iframe');
         inner.src = chrome.runtime.getURL('camara.html');

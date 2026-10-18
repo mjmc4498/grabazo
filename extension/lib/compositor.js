@@ -12,6 +12,11 @@
 
 const even = (n) => Math.max(2, Math.round(n / 2) * 2);
 
+// Cerrar un flujo que ya se cerró rechaza la promesa («Stream closed»): se ignora.
+const quiet = (fn) => {
+  try { fn()?.catch?.(() => {}); } catch {}
+};
+
 export function createCompositor(input, opts = {}) {
   const generator = new MediaStreamTrackGenerator({ kind: 'video' });
   const writer = generator.writable.getWriter();
@@ -41,14 +46,24 @@ export function createCompositor(input, opts = {}) {
   let tx = 0.5;
   let ty = 0.5;
 
+  // Reloj (en un Worker, no se frena en segundo plano): a los cuadros por segundo del
+  // video mientras hay zoom y, si no, unas pocas veces por segundo para que la grabación
+  // no se detenga cuando la página está quieta (sin cuadros nuevos, MediaRecorder no
+  // escribe nada, ni siquiera el audio).
+  const KEEPALIVE_FPS = 4;
   const clockWorker = new Worker(new URL('./reloj.js', import.meta.url));
-  let ticking = false;
+  let rate = 0;
+  let lastEmit = 0;
   clockWorker.onmessage = () => tick();
 
+  function setRate(next) {
+    if (next === rate) return;
+    rate = next;
+    clockWorker.postMessage(next);
+  }
+
   function setTicking(on) {
-    if (on === ticking) return;
-    ticking = on;
-    clockWorker.postMessage(on ? fps : 0);
+    setRate(stopped ? 0 : on ? fps : KEEPALIVE_FPS);
   }
 
   // Marca de tiempo propia y siempre creciente (µs).
@@ -133,7 +148,14 @@ export function createCompositor(input, opts = {}) {
         draw(frame);
         out = new VideoFrame(canvas, { timestamp: ts() });
       }
-      await writer.write(out);
+      try {
+        await writer.write(out);
+      } catch (err) {
+        // Si no se pudo escribir (la pista ya se cerró), el cuadro se libera aquí.
+        try { out.close(); } catch {}
+        throw err;
+      }
+      lastEmit = performance.now();
     } catch (err) {
       if (!stopped) console.debug('[Grabazo] composición', err?.message || err);
     } finally {
@@ -143,14 +165,43 @@ export function createCompositor(input, opts = {}) {
     if (pending && last && !stopped) emit(last);
   }
 
+  // Sin ningún cuadro todavía (página quieta al empezar): un cuadro negro del tamaño final.
+  async function emitBlank() {
+    if (writing || stopped || !canvas) return;
+    writing = true;
+    try {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, outW, outH);
+      const blank = new VideoFrame(canvas, { timestamp: ts() });
+      try {
+        await writer.write(blank);
+      } catch {
+        try { blank.close(); } catch {}
+        return;
+      }
+      lastEmit = performance.now();
+    } catch {} finally {
+      writing = false;
+    }
+  }
+
   function tick() {
-    if (last && !stopped) emit(last);
+    if (stopped) return;
+    if (z > 1.001 || animating()) {
+      if (last) emit(last);
+      return;
+    }
+    // Página quieta: se repite el último cuadro para que la grabación siga avanzando.
+    if (performance.now() - lastEmit < 400) return;
+    if (last) emit(last);
+    else emitBlank();
   }
 
   // Lee los cuadros de una pista. Si la fuente cambia (la cámara se reconectó), se lee
   // la nueva y la salida sigue siendo la misma pista: la grabación no se corta.
   function read(track) {
-    try { reader?.cancel(); } catch {}
+    quiet(() => reader?.cancel());
     const own = new MediaStreamTrackProcessor({ track }).readable.getReader();
     reader = own;
     (async () => {
@@ -172,6 +223,7 @@ export function createCompositor(input, opts = {}) {
     })();
   }
   read(input);
+  setTicking(false);
 
   return {
     track: generator,
@@ -211,8 +263,8 @@ export function createCompositor(input, opts = {}) {
       stopped = true;
       setTicking(false);
       clockWorker.terminate();
-      try { reader?.cancel(); } catch {}
-      try { writer.close(); } catch {}
+      quiet(() => reader?.cancel());
+      quiet(() => writer.close());
       try { last?.close(); } catch {}
       last = null;
       try { generator.stop(); } catch {}

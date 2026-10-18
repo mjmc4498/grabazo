@@ -411,6 +411,12 @@
       }
     }
   },
+  "pcCamera": {
+    "message": "Cámara de la computadora"
+  },
+  "pcMic": {
+    "message": "Micrófono de la computadora"
+  },
   "micN": {
     "message": "Micrófono $N$",
     "placeholders": {
@@ -524,7 +530,7 @@
     "message": "Permite la cámara y el micrófono"
   },
   "permBannerBody": {
-    "message": "Toca aquí para dar acceso una sola vez."
+    "message": "Toca aquí y, en el aviso de Chrome, elige «Permitir al visitar el sitio»."
   },
   "phoneTitle": {
     "message": "Tu celular"
@@ -648,7 +654,7 @@
     "message": "Cámara y micrófono"
   },
   "permMediaSub": {
-    "message": "Se permiten una vez para toda la extensión: la burbuja, la grabación y la vista previa."
+    "message": "Se permiten una vez para toda la extensión: la burbuja, la grabación y la vista previa. En el aviso de Chrome elige «Permitir al visitar el sitio»: con «Permitir esta vez» el permiso se pierde al cerrar esta pestaña."
   },
   "permCam": {
     "message": "Cámara"

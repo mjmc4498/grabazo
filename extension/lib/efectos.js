@@ -80,6 +80,11 @@ function glow(ctx, x, y, r, color) {
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
+// Cerrar un flujo que ya se cerró rechaza la promesa («Stream closed»): se ignora.
+const quiet = (fn) => {
+  try { fn()?.catch?.(() => {}); } catch {}
+};
+
 export const needsSegmentation = (effect) => effect === 'blur' || effect === 'blur-strong' || effect in BACKGROUNDS;
 export const isPassThrough = ({ effect = 'none', filter = 'none' } = {}) => !needsSegmentation(effect) && (FILTERS[filter] || 'none') === 'none';
 
@@ -251,14 +256,19 @@ export function createEffects(input, initial = {}) {
         render(frame);
         const next = new VideoFrame(out, { timestamp: frame.timestamp, duration: frame.duration ?? undefined });
         frame.close();
-        await writer.write(next);
+        try {
+          await writer.write(next);
+        } catch (err) {
+          try { next.close(); } catch {}
+          throw err;
+        }
       } catch (err) {
         try { frame.close(); } catch {}
         if (stopped) break;
         console.debug('[Grabazo] efectos', err?.message || err);
       }
     }
-    try { writer.close(); } catch {}
+    quiet(() => writer.close());
   })();
 
   return {
@@ -270,7 +280,7 @@ export function createEffects(input, initial = {}) {
     set onerror(fn) { onError = fn; },
     stop() {
       stopped = true;
-      try { reader.cancel(); } catch {}
+      quiet(() => reader.cancel());
       try { generator.stop(); } catch {}
     },
   };

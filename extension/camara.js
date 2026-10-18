@@ -56,6 +56,18 @@ GrabazoRelay.connect({
   onIdle: () => chrome.runtime.sendMessage({ to: 'sw', type: 'cam:wake' }).catch(() => {}),
 });
 
+// Modo espejo según los ajustes (cambia al instante si se cambia en la burbuja o el popup).
+async function applyMirror() {
+  try {
+    const { settings } = await chrome.storage.sync.get('settings');
+    document.body.classList.toggle('mirror', settings?.camMirror !== false);
+  } catch {}
+}
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync' && changes.settings) applyMirror();
+});
+applyMirror();
+
 video.addEventListener('playing', render);
 video.addEventListener('emptied', render);
 render();

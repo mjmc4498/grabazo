@@ -22,6 +22,10 @@ video {
   transition: opacity .3s ease;
 }
 body.live video { opacity: 1; }
+/* Modo espejo: solo la imagen (los avisos se leen normal). */
+body.mirror video { transform: scaleX(-1); }
+
+[hidden] { display: none !important; }
 
 .state {
   position: absolute;

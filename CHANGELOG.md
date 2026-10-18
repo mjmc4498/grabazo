@@ -32,4 +32,4 @@ Primera versión.
   Cloudflare para redes restrictivas.
 - **Atajos:** Alt+Shift+G (abrir), Alt+Shift+R (grabar o detener), Alt+Shift+K
   (pausar) y Alt+Shift+A (lápiz).
-- Prueba de punta a punta con 68 comprobaciones y prueba del estudio con 51.
+- Prueba de punta a punta con 77 comprobaciones y prueba del estudio con 51.

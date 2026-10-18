@@ -314,7 +314,7 @@ function pickMime(format) {
 }
 
 // Estado interno para diagnóstico (lo leen las pruebas).
-const debug = { chunks: 0, bytes: 0, audio: '', mixer: '' };
+const debug = { chunks: 0, bytes: 0, audio: '', mixer: '', log: [] };
 globalThis.__grabador = debug;
 
 function go() {
@@ -534,6 +534,7 @@ const PHASES = {
 };
 
 function setPhase(next) {
+  debug.log?.push(`${Math.round(performance.now())} ${next}`);
   phase = next;
   document.body.dataset.phase = next;
   const [title, body] = PHASES[next] || PHASES.preparing;
