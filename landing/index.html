@@ -1,0 +1,1403 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0b0c" id="meta-theme-color">
+
+  <!-- SEO principal: grabador de pantalla gratis para Chrome, sin marca de agua, con el celular como control remoto -->
+  <title>Grabazo — Grabador de pantalla gratis para Chrome, sin marca de agua ni límite de tiempo</title>
+  <meta name="description" content="Grabazo es una extensión gratis para Google Chrome que graba tu pantalla, pestaña o ventana con tu cámara y micrófono. Sin marca de agua, sin límite de tiempo y sin cuenta. Dibuja, haz zoom y usa tu celular como control remoto, teleprompter y cámara.">
+  <meta name="keywords" content="Grabazo, grabador de pantalla gratis, grabar pantalla en Chrome, extensión para grabar pantalla, grabar pantalla con cámara, grabar pantalla sin marca de agua, grabador de pantalla sin límite de tiempo, grabar pestaña con sonido, grabar pantalla y webcam, grabar pantalla y micrófono, teleprompter en el celular, usar el celular como cámara web, dibujar en pantalla mientras grabas, zoom al grabar pantalla, difuminar datos al grabar, exportar MP4 WebM GIF, grabar tutoriales, grabar clases, Miguel Mogrovejo">
+  <meta name="author" content="Miguel Mogrovejo">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://grabazo.com/">
+
+  <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_LA">
+  <meta property="og:site_name" content="Grabazo">
+  <meta property="og:url" content="https://grabazo.com/">
+  <meta property="og:title" content="Grabazo — Graba tu pantalla, tu cámara y tus ideas. Tu celular es el control remoto.">
+  <meta property="og:description" content="Extensión gratis para Google Chrome: graba pestaña, área, ventana o pantalla con cámara, dibujos y zoom. Sin marca de agua, sin límite de tiempo, sin cuenta y todo se guarda en tu computadora.">
+  <meta property="og:image" content="https://grabazo.com/assets/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Grabazo: grabador de pantalla para Chrome con burbuja de cámara, dibujo en vivo y el celular como control remoto">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Grabazo — Grabador de pantalla gratis para Chrome">
+  <meta name="twitter:description" content="Graba pantalla, cámara y micrófono sin marca de agua ni límite de tiempo. Dibuja en vivo y controla todo desde tu celular, que también es teleprompter y cámara.">
+  <meta name="twitter:image" content="https://grabazo.com/assets/og-image.png">
+  <meta name="twitter:image:alt" content="Grabazo: grabador de pantalla para Chrome con el celular como control remoto">
+
+  <!-- Íconos, favicons y manifiesto PWA -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <script src="theme.js?v=1.0.0"></script>
+  <link rel="stylesheet" href="styles.css?v=1.0.0">
+  <script src="app.js?v=1.0.0" defer></script>
+
+  <!-- Datos estructurados JSON-LD (Organization, WebSite, SoftwareApplication, HowTo, FAQPage) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://grabazo.com/#organization",
+        "name": "Grabazo",
+        "url": "https://grabazo.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://grabazo.com/icon-512.png",
+          "width": 512,
+          "height": 512
+        },
+        "founder": { "@id": "https://grabazo.com/#creator" },
+        "sameAs": [
+          "https://github.com/mjmc4498/grabazo"
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": "https://grabazo.com/#creator",
+        "name": "Miguel Mogrovejo",
+        "url": "https://www.linkedin.com/in/mjmc4498/",
+        "sameAs": [
+          "https://www.linkedin.com/in/mjmc4498/",
+          "https://github.com/mjmc4498"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://grabazo.com/#website",
+        "url": "https://grabazo.com/",
+        "name": "Grabazo",
+        "inLanguage": "es",
+        "publisher": { "@id": "https://grabazo.com/#organization" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://grabazo.com/#software",
+        "name": "Grabazo",
+        "alternateName": "Grabazo: graba tu pantalla, cámara y anotaciones",
+        "description": "Extensión gratuita de Google Chrome para grabar la pantalla, una pestaña, un área, una ventana o solo la cámara, con burbuja de cámara, micrófono y sonido del sistema, dibujo en vivo, zoom, foco de luz y difuminado de datos sensibles. El celular se conecta por código QR y funciona como control remoto, teleprompter y cámara. Sin marcas de agua, sin límite de tiempo, sin cuenta y con las grabaciones guardadas en la computadora.",
+        "applicationCategory": "MultimediaApplication",
+        "applicationSubCategory": "Grabador de pantalla · Extensión de Google Chrome",
+        "operatingSystem": "Windows, macOS, Linux, ChromeOS",
+        "browserRequirements": "Requiere Google Chrome 116 o superior. Para el celular basta cualquier navegador moderno.",
+        "softwareVersion": "1.0.0",
+        "inLanguage": "es",
+        "isAccessibleForFree": true,
+        "url": "https://grabazo.com/",
+        "downloadUrl": "https://grabazo.com/downloads/grabazo-chrome-v1.0.0.zip",
+        "image": "https://grabazo.com/icon-512.png",
+        "screenshot": "https://grabazo.com/assets/og-image.png",
+        "featureList": [
+          "Grabación de pestaña con su sonido, área personalizada, ventana, pantalla completa o solo cámara",
+          "Burbuja de cámara flotante y arrastrable: círculo o rectángulo, 4 tamaños y modo espejo",
+          "Fondo desenfocado y 6 fondos virtuales con segmentación de personas que corre en la propia computadora",
+          "Filtros de color: blanco y negro, cálido, frío, vívido y retro",
+          "Micrófono y sonido del sistema o de la pestaña al mismo tiempo, con pulsar para hablar",
+          "Dibujo en vivo: lápiz, resaltador, flechas, rectángulos, círculos, texto y borrador, con 8 colores y 3 grosores",
+          "Resaltado de clics, foco de luz, ocultar el cursor inactivo y zoom dinámico de 1,5× a 3×",
+          "Difuminado de información sensible en tiempo real",
+          "Cuenta regresiva, pausa, reinicio, límite de tiempo con aviso y atajos de teclado",
+          "Estudio post-grabación: recortar, cortar segmentos, quitar audio y exportar en MP4, WebM o GIF",
+          "El celular como control remoto, teleprompter y cámara mediante código QR, con WebRTC directo y cifrado",
+          "Sin marcas de agua, sin límite de tiempo, sin cuenta y con las grabaciones guardadas en la computadora"
+        ],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "author": { "@id": "https://grabazo.com/#creator" },
+        "publisher": { "@id": "https://grabazo.com/#organization" }
+      },
+      {
+        "@type": "HowTo",
+        "@id": "https://grabazo.com/#como-funciona",
+        "name": "Cómo grabar tu pantalla y tu cámara en Chrome con Grabazo",
+        "description": "Instala la extensión, elige qué grabar y, si quieres, conecta tu celular con un código QR para usarlo como control remoto, teleprompter o cámara.",
+        "totalTime": "PT1M",
+        "tool": [
+          { "@type": "HowToTool", "name": "Google Chrome 116 o superior" },
+          { "@type": "HowToTool", "name": "Un celular con navegador (opcional)" }
+        ],
+        "step": [
+          {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Agrega Grabazo a Chrome",
+            "text": "Descarga el ZIP de Grabazo, descomprímelo y cárgalo en chrome://extensions con el modo de desarrollador activado. Fija el ícono en la barra de Chrome para tenerlo a mano.",
+            "url": "https://grabazo.com/#como-funciona"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Elige qué grabar y pulsa Grabar",
+            "text": "Abre Grabazo (Alt+Shift+G), elige pestaña, área, ventana, pantalla o solo cámara, activa tu cámara y tu micrófono y pulsa Grabar (Alt+Shift+R).",
+            "url": "https://grabazo.com/#como-funciona"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "Escanea el código QR con tu celular",
+            "text": "Escanea el QR que muestra Grabazo y tu celular se convierte, sin instalar ninguna app, en control remoto, teleprompter o cámara de la grabación.",
+            "url": "https://grabazo.com/#como-funciona"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://grabazo.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Grabazo es gratis de verdad? ¿Pone marca de agua o límite de tiempo?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sí, es gratis. Grabazo no pone marcas de agua, no limita la duración de tus videos y no te pide crear una cuenta. Si quieres, tú mismo puedes fijar un límite de tiempo con aviso para no pasarte."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Dónde se guardan mis grabaciones? ¿Se suben a algún servidor?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Se guardan en tu computadora, en el almacenamiento local del navegador (IndexedDB), y las encuentras en «Mis grabaciones». Nada se sube a servidores: el video solo sale de tu computadora cuando tú lo exportas y decides compartirlo."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué puedo grabar con Grabazo?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Una pestaña de Chrome con su sonido, un área personalizada de la pestaña, cualquier ventana, la pantalla completa o solo tu cámara. Puedes sumar la burbuja de cámara, tu micrófono y el sonido del sistema o de la pestaña al mismo tiempo."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Necesito instalar una app en el celular?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Escaneas el código QR que muestra Grabazo y el control se abre en el navegador de tu celular, sea iPhone o Android. Desde ahí puedes iniciar, pausar o detener la grabación, cambiar la herramienta de dibujo, leer tu guion en el teleprompter o usar la cámara del celular."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cómo funciona el teleprompter en el celular?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Escribes o pegas tus notas y aparecen en la pantalla de tu celular, con desplazamiento automático a la velocidad que elijas, tamaño de letra ajustable y modo espejo. Arranca solo cuando empiezas a grabar, así lees tu guion sin que aparezca en el video."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Puedo usar la cámara de mi celular como webcam para la grabación?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sí. Con el celular conectado por QR puedes usar su cámara y su micrófono como la burbuja de cámara de tu grabación. Es ideal si tu computadora no tiene webcam o si prefieres la imagen de tu teléfono."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Puedo editar el video y en qué formatos lo exporto?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Al terminar se abre el estudio de Grabazo: recortas el inicio y el final, cortas partes del medio, quitas el audio si lo necesitas y exportas en MP4, WebM o GIF. Todo se procesa en tu navegador con WebCodecs y, si no haces cambios, la exportación es casi instantánea."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Funciona en redes de empresa o con los datos móviles del celular?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sí. El celular y la computadora se conectan de forma directa y cifrada con WebRTC, aunque estén en redes distintas. Si la red de tu empresa o universidad bloquea la conexión directa, Grabazo usa la retransmisión TURN de Cloudflare, que sigue cifrada."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cómo instalo Grabazo si todavía no está en la Chrome Web Store?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Descarga el archivo ZIP, descomprímelo, abre chrome://extensions, activa el «Modo de desarrollador» y pulsa «Cargar extensión sin empaquetar» eligiendo la carpeta. Muy pronto estará en la Chrome Web Store para instalarlo con un clic. Necesitas Google Chrome 116 o superior en Windows, macOS, Linux o ChromeOS."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué pasa si Chrome se cierra a mitad de una grabación?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Grabazo va guardando la grabación en tu computadora mientras grabas. Si Chrome se cierra a mitad, puedes recuperar lo grabado la próxima vez que abras Grabazo."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a href="#contenido" class="skip-link">Saltar al contenido principal</a>
+
+  <!-- Íconos SVG reutilizables (se usan con <use href="#i-…">) -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12" stroke-width="2.6"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2.2" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-restart" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 24 24"><path d="M5 3.5l13.5 7.2-6 1.6-2.7 6.2z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l1-4.2L16.2 4.6a2.1 2.1 0 0 1 3 3L8 18.8z"/><path d="M14.5 6.3l3 3"/></symbol>
+    <symbol id="i-highlighter" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5-7.5 7.5H7v-5z"/><path d="M7 17l-3 3h6M10.5 8.5l5 5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19L19 5M9.5 5H19v9.5"/></symbol>
+    <symbol id="i-rect" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="12" rx="1.6"/></symbol>
+    <symbol id="i-ellipse" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6.5"/></symbol>
+    <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 7V4.5h14V7M12 4.5v15M9 19.5h6"/></symbol>
+    <symbol id="i-eraser" viewBox="0 0 24 24"><path d="M8 20h12M4.6 15.4l9.2-9.2a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L11 19H8.2z"/><path d="M9 11l4.5 4.5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5L16 16M11 8v6M8 11h6"/></symbol>
+    <symbol id="i-spot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-dasharray="2.2 2.6"/><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-click" viewBox="0 0 24 24"><path d="M9.5 9.5l10 3.8-4.4 1.8-1.8 4.4z"/><path d="M5 4l1.6 1.6M3 9.5h2.4M9.5 3v2.4M4.6 14.5l1.7-1.7M14.4 4.6l-1.7 1.7"/></symbol>
+    <symbol id="i-blur" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6 0 10 7 10 7a17.6 17.6 0 0 1-3.2 3.8M6.6 6.6A17.4 17.4 0 0 0 2 12s4 7 10 7a9.6 9.6 0 0 0 5.3-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><rect x="2.5" y="6" width="13.5" height="12" rx="2.6"/><path d="M16 10.5l5.5-3.2v9.4L16 13.5z"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10.5 18.5h3"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><path d="M14 14h3v3h-3zM20.5 14v.5M14 20.5h3M20.5 17.5v3h-3"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.2"/><path d="M3 9h18M6.5 6.5h.01M9.5 6.5h.01"/></symbol>
+    <symbol id="i-tab" viewBox="0 0 24 24"><path d="M3 20V8.5A2.5 2.5 0 0 1 5.5 6H10l2 3h6.5A2.5 2.5 0 0 1 21 11.5V20z"/></symbol>
+    <symbol id="i-area" viewBox="0 0 24 24"><path d="M4 8.5V5a1 1 0 0 1 1-1h3.5M15.5 4H19a1 1 0 0 1 1 1v3.5M20 15.5V19a1 1 0 0 1-1 1h-3.5M8.5 20H5a1 1 0 0 1-1-1v-3.5"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.2"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v11.5M7 10.5l5 5 5-5M4 20.5h16"/></symbol>
+    <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.2 8.2L20 20M8.2 15.8L20 4"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.2"/><path d="M7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="11" width="15" height="10" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></symbol>
+    <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.3 8.3A5 5 0 0 0 7 18h10M20.2 16.4A4 4 0 0 0 17.5 10a6 6 0 0 0-7.6-4.6"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+    <symbol id="i-user-off" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 12.8-5.3M3 3l18 18"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx=".8"/><path d="M9.5 2.5V6M14.5 2.5V6M9.5 18v3.5M14.5 18v3.5M2.5 9.5H6M2.5 14.5H6M18 9.5h3.5M18 14.5h3.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6.5L9.5 17 4 11.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2.2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7.5 14h9"/></symbol>
+    <symbol id="i-script" viewBox="0 0 24 24"><path d="M5 4.5h14M5 8.5h14M5 12.5h10M5 16.5h14M5 20.5h8"/></symbol>
+    <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 10v3.5l2.5 2M9.5 2.5h5"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3A4 4 0 0 0 13 5.3l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+    <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M10 4.5a2 2 0 0 1 4 0v1h4a1 1 0 0 1 1 1v4h-1a2 2 0 0 0 0 4h1v4a1 1 0 0 1-1 1h-4v-1a2 2 0 0 0-4 0v1H6a1 1 0 0 1-1-1v-4h1a2 2 0 0 0 0-4H5v-4a1 1 0 0 1 1-1h4z"/></symbol>
+    <symbol id="i-mirror" viewBox="0 0 24 24"><path d="M12 3v18" stroke-dasharray="2 2.4"/><path d="M8.5 7L4 12l4.5 5zM15.5 7L20 12l-4.5 5z"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5L6.5 9H3v6h3.5L11 19z"/><path d="M22 9l-6 6M16 9l6 6"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 19V6.5A1.5 1.5 0 0 1 4.5 5H10l2 2.5h7.5A1.5 1.5 0 0 1 21 9v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19z"/></symbol>
+    <symbol id="i-lifebuoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.8"/><path d="M5.6 5.6l3.7 3.7M14.7 14.7l3.7 3.7M18.4 5.6l-3.7 3.7M9.3 14.7l-3.7 3.7"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4a1.5 1.5 0 0 1 3 0v6M14 10V5.5a1.5 1.5 0 0 1 3 0V13M17 9.5a1.5 1.5 0 0 1 3 0V15a7 7 0 0 1-7 7h-1.5a7 7 0 0 1-5.3-2.4L3.6 16.4a1.6 1.6 0 0 1 2.4-2.1L8 16.5"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.38-3.88-1.38-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.24 2.76.12 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.7 5.39-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></symbol>
+  </svg>
+
+  <!-- ====================================================================
+       BARRA DE NAVEGACIÓN
+       ==================================================================== -->
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a href="#inicio" class="brand" aria-label="Grabazo — Inicio">
+        <img src="assets/logo.svg" width="40" height="40" alt="">
+        <span>Grabazo</span>
+      </a>
+
+      <nav class="nav-links" id="main-nav" aria-label="Navegación principal">
+        <a href="#funciones">Funciones</a>
+        <a href="#pruebalo">Pruébalo</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#comparativa">Comparativa</a>
+        <a href="#privacidad">Privacidad</a>
+        <a href="#faq">Preguntas</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="icon-btn" id="theme-toggle" aria-label="Cambiar a tema claro" title="Cambiar tema claro u oscuro">
+          <svg class="i theme-icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="i theme-icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+        <a href="https://github.com/mjmc4498/grabazo" target="_blank" rel="noopener" class="btn btn-ghost btn-sm nav-github">
+          <svg class="i" aria-hidden="true"><use href="#i-github"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a href="downloads/grabazo-chrome-v1.0.0.zip" download class="btn btn-primary btn-sm nav-cta" data-download>
+          Agregar a Chrome
+        </a>
+        <button type="button" class="icon-btn menu-btn" id="menu-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir el menú">
+          <svg class="i" aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <!-- ====================================================================
+         HERO
+         ==================================================================== -->
+    <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">
+            <span class="rec-dot" aria-hidden="true"></span>
+            <span>Extensión gratis para Google Chrome</span>
+          </p>
+
+          <h1 id="hero-title">
+            Graba tu pantalla, tu cámara y tus ideas.
+            <span class="accent-text">Tu celular es el control remoto.</span>
+          </h1>
+
+          <p class="hero-lead">
+            <strong>Grabazo</strong> es el grabador de pantalla para Chrome que <strong>no pone marcas de agua</strong>, <strong>no te limita el tiempo</strong> y <strong>no te pide cuenta</strong>. Graba una pestaña, una ventana o toda la pantalla con tu cámara, dibuja mientras explicas y controla todo desde tu celular, que además hace de teleprompter y de cámara.
+          </p>
+
+          <div class="cta-row">
+            <a href="downloads/grabazo-chrome-v1.0.0.zip" download class="btn btn-primary btn-lg" data-download>
+              <svg class="i" aria-hidden="true"><use href="#i-download"/></svg>
+              <span>Agregar a Chrome — gratis</span>
+            </a>
+            <a href="#pruebalo" class="btn btn-secondary btn-lg">
+              <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+              <span>Ver cómo funciona</span>
+            </a>
+          </div>
+
+          <p class="cta-note">
+            <span class="badge-soon">Próximamente en la Chrome Web Store</span>
+            <span>Mientras tanto, instálalo desde el ZIP en pocos pasos. <button type="button" class="link-btn" data-open-install>¿Cómo se instala?</button></span>
+          </p>
+
+          <ul class="hero-pills" aria-label="Lo que no vas a encontrar en Grabazo">
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Sin marcas de agua</li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Sin límite de tiempo</li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Sin cuenta</li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Se guarda en tu computadora</li>
+          </ul>
+        </div>
+
+        <!-- Maqueta: una pestaña de Chrome grabándose con Grabazo + el celular como control remoto -->
+        <figure class="hero-stage" role="img" aria-label="Grabazo grabando una pestaña de Chrome: barra flotante con el tiempo de grabación, un círculo naranja dibujado sobre un gráfico, un correo difuminado, la burbuja de cámara y un celular que funciona como control remoto">
+          <div class="mk-browser">
+            <div class="mk-top">
+              <span class="mk-dots"><i></i><i></i><i></i></span>
+              <span class="mk-tab"><i></i>Plan de lanzamiento</span>
+              <span class="mk-tab mk-tab-off">Correo</span>
+            </div>
+            <div class="mk-url">
+              <svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>
+              <span class="mk-addr">tuempresa.com/plan</span>
+              <span class="mk-ext"><img src="assets/logo-small.svg" width="16" height="16" alt=""><b></b></span>
+            </div>
+            <div class="mk-page">
+              <div class="mk-side"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="mk-main">
+                <span class="mk-h">Plan de lanzamiento</span>
+                <span class="mk-sub">Resumen del trimestre</span>
+                <div class="mk-kpis">
+                  <span><small>Visitas</small><b>48,2 k</b></span>
+                  <span><small>Registros</small><b>3.140</b></span>
+                  <span><small>Ventas</small><b>+18 %</b></span>
+                </div>
+                <div class="mk-mail"><small>Contacto</small><b class="mk-blur">ana.torres@empresa.com</b></div>
+                <div class="mk-chart">
+                  <i></i><i></i><i></i><i></i><i></i>
+                  <i class="mk-goal"><svg class="mk-ink mk-ink-loop" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" vector-effect="non-scaling-stroke" d="M58 6C26 2 8 28 9 58s20 40 46 38 40-20 37-50S70 1 40 9"/></svg></i>
+                  <i></i>
+                  <svg class="mk-ink mk-ink-arrow" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" vector-effect="non-scaling-stroke" d="M4 78C22 18 62 6 92 40M92 40L78 37M92 40L90 26"/></svg>
+                </div>
+              </div>
+              <span class="mk-ripple"></span>
+              <div class="mk-cam"><i class="mk-cam-head"></i><i class="mk-cam-body"></i></div>
+              <div class="mk-bar">
+                <span class="mk-rec"><i></i>02:14</span>
+                <svg class="i" aria-hidden="true"><use href="#i-pause"/></svg>
+                <svg class="i mk-stop" aria-hidden="true"><use href="#i-stop"/></svg>
+                <span class="mk-sep"></span>
+                <svg class="i mk-on" aria-hidden="true"><use href="#i-pen"/></svg>
+                <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg>
+                <svg class="i" aria-hidden="true"><use href="#i-zoom"/></svg>
+                <svg class="i" aria-hidden="true"><use href="#i-spot"/></svg>
+                <svg class="i mk-hide-sm" aria-hidden="true"><use href="#i-blur"/></svg>
+                <span class="mk-sep mk-hide-sm"></span>
+                <svg class="i mk-hide-sm" aria-hidden="true"><use href="#i-camera"/></svg>
+                <svg class="i mk-hide-sm" aria-hidden="true"><use href="#i-mic"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="mk-phone">
+            <div class="mk-phone-screen">
+              <span class="mk-ph-status"><i></i>Conectado</span>
+              <span class="mk-ph-time">02:14</span>
+              <span class="mk-ph-label">Grabando</span>
+              <span class="mk-ph-big"><svg class="i" aria-hidden="true"><use href="#i-stop"/></svg></span>
+              <span class="mk-ph-row">
+                <span><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg></span>
+                <span><svg class="i" aria-hidden="true"><use href="#i-restart"/></svg></span>
+              </span>
+              <span class="mk-ph-tools">
+                <span class="mk-on"><svg class="i" aria-hidden="true"><use href="#i-pen"/></svg></span>
+                <span><svg class="i" aria-hidden="true"><use href="#i-zoom"/></svg></span>
+                <span><svg class="i" aria-hidden="true"><use href="#i-spot"/></svg></span>
+              </span>
+              <span class="mk-ph-ptt"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>Mantén para hablar</span>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         LOS CUATRO CEROS
+         ==================================================================== -->
+    <section class="zeros" aria-label="Lo esencial de Grabazo">
+      <div class="container zeros-grid">
+        <div class="zero">
+          <span class="zero-num" aria-hidden="true">0</span>
+          <div>
+            <h2>marcas de agua</h2>
+            <p>Tus videos salen limpios, sin logos encima.</p>
+          </div>
+        </div>
+        <div class="zero">
+          <span class="zero-num" aria-hidden="true">0</span>
+          <div>
+            <h2>límites de tiempo</h2>
+            <p>Graba lo que necesites. Si quieres, pon tú un límite con aviso.</p>
+          </div>
+        </div>
+        <div class="zero">
+          <span class="zero-num" aria-hidden="true">0</span>
+          <div>
+            <h2>cuentas</h2>
+            <p>Instalas y grabas. Sin registro, sin correo, sin contraseña.</p>
+          </div>
+        </div>
+        <div class="zero">
+          <span class="zero-num" aria-hidden="true">0</span>
+          <div>
+            <h2>subidas a la nube</h2>
+            <p>Todo se guarda en tu computadora. Tú decides qué compartir.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         FUNCIONES (7 GRUPOS)
+         ==================================================================== -->
+    <section class="section lazy-section" id="funciones" aria-labelledby="funciones-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Funciones</span>
+          <h2 class="section-title" id="funciones-title">Todo lo que esperas de un buen grabador. Y lo que no esperabas.</h2>
+          <p class="section-subtitle">
+            Grabazo junta en una sola extensión la captura, la cámara, el dibujo en vivo, los efectos de cursor y un estudio para recortar y exportar. Y le suma lo que lo hace <span class="nowrap">«-azo»</span>: tu celular.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"><svg class="i"><use href="#i-monitor"/></svg></div>
+            <span class="feature-num">01 · Modos de captura</span>
+            <h3>Graba justo lo que necesitas</h3>
+            <p>Elige qué entra en el video antes de empezar.</p>
+            <ul class="feature-list">
+              <li><svg class="i" aria-hidden="true"><use href="#i-tab"/></svg>Una pestaña, con su sonido</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-area"/></svg>Un área personalizada de la pestaña</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-window"/></svg>Cualquier ventana abierta</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg>La pantalla completa</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>Solo tu cámara</li>
+            </ul>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"><svg class="i"><use href="#i-camera"/></svg></div>
+            <span class="feature-num">02 · Cámara y audio</span>
+            <h3>Tu cámara, como en un estudio</h3>
+            <p>Una burbuja de cámara flotante que arrastras a donde quieras: en círculo o rectángulo, en 4 tamaños y con modo espejo.</p>
+            <ul class="feature-list">
+              <li><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>Fondo desenfocado (suave o fuerte) y 6 fondos virtuales, con segmentación de personas MediaPipe que corre en tu propia computadora</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>Filtros de color: B/N, cálido, frío, vívido y retro</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>Micrófono y sonido del sistema o la pestaña, a la vez</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg>Pulsar para hablar: con una tecla, desde la barra o manteniendo pulsado un botón en el celular</li>
+            </ul>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"><svg class="i"><use href="#i-pen"/></svg></div>
+            <span class="feature-num">03 · Dibujo y anotación</span>
+            <h3>Dibuja mientras explicas</h3>
+            <p>Señala, encierra y subraya en vivo, directamente sobre lo que estás grabando.</p>
+            <ul class="feature-list">
+              <li><svg class="i" aria-hidden="true"><use href="#i-pen"/></svg>Lápiz libre, resaltador y texto</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg>Flechas, rectángulos, círculos y elipses</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-eraser"/></svg>Borrador, deshacer y borrar todo</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>8 colores, 3 grosores y tinta que se desvanece (opcional)</li>
+            </ul>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"><svg class="i"><use href="#i-spot"/></svg></div>
+            <span class="feature-num">04 · Cursor y pantalla</span>
+            <h3>Que tu público mire donde importa</h3>
+            <p>Efectos que guían la mirada sin que tengas que editar después.</p>
+            <ul class="feature-list">
+              <li><svg class="i" aria-hidden="true"><use href="#i-click"/></svg>Resaltado de clics y cursor que se oculta si no lo mueves</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-spot"/></svg>Foco de luz que oscurece el resto de la pantalla</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-zoom"/></svg>Zoom dinámico y suave que sigue al cursor (de 1,5× a 3×, o automático al hacer clic)</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-blur"/></svg>Difumina datos sensibles en tiempo real: clic sobre un elemento o arrastra una zona</li>
+            </ul>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"><svg class="i"><use href="#i-timer"/></svg></div>
+            <span class="feature-num">05 · Controles</span>
+            <h3>Tú mandas en la grabación</h3>
+            <p>Cuenta regresiva de 0, 3, 5 o 10 segundos, pausar y reanudar, reiniciar, descartar y límite de tiempo con aviso. La barra flotante se arrastra y se puede ocultar.</p>
+            <ul class="shortcut-list" aria-label="Atajos de teclado">
+              <li><span><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd></span>Abrir Grabazo</li>
+              <li><span><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></span>Grabar o detener</li>
+              <li><span><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd></span>Pausar o reanudar</li>
+              <li><span><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd></span>Lápiz</li>
+            </ul>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true"><svg class="i"><use href="#i-scissors"/></svg></div>
+            <span class="feature-num">06 · Estudio</span>
+            <h3>Recorta y exporta al instante</h3>
+            <p>Al terminar se abre el estudio, sin subir nada a ningún lado.</p>
+            <ul class="feature-list">
+              <li><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg>Recorta el inicio y el final, y corta partes del medio</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-mute"/></svg>Quita el audio con un clic</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-film"/></svg>Exporta en MP4, WebM o GIF con WebCodecs, en tu navegador</li>
+              <li><svg class="i" aria-hidden="true"><use href="#i-folder"/></svg>Biblioteca «Mis grabaciones» y recuperación si Chrome se cierra</li>
+            </ul>
+          </article>
+
+          <article class="feature-card feature-card-azo">
+            <div class="azo-head">
+              <div class="feature-icon feature-icon-azo" aria-hidden="true"><svg class="i"><use href="#i-phone"/></svg></div>
+              <div>
+                <span class="feature-num">07 · Lo que lo hace <span class="nowrap">«-azo»</span></span>
+                <h3>Tu celular es el control remoto, el teleprompter y la cámara</h3>
+                <p>Escaneas un QR y listo: sin instalar apps. La conexión es directa y cifrada (WebRTC con PeerJS) y, en redes restrictivas, pasa por la retransmisión TURN de Cloudflare.</p>
+              </div>
+            </div>
+            <div class="azo-grid">
+              <div class="azo-item">
+                <svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>
+                <h4>Control remoto en vivo</h4>
+                <p>Inicia, pausa, reinicia y detén. Cambia la herramienta de dibujo y el color, activa zoom, foco y clics, la cámara y el micrófono, o muestra y oculta la barra. Sin tocar el mouse.</p>
+              </div>
+              <div class="azo-item">
+                <svg class="i" aria-hidden="true"><use href="#i-script"/></svg>
+                <h4>Teleprompter</h4>
+                <p>Tus notas o tu guion en la pantalla del teléfono, con desplazamiento automático, velocidad y tamaño de letra ajustables y modo espejo. Arranca solo al grabar.</p>
+              </div>
+              <div class="azo-item">
+                <svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>
+                <h4>Cámara y micrófono del celular</h4>
+                <p>Usa la cámara de tu teléfono como la burbuja de webcam de la grabación. Ideal si tu computadora no tiene cámara o prefieres la del celular.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SIMULADOR INTERACTIVO
+         ==================================================================== -->
+    <section class="section lazy-section sim-section" id="pruebalo" aria-labelledby="pruebalo-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Pruébalo aquí mismo</span>
+          <h2 class="section-title" id="pruebalo-title">Juega con Grabazo antes de instalarlo</h2>
+          <p class="section-subtitle">
+            Dibuja sobre la página, enciende el foco o el zoom, difumina el correo, arrastra la burbuja de cámara y maneja todo desde el celular. Es una simulación: nada se graba ni sale de tu navegador.
+          </p>
+        </div>
+
+        <div class="sim" id="sim">
+          <div class="sim-desk">
+            <div class="sim-browser">
+              <div class="sim-chrome">
+                <span class="mk-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="sim-addr">tuempresa.com/plan</span>
+                <span class="sim-status" id="sim-status" aria-live="polite">Listo para grabar</span>
+              </div>
+
+              <div class="sim-stage" id="sim-stage" data-tool="cursor">
+                <div class="sim-zoom" id="sim-zoom">
+                  <div class="sim-page">
+                    <div class="sp-head">
+                      <span class="sp-title">Plan de lanzamiento · Q4</span>
+                      <span class="sp-chip">Borrador</span>
+                    </div>
+                    <div class="sp-kpis">
+                      <div class="sp-kpi"><small>Visitas</small><b>48,2 k</b><span class="sp-up">+12 %</span></div>
+                      <div class="sp-kpi"><small>Registros</small><b>3.140</b><span class="sp-up">+8 %</span></div>
+                      <div class="sp-kpi"><small>Ventas</small><b>+18 %</b><span class="sp-up">meta</span></div>
+                    </div>
+                    <div class="sp-body">
+                      <div class="sp-chart" aria-hidden="true">
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i class="sp-goal"></i><i></i>
+                      </div>
+                      <div class="sp-side">
+                        <ul class="sp-list">
+                          <li><span class="sp-check"></span>Landing lista</li>
+                          <li><span class="sp-check"></span>Video demo</li>
+                          <li><span class="sp-check sp-todo"></span>Correo a clientes</li>
+                        </ul>
+                        <div class="sp-contacts">
+                          <small>Contacto</small>
+                          <span class="sp-field" data-blurable>ana.torres@empresa.com</span>
+                          <span class="sp-field" data-blurable>+51 987 654 321</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <canvas class="sim-canvas" id="sim-canvas" aria-label="Lienzo de dibujo de la simulación" role="img"></canvas>
+                </div>
+
+                <div class="sim-spot" aria-hidden="true"></div>
+                <div class="sim-ripples" id="sim-ripples" aria-hidden="true"></div>
+
+                <div class="sim-cam" id="sim-cam" tabindex="0" role="group" aria-label="Burbuja de cámara simulada. Arrástrala o muévela con las flechas del teclado." data-shape="circle" data-size="1" data-filter="none" data-bg="none">
+                  <div class="cam-feed">
+                    <div class="cam-bg"></div>
+                    <div class="cam-person"><i class="cam-head"></i><i class="cam-body"></i></div>
+                    <div class="cam-tint"></div>
+                  </div>
+                  <span class="cam-mic" aria-hidden="true"><svg class="i"><use href="#i-mic"/></svg></span>
+                </div>
+
+                <div class="sim-countdown" id="sim-countdown" aria-hidden="true"></div>
+
+                <div class="sim-done" id="sim-done" hidden>
+                  <div class="sim-done-card" role="status">
+                    <strong>Grabación terminada <span id="sim-done-time">00:00</span></strong>
+                    <p>En Grabazo real se abre el estudio: recortas, cortas y exportas en MP4, WebM o GIF. En esta simulación no se grabó nada.</p>
+                    <div class="sim-done-actions">
+                      <a href="#estudio" class="btn btn-primary btn-sm">Ver el estudio</a>
+                      <button type="button" class="btn btn-ghost btn-sm" data-act="close-done">Seguir probando</button>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="sim-showbar" id="sim-showbar" data-act="showbar" hidden>
+                  <svg class="i" aria-hidden="true"><use href="#i-eye"/></svg>
+                  <span>Mostrar barra</span>
+                </button>
+              </div>
+
+              <div class="sim-toolbar" id="sim-toolbar" role="toolbar" aria-label="Barra de Grabazo (simulada)">
+                <button type="button" class="sb sb-rec" data-act="rec" aria-label="Empezar a grabar">
+                  <svg class="i" aria-hidden="true"><use href="#i-rec"/></svg>
+                  <span class="sb-time" id="sim-time">00:00</span>
+                </button>
+                <button type="button" class="sb" data-act="pause" aria-label="Pausar" aria-pressed="false" disabled><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg></button>
+                <span class="sb-sep" aria-hidden="true"></span>
+                <button type="button" class="sb" data-tool="cursor" aria-pressed="true" title="Cursor"><svg class="i" aria-hidden="true"><use href="#i-cursor"/></svg><span class="sr-only">Cursor</span></button>
+                <button type="button" class="sb" data-tool="pen" aria-pressed="false" title="Lápiz"><svg class="i" aria-hidden="true"><use href="#i-pen"/></svg><span class="sr-only">Lápiz</span></button>
+                <button type="button" class="sb" data-tool="highlighter" aria-pressed="false" title="Resaltador"><svg class="i" aria-hidden="true"><use href="#i-highlighter"/></svg><span class="sr-only">Resaltador</span></button>
+                <button type="button" class="sb" data-tool="arrow" aria-pressed="false" title="Flecha"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg><span class="sr-only">Flecha</span></button>
+                <button type="button" class="sb" data-tool="rect" aria-pressed="false" title="Rectángulo"><svg class="i" aria-hidden="true"><use href="#i-rect"/></svg><span class="sr-only">Rectángulo</span></button>
+                <button type="button" class="sb" data-tool="ellipse" aria-pressed="false" title="Círculo"><svg class="i" aria-hidden="true"><use href="#i-ellipse"/></svg><span class="sr-only">Círculo</span></button>
+                <button type="button" class="sb" data-tool="blur" aria-pressed="false" title="Difuminar: haz clic en un dato"><svg class="i" aria-hidden="true"><use href="#i-blur"/></svg><span class="sr-only">Difuminar</span></button>
+                <span class="sb-sep" aria-hidden="true"></span>
+                <button type="button" class="sb" data-act="undo" title="Deshacer"><svg class="i" aria-hidden="true"><use href="#i-undo"/></svg><span class="sr-only">Deshacer</span></button>
+                <button type="button" class="sb" data-act="clear" title="Borrar todo"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg><span class="sr-only">Borrar todo</span></button>
+                <button type="button" class="sb sb-hide" data-act="hidebar" title="Ocultar la barra"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg><span class="sr-only">Ocultar la barra</span></button>
+              </div>
+            </div>
+
+            <div class="sim-controls">
+              <div class="sim-group">
+                <span class="sim-label" id="lbl-color">Color</span>
+                <div class="swatches" role="group" aria-labelledby="lbl-color">
+                  <button type="button" class="swatch" data-color="#FF7A1A" aria-pressed="true" title="Naranja"><span class="sr-only">Naranja</span></button>
+                  <button type="button" class="swatch" data-color="#FF3B30" aria-pressed="false" title="Rojo"><span class="sr-only">Rojo</span></button>
+                  <button type="button" class="swatch" data-color="#FFD60A" aria-pressed="false" title="Amarillo"><span class="sr-only">Amarillo</span></button>
+                  <button type="button" class="swatch" data-color="#30D158" aria-pressed="false" title="Verde"><span class="sr-only">Verde</span></button>
+                  <button type="button" class="swatch" data-color="#0A84FF" aria-pressed="false" title="Azul"><span class="sr-only">Azul</span></button>
+                  <button type="button" class="swatch" data-color="#BF5AF2" aria-pressed="false" title="Morado"><span class="sr-only">Morado</span></button>
+                  <button type="button" class="swatch" data-color="#FFFFFF" aria-pressed="false" title="Blanco"><span class="sr-only">Blanco</span></button>
+                  <button type="button" class="swatch" data-color="#1C1C1E" aria-pressed="false" title="Negro"><span class="sr-only">Negro</span></button>
+                </div>
+              </div>
+              <div class="sim-group">
+                <span class="sim-label" id="lbl-width">Grosor</span>
+                <div class="seg" role="group" aria-labelledby="lbl-width">
+                  <button type="button" data-width="0" aria-pressed="false" title="Fino"><i class="dot dot-1"></i><span class="sr-only">Fino</span></button>
+                  <button type="button" data-width="1" aria-pressed="true" title="Medio"><i class="dot dot-2"></i><span class="sr-only">Medio</span></button>
+                  <button type="button" data-width="2" aria-pressed="false" title="Grueso"><i class="dot dot-3"></i><span class="sr-only">Grueso</span></button>
+                </div>
+              </div>
+              <div class="sim-group sim-group-wide">
+                <span class="sim-label" id="lbl-fx">Efectos</span>
+                <div class="chips" role="group" aria-labelledby="lbl-fx">
+                  <button type="button" class="chip" data-toggle="spot" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-spot"/></svg>Foco</button>
+                  <button type="button" class="chip" data-toggle="clicks" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-click"/></svg>Clics</button>
+                  <button type="button" class="chip" data-toggle="zoom" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-zoom"/></svg>Zoom 2×</button>
+                  <button type="button" class="chip" data-toggle="fade" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>Tinta que se desvanece</button>
+                </div>
+              </div>
+              <div class="sim-group sim-group-wide">
+                <span class="sim-label" id="lbl-cam">Cámara</span>
+                <div class="chips" role="group" aria-labelledby="lbl-cam">
+                  <button type="button" class="chip" data-toggle="cam" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>Cámara</button>
+                  <button type="button" class="chip" data-cycle="shape">Forma: <b data-out="shape">círculo</b></button>
+                  <button type="button" class="chip" data-cycle="size">Tamaño: <b data-out="size">M</b></button>
+                  <button type="button" class="chip" data-cycle="filter">Filtro: <b data-out="filter">ninguno</b></button>
+                  <button type="button" class="chip" data-cycle="bg">Fondo: <b data-out="bg">original</b></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Celular simulado: control remoto + teleprompter -->
+          <div class="sim-phone-wrap">
+            <div class="sim-phone">
+              <div class="sim-phone-notch" aria-hidden="true"></div>
+              <div class="sim-phone-screen">
+                <div class="ph-top">
+                  <span class="ph-conn"><i aria-hidden="true"></i>Conectado</span>
+                  <span class="ph-brand"><img src="assets/logo-small.svg" width="16" height="16" alt="">Grabazo</span>
+                </div>
+
+                <div class="ph-tabs" role="tablist" aria-label="Pantallas del celular">
+                  <button type="button" role="tab" id="ph-tab-control" aria-controls="ph-panel-control" aria-selected="true" data-ptab="control">Control</button>
+                  <button type="button" role="tab" id="ph-tab-guion" aria-controls="ph-panel-guion" aria-selected="false" data-ptab="guion" tabindex="-1">Guion</button>
+                </div>
+
+                <div class="ph-panel" id="ph-panel-control" role="tabpanel" aria-labelledby="ph-tab-control">
+                  <div class="ph-timer">
+                    <span class="ph-time" id="ph-time">00:00</span>
+                    <span class="ph-state" id="ph-state">Listo para grabar</span>
+                  </div>
+                  <div class="ph-main">
+                    <button type="button" class="ph-round" data-act="pause" aria-label="Pausar" aria-pressed="false" disabled><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg></button>
+                    <button type="button" class="ph-big" data-act="rec" aria-label="Empezar a grabar"><span class="ph-big-inner"></span></button>
+                    <button type="button" class="ph-round" data-act="restart" aria-label="Reiniciar la grabación" disabled><svg class="i" aria-hidden="true"><use href="#i-restart"/></svg></button>
+                  </div>
+                  <div class="ph-tools" role="group" aria-label="Herramienta">
+                    <button type="button" data-tool="cursor" aria-pressed="true" title="Cursor"><svg class="i" aria-hidden="true"><use href="#i-cursor"/></svg><span class="sr-only">Cursor</span></button>
+                    <button type="button" data-tool="pen" aria-pressed="false" title="Lápiz"><svg class="i" aria-hidden="true"><use href="#i-pen"/></svg><span class="sr-only">Lápiz</span></button>
+                    <button type="button" data-tool="highlighter" aria-pressed="false" title="Resaltador"><svg class="i" aria-hidden="true"><use href="#i-highlighter"/></svg><span class="sr-only">Resaltador</span></button>
+                    <button type="button" data-tool="arrow" aria-pressed="false" title="Flecha"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg><span class="sr-only">Flecha</span></button>
+                    <button type="button" data-tool="ellipse" aria-pressed="false" title="Círculo"><svg class="i" aria-hidden="true"><use href="#i-ellipse"/></svg><span class="sr-only">Círculo</span></button>
+                  </div>
+                  <div class="ph-colors" role="group" aria-label="Color">
+                    <button type="button" class="swatch" data-color="#FF7A1A" aria-pressed="true"><span class="sr-only">Naranja</span></button>
+                    <button type="button" class="swatch" data-color="#FF3B30" aria-pressed="false"><span class="sr-only">Rojo</span></button>
+                    <button type="button" class="swatch" data-color="#FFD60A" aria-pressed="false"><span class="sr-only">Amarillo</span></button>
+                    <button type="button" class="swatch" data-color="#30D158" aria-pressed="false"><span class="sr-only">Verde</span></button>
+                    <button type="button" class="swatch" data-color="#0A84FF" aria-pressed="false"><span class="sr-only">Azul</span></button>
+                  </div>
+                  <div class="ph-toggles" role="group" aria-label="Efectos">
+                    <button type="button" data-toggle="zoom" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-zoom"/></svg>Zoom</button>
+                    <button type="button" data-toggle="spot" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-spot"/></svg>Foco</button>
+                    <button type="button" data-toggle="clicks" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-click"/></svg>Clics</button>
+                    <button type="button" data-toggle="cam" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>Cámara</button>
+                    <button type="button" data-toggle="mic" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>Micro</button>
+                    <button type="button" data-toggle="bar" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg>Barra</button>
+                  </div>
+                  <button type="button" class="ph-ptt" id="ph-ptt" aria-pressed="false">
+                    <svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>
+                    <span>Mantén pulsado para hablar</span>
+                  </button>
+                </div>
+
+                <div class="ph-panel" id="ph-panel-guion" role="tabpanel" aria-labelledby="ph-tab-guion" hidden>
+                  <div class="tp" id="tp">
+                    <div class="tp-view" id="tp-view">
+                      <div class="tp-text" id="tp-text">
+                        <p>Hola, soy Ana. En los próximos dos minutos te muestro el plan de lanzamiento.</p>
+                        <p>Primero, mira estas tres cifras: son las que vamos a mover este trimestre.</p>
+                        <p>Ahora encierro la más importante para que no se pierda.</p>
+                        <p>Fíjate en el gráfico: la barra naranja es nuestra meta. Con el zoom ves el detalle.</p>
+                        <p>Ojo con este correo: lo difumino, porque no debe salir en el video.</p>
+                        <p>Si algo sale mal, pauso, respiro y sigo. Nadie lo nota.</p>
+                        <p>Al terminar, recorto el inicio, exporto en MP4 y lo comparto.</p>
+                        <p>¡Gracias por mirar! Nos vemos en el próximo video.</p>
+                      </div>
+                    </div>
+                    <span class="tp-guide" aria-hidden="true"></span>
+                  </div>
+                  <div class="tp-controls">
+                    <button type="button" data-tp="play" aria-pressed="false" class="tp-play"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg><span>Iniciar</span></button>
+                    <div class="tp-row">
+                      <span>Velocidad</span>
+                      <button type="button" data-tp="slower" aria-label="Más lento">−</button>
+                      <b id="tp-speed">3</b>
+                      <button type="button" data-tp="faster" aria-label="Más rápido">+</button>
+                    </div>
+                    <div class="tp-row">
+                      <span>Letra</span>
+                      <button type="button" data-tp="smaller" aria-label="Letra más pequeña">A−</button>
+                      <button type="button" data-tp="bigger" aria-label="Letra más grande">A+</button>
+                      <button type="button" data-tp="mirror" aria-pressed="false" aria-label="Modo espejo"><svg class="i" aria-hidden="true"><use href="#i-mirror"/></svg></button>
+                    </div>
+                    <p class="tp-hint">Arranca solo cuando empiezas a grabar.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="sim-foot">
+          <svg class="i" aria-hidden="true"><use href="#i-keyboard"/></svg>
+          <span>Con el simulador en pantalla prueba los atajos <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> (grabar), <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (pausar) y <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd> (lápiz).</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         CÓMO FUNCIONA (3 PASOS)
+         ==================================================================== -->
+    <section class="section lazy-section" id="como-funciona" aria-labelledby="como-title">
+      <div class="container">
+        <div class="section-header centered">
+          <span class="kicker">Cómo funciona</span>
+          <h2 class="section-title" id="como-title">Tres pasos y estás grabando</h2>
+          <p class="section-subtitle">
+            Sin cuentas, sin configuraciones eternas. Y el celular solo si lo quieres.
+          </p>
+        </div>
+
+        <ol class="steps">
+          <li class="step">
+            <div class="step-visual" aria-hidden="true">
+              <div class="sv-ext">
+                <div class="sv-ext-bar"><span class="sv-pill"></span><svg class="i"><use href="#i-puzzle"/></svg><img src="assets/logo-small.svg" width="20" height="20" alt=""></div>
+                <div class="sv-ext-card">
+                  <img src="assets/logo.svg" width="40" height="40" alt="">
+                  <div><b>Grabazo</b><small>Extensión cargada</small></div>
+                  <span class="sv-toggle"></span>
+                </div>
+              </div>
+            </div>
+            <span class="step-num">1</span>
+            <h3>Agrega Grabazo a Chrome</h3>
+            <p>Descarga el ZIP y cárgalo en <code>chrome://extensions</code>. Muy pronto podrás instalarlo con un clic desde la Chrome Web Store. Fija el ícono en la barra para tenerlo a mano.</p>
+          </li>
+
+          <li class="step">
+            <div class="step-visual" aria-hidden="true">
+              <div class="sv-modes">
+                <span class="is-on"><svg class="i"><use href="#i-tab"/></svg>Pestaña</span>
+                <span><svg class="i"><use href="#i-area"/></svg>Área</span>
+                <span><svg class="i"><use href="#i-window"/></svg>Ventana</span>
+                <span><svg class="i"><use href="#i-monitor"/></svg>Pantalla</span>
+                <span><svg class="i"><use href="#i-camera"/></svg>Solo cámara</span>
+                <b class="sv-rec"><i></i>Grabar</b>
+              </div>
+            </div>
+            <span class="step-num">2</span>
+            <h3>Elige qué grabar y pulsa Grabar</h3>
+            <p>Pestaña, área, ventana, pantalla o solo cámara. Activa tu cámara y tu micrófono, espera la cuenta regresiva y listo. Atajo: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>.</p>
+          </li>
+
+          <li class="step">
+            <div class="step-visual" aria-hidden="true">
+              <div class="sv-qr">
+                <svg class="sv-qr-code" viewBox="0 0 29 29" shape-rendering="crispEdges">
+                  <path d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2zM22 0h7v7h-7zM23 1v5h5V1zM24 2h3v3h-3zM0 22h7v7H0zM1 23v5h5v-5zM2 24h3v3H2zM9 0h2v2H9zM12 1h3v2h-3zM16 0h2v3h-2zM19 2h2v2h-2zM9 4h3v2H9zM14 4h2v3h-2zM17 5h3v2h-3zM8 8h2v3H8zM11 8h4v2h-4zM17 8h2v2h-2zM21 8h3v2h-3zM25 9h3v2h-3zM0 9h3v2H0zM4 10h3v2H4zM12 11h2v3h-2zM15 12h3v2h-3zM20 11h2v3h-2zM24 12h2v2h-2zM27 13h2v3h-2zM1 13h2v3H1zM5 14h4v2H5zM10 15h3v2h-3zM16 15h2v2h-2zM19 15h4v2h-4zM8 18h2v3H8zM12 18h3v2h-3zM17 18h2v4h-2zM21 19h3v2h-3zM25 18h2v3h-2zM0 18h2v2H0zM4 18h2v2H4zM10 22h4v2h-4zM15 22h2v3h-2zM20 22h2v2h-2zM23 23h3v2h-3zM27 22h2v2h-2zM9 26h2v3H9zM13 26h3v2h-3zM18 25h2v4h-2zM21 26h2v2h-2zM24 26h3v3h-3z"/>
+                </svg>
+                <div class="sv-phone"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+            <span class="step-num">3</span>
+            <h3>Escanea el QR con tu celular</h3>
+            <p>Opcional, pero es lo mejor: tu celular se vuelve control remoto, teleprompter o cámara, sin instalar ninguna app. Al terminar, el estudio se abre solo para recortar y exportar.</p>
+          </li>
+        </ol>
+
+        <div class="requirements">
+          <div>
+            <svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg>
+            <p><strong>En tu computadora:</strong> Google Chrome 116 o superior en Windows, macOS, Linux o ChromeOS.</p>
+          </div>
+          <div>
+            <svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>
+            <p><strong>En tu celular (opcional):</strong> cualquier navegador moderno, en iPhone o Android. Sin apps.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         ESTUDIO POST-GRABACIÓN
+         ==================================================================== -->
+    <section class="section lazy-section" id="estudio" aria-labelledby="estudio-title">
+      <div class="container studio">
+        <div class="studio-copy">
+          <span class="kicker">Estudio post-grabación</span>
+          <h2 class="section-title" id="estudio-title">Del último clic a tu MP4, sin salir del navegador</h2>
+          <p class="section-subtitle">
+            Cuando detienes la grabación, el estudio se abre solo. Quita los segundos de más, corta lo que sobra y exporta. Todo se procesa en tu computadora con WebCodecs.
+          </p>
+          <ul class="check-list">
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span><strong>Recorta el inicio y el final</strong> y corta segmentos intermedios.</span></li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span><strong>Quita el audio</strong> si solo necesitas la imagen.</span></li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span><strong>Exporta en MP4, WebM o GIF.</strong> Si no cambias nada, la exportación es casi instantánea.</span></li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span><strong>«Mis grabaciones»</strong> guarda tu biblioteca, y si Chrome se cierra a mitad, recuperas lo grabado.</span></li>
+          </ul>
+        </div>
+
+        <div class="studio-mock" role="img" aria-label="Estudio de Grabazo: vista previa del video, línea de tiempo con el inicio y el final recortados, un segmento cortado en el medio y botones para exportar en MP4, WebM o GIF">
+          <div class="st-preview">
+            <div class="st-frame">
+              <span class="st-line st-l1"></span><span class="st-line st-l2"></span>
+              <div class="st-bars"><i></i><i></i><i></i><i></i><i></i></div>
+              <span class="st-cam"></span>
+            </div>
+            <span class="st-play"><svg class="i"><use href="#i-play"/></svg></span>
+          </div>
+          <div class="st-timeline">
+            <div class="st-track">
+              <span class="st-cut st-cut-start"></span>
+              <span class="st-keep"></span>
+              <span class="st-cut st-cut-mid"><svg class="i"><use href="#i-scissors"/></svg></span>
+              <span class="st-keep st-keep-2"></span>
+              <span class="st-cut st-cut-end"></span>
+              <span class="st-head"></span>
+            </div>
+            <div class="st-times"><span>00:00</span><span>01:12</span><span>02:31</span></div>
+          </div>
+          <div class="st-actions">
+            <span class="st-btn"><svg class="i"><use href="#i-mute"/></svg>Quitar audio</span>
+            <span class="st-formats"><b class="is-on">MP4</b><b>WebM</b><b>GIF</b></span>
+            <span class="st-btn st-export"><svg class="i"><use href="#i-download"/></svg>Exportar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         COMPARATIVA
+         ==================================================================== -->
+    <section class="section lazy-section" id="comparativa" aria-labelledby="comparativa-title">
+      <div class="container">
+        <div class="section-header centered">
+          <span class="kicker">Comparativa</span>
+          <h2 class="section-title" id="comparativa-title">Grabazo vs. los grabadores típicos</h2>
+          <p class="section-subtitle">
+            Lo que suele pasar con los grabadores de pantalla gratuitos y de pago, frente a lo que obtienes con Grabazo.
+          </p>
+        </div>
+
+        <p class="table-hint" aria-hidden="true">Desliza la tabla para ver las otras columnas →</p>
+        <div class="table-wrap" role="region" aria-labelledby="comparativa-title" tabindex="0">
+          <table class="compare">
+            <caption class="sr-only">Comparación entre Grabazo, grabadores gratuitos típicos y grabadores de pago</caption>
+            <thead>
+              <tr>
+                <th scope="col">Característica</th>
+                <th scope="col" class="col-azo"><span class="th-azo"><img src="assets/logo-small.svg" width="18" height="18" alt="">Grabazo</span></th>
+                <th scope="col">Gratuitos típicos</th>
+                <th scope="col">De pago o por suscripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Precio</th>
+                <td class="col-azo"><span class="yes">Gratis</span></td>
+                <td>Gratis con restricciones</td>
+                <td>Pago mensual o anual</td>
+              </tr>
+              <tr>
+                <th scope="row">Marca de agua</th>
+                <td class="col-azo"><span class="yes">Nunca</span></td>
+                <td><span class="no">Frecuente</span></td>
+                <td>Solo si no pagas</td>
+              </tr>
+              <tr>
+                <th scope="row">Límite de tiempo</th>
+                <td class="col-azo"><span class="yes">Sin límite</span> (o el que tú pongas)</td>
+                <td><span class="no">A menudo, de pocos minutos</span></td>
+                <td>Según el plan</td>
+              </tr>
+              <tr>
+                <th scope="row">Cuenta obligatoria</th>
+                <td class="col-azo"><span class="yes">No</span></td>
+                <td>A menudo sí</td>
+                <td>Sí, siempre</td>
+              </tr>
+              <tr>
+                <th scope="row">Dónde quedan tus videos</th>
+                <td class="col-azo"><span class="yes">En tu computadora</span></td>
+                <td>Muchas veces en su nube</td>
+                <td>Normalmente en su nube</td>
+              </tr>
+              <tr>
+                <th scope="row">Celular como control remoto</th>
+                <td class="col-azo"><span class="yes">Sí, con un QR</span></td>
+                <td><span class="no">No</span></td>
+                <td>Rara vez</td>
+              </tr>
+              <tr>
+                <th scope="row">Teleprompter en el celular</th>
+                <td class="col-azo"><span class="yes">Sí</span></td>
+                <td><span class="no">No</span></td>
+                <td>Rara vez</td>
+              </tr>
+              <tr>
+                <th scope="row">Celular como cámara</th>
+                <td class="col-azo"><span class="yes">Sí</span></td>
+                <td><span class="no">No</span></td>
+                <td>Rara vez</td>
+              </tr>
+              <tr>
+                <th scope="row">Dibujo, zoom y foco en vivo</th>
+                <td class="col-azo"><span class="yes">Sí</span></td>
+                <td>Limitado</td>
+                <td>Sí, en planes avanzados</td>
+              </tr>
+              <tr>
+                <th scope="row">Difuminar datos en vivo</th>
+                <td class="col-azo"><span class="yes">Sí</span></td>
+                <td><span class="no">No</span></td>
+                <td>Varía</td>
+              </tr>
+              <tr>
+                <th scope="row">Exportar MP4, WebM y GIF</th>
+                <td class="col-azo"><span class="yes">Sí, en tu navegador</span></td>
+                <td>Formatos limitados</td>
+                <td>Sí</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Comparación general basada en limitaciones habituales del mercado. Cada producto es distinto: revisa sus condiciones antes de elegir.</p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PRIVACIDAD Y ARQUITECTURA
+         ==================================================================== -->
+    <section class="section lazy-section" id="privacidad" aria-labelledby="privacidad-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="kicker">Privacidad y arquitectura</span>
+          <h2 class="section-title" id="privacidad-title">Tus videos se quedan contigo</h2>
+          <p class="section-subtitle">
+            Grabazo graba y procesa todo en tu computadora. La conexión con el celular es directa y cifrada, y los servidores solo ayudan a que los dos dispositivos se encuentren.
+          </p>
+        </div>
+
+        <div class="arch" role="img" aria-label="Diagrama: el celular y la computadora se conectan de forma directa y cifrada por WebRTC; la señalización de PeerJS solo sirve para presentarlos y, si la red bloquea la conexión directa, el tráfico cifrado pasa por la retransmisión TURN de Cloudflare. La grabación se guarda en IndexedDB dentro de la computadora, se edita en el estudio y se exporta a un archivo MP4, WebM o GIF.">
+          <div class="arch-row">
+            <div class="arch-node">
+              <svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>
+              <b>Tu celular</b>
+              <small>Navegador web, sin apps</small>
+            </div>
+            <div class="arch-link">
+              <span class="arch-pill"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>WebRTC directo y cifrado</span>
+              <span class="arch-wire"></span>
+              <span class="arch-alt">
+                <span>Señalización PeerJS: solo para conectar</span>
+                <span>TURN de Cloudflare: si la red bloquea lo directo</span>
+              </span>
+            </div>
+            <div class="arch-node arch-node-pc">
+              <svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg>
+              <b>Tu computadora</b>
+              <small>Chrome + Grabazo</small>
+            </div>
+          </div>
+          <div class="arch-flow">
+            <span><svg class="i" aria-hidden="true"><use href="#i-rec"/></svg>Grabación</span>
+            <i aria-hidden="true"></i>
+            <span><svg class="i" aria-hidden="true"><use href="#i-database"/></svg>IndexedDB local</span>
+            <i aria-hidden="true"></i>
+            <span><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg>Estudio (WebCodecs)</span>
+            <i aria-hidden="true"></i>
+            <span><svg class="i" aria-hidden="true"><use href="#i-film"/></svg>Tu archivo MP4 · WebM · GIF</span>
+          </div>
+          <p class="arch-caption"><svg class="i" aria-hidden="true"><use href="#i-cloud-off"/></svg>Ningún paso sube tu video a un servidor.</p>
+        </div>
+
+        <div class="privacy-grid">
+          <article class="mini-card">
+            <svg class="i" aria-hidden="true"><use href="#i-database"/></svg>
+            <h3>Grabación 100 % local</h3>
+            <p>El video se guarda en el almacenamiento del navegador (IndexedDB) de tu computadora y aparece en «Mis grabaciones».</p>
+          </article>
+          <article class="mini-card">
+            <svg class="i" aria-hidden="true"><use href="#i-cloud-off"/></svg>
+            <h3>Nada se sube</h3>
+            <p>Grabazo no envía tus grabaciones a ningún servidor. El archivo sale de tu equipo solo cuando tú lo exportas y lo compartes.</p>
+          </article>
+          <article class="mini-card">
+            <svg class="i" aria-hidden="true"><use href="#i-cpu"/></svg>
+            <h3>Efectos en tu equipo</h3>
+            <p>El desenfoque y los fondos virtuales usan segmentación de personas MediaPipe, que corre en tu propia computadora.</p>
+          </article>
+          <article class="mini-card">
+            <svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>
+            <h3>Conexión cifrada</h3>
+            <p>Celular y computadora hablan por WebRTC, que cifra siempre la comunicación de punto a punto.</p>
+          </article>
+          <article class="mini-card">
+            <svg class="i" aria-hidden="true"><use href="#i-link"/></svg>
+            <h3>Servidores solo para conectar</h3>
+            <p>La señalización de PeerJS presenta a los dos dispositivos. Si tu red bloquea lo directo, la retransmisión TURN de Cloudflare pasa el tráfico cifrado.</p>
+          </article>
+          <article class="mini-card">
+            <svg class="i" aria-hidden="true"><use href="#i-user-off"/></svg>
+            <h3>Sin cuentas</h3>
+            <p>No hay registro de usuarios: no te pedimos correo, contraseña ni datos personales para grabar.</p>
+          </article>
+        </div>
+
+        <p class="privacy-link">
+          Lee la <a href="https://mjmc4498.github.io/grabazo/privacy.html" target="_blank" rel="noopener">política de privacidad completa</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PREGUNTAS FRECUENTES (refleja el FAQPage del JSON-LD)
+         ==================================================================== -->
+    <section class="section lazy-section" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-header centered">
+          <span class="kicker">Preguntas frecuentes</span>
+          <h2 class="section-title" id="faq-title">Lo que todos preguntan antes de grabar</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item" name="faq" open>
+            <summary>¿Grabazo es gratis de verdad? ¿Pone marca de agua o límite de tiempo?</summary>
+            <div class="faq-body"><p>Sí, es gratis. Grabazo <strong>no pone marcas de agua</strong>, <strong>no limita la duración</strong> de tus videos y <strong>no te pide crear una cuenta</strong>. Si quieres, tú mismo puedes fijar un límite de tiempo con aviso para no pasarte.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Dónde se guardan mis grabaciones? ¿Se suben a algún servidor?</summary>
+            <div class="faq-body"><p>Se guardan en tu computadora, en el almacenamiento local del navegador (<strong>IndexedDB</strong>), y las encuentras en «Mis grabaciones». <strong>Nada se sube a servidores</strong>: el video solo sale de tu computadora cuando tú lo exportas y decides compartirlo.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Qué puedo grabar con Grabazo?</summary>
+            <div class="faq-body"><p>Una <strong>pestaña</strong> de Chrome con su sonido, un <strong>área</strong> personalizada de la pestaña, cualquier <strong>ventana</strong>, la <strong>pantalla completa</strong> o <strong>solo tu cámara</strong>. Puedes sumar la burbuja de cámara, tu micrófono y el sonido del sistema o de la pestaña al mismo tiempo.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Necesito instalar una app en el celular?</summary>
+            <div class="faq-body"><p>No. Escaneas el código QR que muestra Grabazo y el control se abre en el navegador de tu celular, sea iPhone o Android. Desde ahí puedes iniciar, pausar o detener la grabación, cambiar la herramienta de dibujo, leer tu guion en el teleprompter o usar la cámara del celular.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Cómo funciona el teleprompter en el celular?</summary>
+            <div class="faq-body"><p>Escribes o pegas tus notas y aparecen en la pantalla de tu celular, con <strong>desplazamiento automático</strong> a la velocidad que elijas, tamaño de letra ajustable y <strong>modo espejo</strong>. Arranca solo cuando empiezas a grabar, así lees tu guion sin que aparezca en el video.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Puedo usar la cámara de mi celular como webcam para la grabación?</summary>
+            <div class="faq-body"><p>Sí. Con el celular conectado por QR puedes usar su <strong>cámara y su micrófono</strong> como la burbuja de cámara de tu grabación. Es ideal si tu computadora no tiene webcam o si prefieres la imagen de tu teléfono.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Puedo editar el video y en qué formatos lo exporto?</summary>
+            <div class="faq-body"><p>Al terminar se abre el estudio de Grabazo: recortas el inicio y el final, cortas partes del medio, quitas el audio si lo necesitas y exportas en <strong>MP4, WebM o GIF</strong>. Todo se procesa en tu navegador con WebCodecs y, si no haces cambios, la exportación es casi instantánea.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Funciona en redes de empresa o con los datos móviles del celular?</summary>
+            <div class="faq-body"><p>Sí. El celular y la computadora se conectan de forma directa y cifrada con <strong>WebRTC</strong>, aunque estén en redes distintas. Si la red de tu empresa o universidad bloquea la conexión directa, Grabazo usa la <strong>retransmisión TURN de Cloudflare</strong>, que sigue cifrada.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Cómo instalo Grabazo si todavía no está en la Chrome Web Store?</summary>
+            <div class="faq-body"><p>Descarga el archivo ZIP, descomprímelo, abre <code>chrome://extensions</code>, activa el «Modo de desarrollador» y pulsa «Cargar extensión sin empaquetar» eligiendo la carpeta. Muy pronto estará en la Chrome Web Store para instalarlo con un clic. Necesitas <strong>Google Chrome 116 o superior</strong> en Windows, macOS, Linux o ChromeOS.</p></div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary>¿Qué pasa si Chrome se cierra a mitad de una grabación?</summary>
+            <div class="faq-body"><p>Grabazo va guardando la grabación en tu computadora mientras grabas. Si Chrome se cierra a mitad, puedes <strong>recuperar lo grabado</strong> la próxima vez que abras Grabazo.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         FAMILIA DE PRODUCTOS
+         ==================================================================== -->
+    <section class="section lazy-section" id="familia" aria-labelledby="familia-title">
+      <div class="container">
+        <div class="section-header centered">
+          <span class="kicker">La familia <span class="nowrap">«-azo»</span></span>
+          <h2 class="section-title" id="familia-title">Herramientas que convierten tu celular en un superpoder</h2>
+          <p class="section-subtitle">Grabazo es parte de una familia de herramientas creadas por Miguel Mogrovejo.</p>
+        </div>
+
+        <!-- Cuando Botonazo, Capturazo y Preguntazo tengan su web, convierte sus tarjetas en enlaces como la de Presentazo. -->
+        <div class="family-grid">
+          <a class="family-card" href="https://presentazo.com/" target="_blank" rel="noopener">
+            <span class="family-name">Presentazo <svg class="i" aria-hidden="true"><use href="#i-link"/></svg></span>
+            <p>El control remoto de tus presentaciones: pasa diapositivas, señala y dibuja desde el celular.</p>
+            <span class="family-url">presentazo.com</span>
+          </a>
+          <div class="family-card">
+            <span class="family-name">Botonazo</span>
+            <p>Tu botonera en el celular: un stream deck para lanzar acciones con un toque.</p>
+          </div>
+          <div class="family-card">
+            <span class="family-name">Capturazo</span>
+            <p>El celular como cámara y micrófono de tu computadora.</p>
+          </div>
+          <div class="family-card">
+            <span class="family-name">Preguntazo</span>
+            <p>Preguntas, encuestas y reacciones en vivo para tu público.</p>
+          </div>
+          <div class="family-card family-card-here" aria-current="page">
+            <span class="family-name">Grabazo <span class="here-badge">Estás aquí</span></span>
+            <p>Graba tu pantalla, tu cámara y tus ideas. Tu celular es el control remoto.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         CTA FINAL
+         ==================================================================== -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-final">
+          <img src="assets/logo.svg" width="88" height="88" alt="" loading="lazy">
+          <h2 id="cta-title">Tu próximo video puede ser un grabazo.</h2>
+          <p>Gratis, sin marcas de agua, sin límite de tiempo y sin cuenta. Instálalo en Chrome y graba tu primer video hoy.</p>
+          <div class="cta-row cta-row-center">
+            <a href="downloads/grabazo-chrome-v1.0.0.zip" download class="btn btn-primary btn-lg" data-download>
+              <svg class="i" aria-hidden="true"><use href="#i-download"/></svg>
+              <span>Agregar a Chrome — gratis</span>
+            </a>
+            <button type="button" class="btn btn-secondary btn-lg" data-open-install>
+              <svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>
+              <span>Cómo instalar el ZIP</span>
+            </button>
+          </div>
+          <p class="cta-small">Próximamente en la Chrome Web Store · Versión 1.0.0 · Chrome 116 o superior</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================================================================
+       PIE DE PÁGINA
+       ==================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-about">
+          <a href="#inicio" class="brand">
+            <img src="assets/logo.svg" width="36" height="36" alt="">
+            <span>Grabazo</span>
+          </a>
+          <p>Graba tu pantalla, tu cámara y tus ideas. Tu celular es el control remoto. Extensión gratis para Google Chrome, creada por <a href="https://www.linkedin.com/in/mjmc4498/" target="_blank" rel="noopener">Miguel Mogrovejo</a>.</p>
+          <div class="footer-social">
+            <a href="https://github.com/mjmc4498/grabazo" target="_blank" rel="noopener" class="social-pill">
+              <svg class="i" aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span>
+            </a>
+            <a href="https://www.linkedin.com/in/mjmc4498/" target="_blank" rel="noopener" class="social-pill">
+              <svg class="i" aria-hidden="true"><use href="#i-linkedin"/></svg><span>Miguel en LinkedIn</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h2>Producto</h2>
+          <ul class="footer-links">
+            <li><a href="#funciones">Funciones</a></li>
+            <li><a href="#pruebalo">Simulador</a></li>
+            <li><a href="#como-funciona">Cómo funciona</a></li>
+            <li><a href="#estudio">Estudio</a></li>
+            <li><a href="#comparativa">Comparativa</a></li>
+            <li><a href="#faq">Preguntas frecuentes</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h2>Recursos</h2>
+          <ul class="footer-links">
+            <li><a href="downloads/grabazo-chrome-v1.0.0.zip" download data-download>Descargar ZIP (v1.0.0)</a></li>
+            <li><a href="https://mjmc4498.github.io/grabazo/" target="_blank" rel="noopener">Control web del celular</a></li>
+            <li><a href="https://github.com/mjmc4498/grabazo" target="_blank" rel="noopener">Repositorio en GitHub</a></li>
+            <li><a href="https://mjmc4498.github.io/grabazo/privacy.html" target="_blank" rel="noopener">Política de privacidad</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h2>Familia <span class="nowrap">«-azo»</span></h2>
+          <ul class="footer-links">
+            <li><a href="https://presentazo.com/" target="_blank" rel="noopener">Presentazo</a></li>
+            <li><span>Botonazo</span></li>
+            <li><span>Capturazo</span></li>
+            <li><span>Preguntazo</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Miguel Mogrovejo · Grabazo</span>
+        <span>Hecho para grabar sin complicarte. Desplegado en Cloudflare.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====================================================================
+       DIÁLOGO: CÓMO INSTALAR EL ZIP
+       ==================================================================== -->
+  <dialog class="install-dialog" id="install-dialog" aria-labelledby="install-title">
+    <div class="dialog-inner">
+      <div class="dialog-head">
+        <img src="assets/logo.svg" width="44" height="44" alt="">
+        <h2 id="install-title">Instala Grabazo en Chrome</h2>
+        <button type="button" class="icon-btn" data-close-install aria-label="Cerrar">
+          <svg class="i" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+      <p class="dialog-lead">Grabazo llegará pronto a la Chrome Web Store. Mientras tanto, puedes instalar la versión oficial 1.0.0 desde el ZIP:</p>
+      <ol class="dialog-steps">
+        <li>Descarga <a href="downloads/grabazo-chrome-v1.0.0.zip" download>grabazo-chrome-v1.0.0.zip</a> y descomprímelo en una carpeta que no vayas a borrar.</li>
+        <li>En Chrome, escribe <code>chrome://extensions</code> en la barra de direcciones y activa el <strong>Modo de desarrollador</strong> (arriba a la derecha).</li>
+        <li>Pulsa <strong>Cargar extensión sin empaquetar</strong> y elige la carpeta descomprimida.</li>
+        <li>Fija el ícono de Grabazo en la barra y pulsa <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> para abrirlo. ¡A grabar!</li>
+      </ol>
+      <div class="cta-row">
+        <a href="downloads/grabazo-chrome-v1.0.0.zip" download class="btn btn-primary btn-sm">
+          <svg class="i" aria-hidden="true"><use href="#i-download"/></svg>
+          <span>Descargar el ZIP</span>
+        </a>
+        <button type="button" class="btn btn-ghost btn-sm" data-close-install>Entendido</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

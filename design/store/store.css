@@ -1,0 +1,113 @@
+/* Estilos compartidos por las imágenes de la Chrome Web Store. */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -.01em;
+}
+body.light { background: radial-gradient(1200px 600px at 85% -10%, #ffffff 0%, #f2f2f5 55%, #e9e9ee 100%); color: #0b0b0c; }
+body.dark { background: radial-gradient(900px 520px at 78% 30%, rgba(255, 122, 26, .18), transparent 60%), #0b0b0c; color: #f5f5f7; }
+
+.stage { position: relative; width: 100%; height: 100%; }
+
+.kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; letter-spacing: .02em; color: #ff7a1a; }
+.kicker img { width: 30px; height: 30px; }
+h1 { margin: 14px 0 0; font-size: 50px; line-height: 1.04; letter-spacing: -.045em; font-weight: 750; }
+.sub { margin: 16px 0 0; font-size: 19px; line-height: 1.5; color: #6e6e73; }
+.dark .sub { color: #a1a1a6; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+.chips span { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 500; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.06), inset 0 0 0 1px rgba(0,0,0,.05); }
+.dark .chips span { background: #1b1b1e; box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
+.chips i { width: 7px; height: 7px; border-radius: 50%; background: #ff7a1a; }
+
+.steps { display: flex; flex-direction: column; gap: 14px; margin-top: 30px; }
+.steps div { display: flex; align-items: flex-start; gap: 14px; font-size: 17px; line-height: 1.4; }
+.steps b { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #0b0b0c; color: #fff; font-size: 14px; }
+.dark .steps b { background: #f5f5f7; color: #0b0b0c; }
+
+/* ---------- teléfono */
+.phone {
+  --s: .62;
+  position: absolute;
+  padding: 11px;
+  border-radius: calc(54px * var(--s) + 11px);
+  background: linear-gradient(160deg, #3a3a3e, #121214 40%, #0b0b0c);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.08) inset, 0 50px 90px -30px rgba(0,0,0,.55), 0 18px 40px -18px rgba(0,0,0,.35);
+}
+.phone .screen {
+  position: relative;
+  width: calc(390px * var(--s));
+  height: calc(844px * var(--s));
+  border-radius: calc(46px * var(--s));
+  overflow: hidden;
+  background: #000;
+}
+.phone .screen img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- navegador */
+.browser {
+  position: absolute;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 40px 80px -30px rgba(0,0,0,.35), 0 12px 30px -12px rgba(0,0,0,.18);
+}
+.dark .browser { box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 50px 100px -30px rgba(0,0,0,.8); }
+.browser .bar { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; background: #ececf0; }
+.browser .bar .dot { width: 11px; height: 11px; border-radius: 50%; background: #d1d1d6; }
+.browser .bar .dot:nth-child(1) { background: #ff5f57; }
+.browser .bar .dot:nth-child(2) { background: #febc2e; }
+.browser .bar .dot:nth-child(3) { background: #28c840; }
+.browser .bar .url { flex: 1; height: 26px; margin: 0 10px; padding: 0 12px; display: flex; align-items: center; border-radius: 8px; background: #fff; font-size: 12.5px; color: #6e6e73; }
+.browser .bar .ext { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; }
+.browser .bar .ext.on { background: rgba(0,0,0,.08); }
+.browser .bar .ext img { width: 18px; height: 18px; }
+.browser > img.shot { display: block; width: 100%; }
+
+.popup-card {
+  position: absolute;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 30px 60px -16px rgba(0,0,0,.35);
+}
+.popup-card img { display: block; width: 100%; }
+
+.signature { position: absolute; right: 40px; bottom: 26px; font-size: 13px; color: #8e8e93; }
+
+/* ---------- Grabazo */
+.light .kicker { color: #f25c05; }
+.dark .browser .bar { background: #1c1c20; }
+.dark .browser .bar .url { background: #2a2a2f; color: #a1a1a6; }
+.dark .browser .bar .dot { background: #3a3a3f; }
+.dark .browser .bar .ext.on { background: rgba(255,255,255,.1); }
+.card-shot {
+  position: absolute;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 40px 80px -30px rgba(0,0,0,.35), 0 12px 30px -12px rgba(0,0,0,.18);
+}
+.dark .card-shot { box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 50px 100px -30px rgba(0,0,0,.8); }
+.card-shot img { display: block; width: 100%; }
+.label-pill { position: absolute; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; background: rgba(20,20,24,.94); color: #f5f5f7; box-shadow: 0 10px 30px rgba(0,0,0,.35); white-space: nowrap; }
+.label-pill i { display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: #ff7a1a; box-shadow: 0 0 0 3px rgba(255,122,26,.28); }
+.light .label-pill { background: #0b0b0c; }
+.glow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,122,26,.38), transparent); pointer-events: none; }
+.light .steps b { background: #f25c05; }
+
+.dark .steps b { background: #ff7a1a; color: #fff; }
+.phone.tilt-l { transform: rotate(-4deg); }
+.phone.tilt-r { transform: rotate(4deg); }
+.bubble { position: absolute; font-size: 44px; line-height: 1; filter: drop-shadow(0 10px 18px rgba(0,0,0,.25)); font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; }
+.chips span.on { background: linear-gradient(135deg, #ffb347, #ff5e1a); color: #fff; box-shadow: none; }
+.chips span.on i { background: #fff; }
+.rec { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(255,59,48,.14); color: #ff453a; font-size: 14px; font-weight: 700; }
+.rec i { width: 9px; height: 9px; border-radius: 50%; background: #ff3b30; box-shadow: 0 0 0 3px rgba(255,59,48,.25); }
+.qr-mini { position: absolute; width: 132px; height: 132px; padding: 10px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 4px rgba(255,122,26,.5), 0 30px 60px -20px rgba(0,0,0,.6); }
+.qr-mini img { width: 100%; height: 100%; display: block; }

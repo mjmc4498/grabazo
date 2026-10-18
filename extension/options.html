@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grabazo · Ajustes</title>
+  <link rel="icon" href="icons/icon-32.png">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="options.css">
+  <script src="lib/relay.js"></script>
+  <script src="options.js" type="module"></script>
+</head>
+<body>
+  <main class="page" id="bienvenida">
+    <!-- Bienvenida -->
+    <section class="hero">
+      <img src="icons/icon-128.png" width="88" height="88" alt="">
+      <div class="hero-text">
+        <h1 data-i18n="heroTitle"></h1>
+        <p class="muted" data-i18n="heroBody"></p>
+      </div>
+    </section>
+
+    <ol class="steps">
+      <li><span class="num">1</span><div><b data-i18n="step1Title"></b><span class="muted" data-i18n="step1Body"></span></div></li>
+      <li><span class="num">2</span><div><b data-i18n="step2Title"></b><span class="muted" data-i18n="step2Body"></span></div></li>
+      <li><span class="num">3</span><div><b data-i18n="step3Title"></b><span class="muted" data-i18n="step3Body"></span></div></li>
+    </ol>
+
+    <div class="hero-actions">
+      <button class="btn accent" id="allow-media" type="button" data-i18n="allowMedia"></button>
+      <button class="btn" id="open-studio" type="button" data-i18n="myRecordings"></button>
+      <span class="muted small" data-i18n-html="shortcutHint"></span>
+    </div>
+
+    <nav class="nav">
+      <a href="#permisos" data-i18n="navPermissions"></a>
+      <a href="#grabacion" data-i18n="navRecording"></a>
+      <a href="#camara" data-i18n="navCamera"></a>
+      <a href="#audio" data-i18n="navAudio"></a>
+      <a href="#efectos" data-i18n="navEffects"></a>
+      <a href="#guion" data-i18n="navScript"></a>
+      <a href="#celular" data-i18n="navPhone"></a>
+      <a href="#atajos" data-i18n="navShortcuts"></a>
+    </nav>
+
+    <!-- Permisos -->
+    <section class="card" id="permisos">
+      <h2 data-i18n="permTitle"></h2>
+      <p class="muted" data-i18n="permBody"></p>
+      <div class="row">
+        <span>
+          <span class="row-title" data-i18n="permMedia"></span>
+          <span class="row-sub muted" data-i18n="permMediaSub"></span>
+        </span>
+        <span class="perm-actions">
+          <span class="perm-state" id="perm-cam"><i></i><span></span></span>
+          <span class="perm-state" id="perm-mic"><i></i><span></span></span>
+          <button class="btn small accent" id="allow-media-2" type="button" data-i18n="allow"></button>
+        </span>
+      </div>
+      <label class="row">
+        <span>
+          <span class="row-title" data-i18n="allSites"></span>
+          <span class="row-sub muted" data-i18n="allSitesSub"></span>
+        </span>
+        <input type="checkbox" class="switch" id="all-sites">
+      </label>
+      <ul class="sites" id="sites"></ul>
+    </section>
+
+    <!-- Grabación -->
+    <section class="card" id="grabacion">
+      <h2 data-i18n="recTitle"></h2>
+      <p class="muted" data-i18n="recBody"></p>
+      <div class="row">
+        <span><span class="row-title" data-i18n="quality"></span><span class="row-sub muted" data-i18n="qualitySub"></span></span>
+        <div class="seg" data-setting="quality" role="radiogroup">
+          <button type="button" role="radio" data-v="720">720p</button>
+          <button type="button" role="radio" data-v="1080">1080p</button>
+          <button type="button" role="radio" data-v="1440">1440p</button>
+          <button type="button" role="radio" data-v="2160">4K</button>
+        </div>
+      </div>
+      <div class="row">
+        <span><span class="row-title" data-i18n="fps"></span><span class="row-sub muted" data-i18n="fpsSub"></span></span>
+        <div class="seg" data-setting="fps" data-type="number" role="radiogroup">
+          <button type="button" role="radio" data-v="24">24</button>
+          <button type="button" role="radio" data-v="30">30</button>
+          <button type="button" role="radio" data-v="60">60</button>
+        </div>
+      </div>
+      <div class="row">
+        <span><span class="row-title" data-i18n="format"></span><span class="row-sub muted" data-i18n="formatSub"></span></span>
+        <div class="seg" data-setting="format" role="radiogroup">
+          <button type="button" role="radio" data-v="auto" data-i18n="formatAuto"></button>
+          <button type="button" role="radio" data-v="webm">WebM</button>
+        </div>
+      </div>
+      <div class="row">
+        <span><span class="row-title" data-i18n="countdown"></span><span class="row-sub muted" data-i18n="countdownSub"></span></span>
+        <div class="seg" data-setting="countdown" data-type="number" role="radiogroup">
+          <button type="button" role="radio" data-v="0" data-i18n="off"></button>
+          <button type="button" role="radio" data-v="3">3 s</button>
+          <button type="button" role="radio" data-v="5">5 s</button>
+          <button type="button" role="radio" data-v="10">10 s</button>
+        </div>
+      </div>
+      <div class="row">
+        <span><span class="row-title" data-i18n="timeLimit"></span><span class="row-sub muted" data-i18n="timeLimitSub"></span></span>
+        <select class="input small-select" id="limit" data-setting="timeLimit" data-type="number"></select>
+      </div>
+      <label class="row">
+        <span><span class="row-title" data-i18n="openStudio"></span><span class="row-sub muted" data-i18n="openStudioSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="openStudio">
+      </label>
+    </section>
+
+    <!-- Cámara -->
+    <section class="card" id="camara">
+      <h2 data-i18n="camTitle"></h2>
+      <p class="muted" data-i18n="camBody"></p>
+      <div class="cam-row">
+        <div class="cam-preview" id="cam-preview">
+          <video id="cam-video" muted playsinline autoplay></video>
+          <span class="cam-msg" id="cam-msg"></span>
+        </div>
+        <div class="cam-fields">
+          <label><span data-i18n="cameraLabel"></span><select class="input" id="cam-select"></select></label>
+          <label><span data-i18n="effectLabel"></span><select class="input" id="cam-effect" data-setting="camEffect"></select></label>
+          <label><span data-i18n="filterLabel"></span><select class="input" id="cam-filter" data-setting="camFilter"></select></label>
+        </div>
+      </div>
+      <div class="row">
+        <span><span class="row-title" data-i18n="camShapeTitle"></span></span>
+        <div class="seg" data-setting="camShape" role="radiogroup">
+          <button type="button" role="radio" data-v="circle" data-i18n="shapeCircle"></button>
+          <button type="button" role="radio" data-v="rect" data-i18n="shapeRect"></button>
+        </div>
+      </div>
+      <div class="row">
+        <span><span class="row-title" data-i18n="camSizeTitle"></span><span class="row-sub muted" data-i18n="camSizeSub"></span></span>
+        <div class="seg" data-setting="camSize" role="radiogroup">
+          <button type="button" role="radio" data-v="s" data-i18n="sizeS"></button>
+          <button type="button" role="radio" data-v="m" data-i18n="sizeM"></button>
+          <button type="button" role="radio" data-v="l" data-i18n="sizeL"></button>
+          <button type="button" role="radio" data-v="xl" data-i18n="sizeXL"></button>
+        </div>
+      </div>
+      <label class="row">
+        <span><span class="row-title" data-i18n="camMirror"></span><span class="row-sub muted" data-i18n="camMirrorSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="camMirror">
+      </label>
+    </section>
+
+    <!-- Audio -->
+    <section class="card" id="audio">
+      <h2 data-i18n="audioTitle"></h2>
+      <p class="muted" data-i18n="audioBody"></p>
+      <div class="row">
+        <span><span class="row-title" data-i18n="micLabel"></span></span>
+        <select class="input small-select" id="mic-select"></select>
+      </div>
+      <label class="row">
+        <span><span class="row-title" data-i18n="noiseSuppression"></span><span class="row-sub muted" data-i18n="noiseSuppressionSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="noiseSuppression">
+      </label>
+      <label class="row">
+        <span><span class="row-title" data-i18n="systemAudio"></span><span class="row-sub muted" data-i18n="systemAudioSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="systemAudio">
+      </label>
+      <label class="row">
+        <span><span class="row-title" data-i18n="pushToTalk"></span><span class="row-sub muted" data-i18n="pushToTalkLong"></span></span>
+        <input type="checkbox" class="switch" data-setting="pushToTalk">
+      </label>
+      <div class="row">
+        <span><span class="row-title" data-i18n="pttKey"></span><span class="row-sub muted" data-i18n="pttKeySub"></span></span>
+        <button class="btn key-btn" id="ptt-key" type="button"></button>
+      </div>
+    </section>
+
+    <!-- Cursor y pantalla -->
+    <section class="card" id="efectos">
+      <h2 data-i18n="fxTitle"></h2>
+      <p class="muted" data-i18n="fxBody"></p>
+      <label class="row">
+        <span><span class="row-title" data-i18n="tbClicks"></span><span class="row-sub muted" data-i18n="clicksSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="clickHighlight">
+      </label>
+      <div class="row">
+        <span><span class="row-title" data-i18n="spotSize"></span><span class="row-sub muted" data-i18n="spotSizeSub"></span></span>
+        <div class="seg" data-setting="spotlightSize" role="radiogroup">
+          <button type="button" role="radio" data-v="s" data-i18n="sizeS"></button>
+          <button type="button" role="radio" data-v="m" data-i18n="sizeM"></button>
+          <button type="button" role="radio" data-v="l" data-i18n="sizeL"></button>
+        </div>
+      </div>
+      <label class="row">
+        <span><span class="row-title" data-i18n="tbHideIdle"></span><span class="row-sub muted" data-i18n="hideIdleSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="hideIdleCursor">
+      </label>
+      <div class="row">
+        <span><span class="row-title" data-i18n="zoomLevel"></span><span class="row-sub muted" data-i18n="zoomLevelSub"></span></span>
+        <div class="seg" data-setting="zoomLevel" data-type="number" role="radiogroup">
+          <button type="button" role="radio" data-v="1.5">1,5×</button>
+          <button type="button" role="radio" data-v="2">2×</button>
+          <button type="button" role="radio" data-v="2.5">2,5×</button>
+          <button type="button" role="radio" data-v="3">3×</button>
+        </div>
+      </div>
+      <label class="row">
+        <span><span class="row-title" data-i18n="tbZoomClick"></span><span class="row-sub muted" data-i18n="zoomClickSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="zoomOnClick">
+      </label>
+      <label class="row">
+        <span><span class="row-title" data-i18n="tbFade"></span><span class="row-sub muted" data-i18n="fadeSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="drawFade">
+      </label>
+      <label class="row">
+        <span><span class="row-title" data-i18n="autoHideBar"></span><span class="row-sub muted" data-i18n="autoHideBarSub"></span></span>
+        <input type="checkbox" class="switch" data-setting="toolbarAutoHide">
+      </label>
+    </section>
+
+    <!-- Guion -->
+    <section class="card" id="guion">
+      <h2 data-i18n="scriptTitle"></h2>
+      <p class="muted" data-i18n="scriptBody"></p>
+      <div class="row column">
+        <textarea class="input script" id="script" spellcheck="true" data-i18n-aria="scriptTitle"></textarea>
+        <div class="script-foot muted"><span id="script-count"></span><span id="script-saved"></span></div>
+      </div>
+    </section>
+
+    <!-- Celular -->
+    <section class="card" id="celular">
+      <h2 data-i18n="phoneTitle"></h2>
+      <p class="muted" data-i18n="phoneBody"></p>
+      <div class="link-box">
+        <div class="link-qr off" id="link-qr"></div>
+        <div class="link-text">
+          <b id="link-title"></b>
+          <span class="muted small" id="link-sub"></span>
+          <div class="link-actions">
+            <button class="btn small accent" id="link-start" type="button" data-i18n="linkStart"></button>
+            <button class="btn small" id="link-copy" type="button" data-i18n="copyLink"></button>
+            <button class="btn small ghost" id="link-reset" type="button" data-i18n="newCode"></button>
+            <button class="btn small ghost danger" id="link-stop" type="button" data-i18n="unlink"></button>
+          </div>
+        </div>
+      </div>
+      <ul class="phones" id="phones"></ul>
+    </section>
+
+    <!-- Atajos -->
+    <section class="card" id="atajos">
+      <h2 data-i18n="shortcutsTitle"></h2>
+      <ul class="shortcuts" id="shortcuts"></ul>
+      <button class="btn small shortcut-link" id="edit-shortcuts" type="button" data-i18n="editShortcuts"></button>
+    </section>
+
+    <!-- Guía -->
+    <section class="card guide" id="guia">
+      <h2 data-i18n="guideTitle"></h2>
+      <details><summary data-i18n="guide1Title"></summary><p class="muted" data-i18n-html="guide1Body"></p></details>
+      <details><summary data-i18n="guide2Title"></summary><p class="muted" data-i18n-html="guide2Body"></p></details>
+      <details><summary data-i18n="guide3Title"></summary><p class="muted" data-i18n-html="guide3Body"></p></details>
+      <details><summary data-i18n="guide4Title"></summary><p class="muted" data-i18n-html="guide4Body"></p></details>
+      <details><summary data-i18n="guide5Title"></summary><p class="muted" data-i18n-html="guide5Body"></p></details>
+    </section>
+
+    <!-- Avanzado -->
+    <section class="card" id="avanzado">
+      <h2 data-i18n="advancedTitle"></h2>
+      <div class="row column">
+        <span><span class="row-title" data-i18n="remoteUrl"></span><span class="row-sub muted" data-i18n="remoteUrlSub"></span></span>
+        <div class="url-row">
+          <input class="input" id="remote-url" type="url" spellcheck="false">
+          <button class="btn small" id="remote-reset" type="button" data-i18n="reset"></button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="about">
+      <img src="icons/icon-32.png" width="20" height="20" alt="">
+      <span>Grabazo <span id="version"></span> · <span data-i18n="madeBy"></span></span>
+      <span>·</span>
+      <a href="https://mjmc4498.github.io/grabazo/privacy.html" target="_blank" rel="noopener" data-i18n="privacy"></a>
+      <span>·</span>
+      <a href="THIRD_PARTY_NOTICES.txt" target="_blank" data-i18n="licenses"></a>
+    </footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

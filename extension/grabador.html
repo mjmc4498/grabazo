@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grabazo</title>
+  <link rel="icon" href="icons/icon-32.png">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="grabador.css">
+  <script src="lib/relay.js"></script>
+  <script src="grabador.js" type="module"></script>
+</head>
+<body data-phase="preparing">
+  <header class="bar">
+    <div class="brand">
+      <img src="icons/icon-32.png" width="24" height="24" alt="">
+      <span>Grabazo</span>
+    </div>
+    <span class="pill" id="mode"></span>
+  </header>
+
+  <main class="stage">
+    <div class="preview-wrap">
+      <video id="preview" muted playsinline autoplay></video>
+      <div class="cam-wait" id="cam-wait" hidden>
+        <span class="spinner"></span>
+        <span id="cam-wait-text"></span>
+      </div>
+      <button class="countdown" id="countdown" type="button" hidden data-i18n-title="countdownCancel"></button>
+      <span class="rec-dot" aria-hidden="true"></span>
+    </div>
+
+    <section class="info">
+      <h1 id="title"></h1>
+      <p class="muted" id="body"></p>
+      <div class="clock" id="clock">0:00</div>
+
+      <div class="controls" id="controls">
+        <button class="ctl" id="pause" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path class="i-pause" d="M9 5v14M15 5v14"/><path class="i-play" d="M7 4.5v15l12-7.5z"/></svg>
+          <span id="pause-label" data-i18n="pause"></span>
+        </button>
+        <button class="ctl stop" id="stop" type="button">
+          <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
+          <span data-i18n="stopSave"></span>
+        </button>
+        <button class="ctl" id="restart" type="button">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          <span data-i18n="restart"></span>
+        </button>
+        <button class="ctl" id="discard" type="button">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg>
+          <span data-i18n="discard"></span>
+        </button>
+      </div>
+
+      <p class="warn" id="warn" hidden></p>
+      <button class="btn primary" id="close" type="button" data-i18n="close" hidden></button>
+    </section>
+  </main>
+
+  <p class="foot muted" data-i18n="recKeepTab"></p>
+</body>
+</html>

@@ -1,0 +1,1383 @@
+{
+  "extName": {
+    "message": "Grabazo: graba tu pantalla, cámara y anotaciones"
+  },
+  "extDescription": {
+    "message": "Graba pestaña, área, ventana o pantalla con cámara, dibujos y zoom. Tu celular es el control remoto, el teleprompter y la cámara."
+  },
+  "actionTitle": {
+    "message": "Grabazo — grabar pantalla y cámara"
+  },
+  "cmdOpen": {
+    "message": "Abrir Grabazo"
+  },
+  "cmdRecord": {
+    "message": "Empezar o detener la grabación"
+  },
+  "cmdPause": {
+    "message": "Pausar o reanudar la grabación"
+  },
+  "cmdDraw": {
+    "message": "Activar o desactivar el lápiz"
+  },
+  "cmdZoom": {
+    "message": "Acercar o alejar el zoom"
+  },
+  "cmdSpotlight": {
+    "message": "Activar o desactivar el foco de luz"
+  },
+  "cmdMic": {
+    "message": "Silenciar o activar el micrófono"
+  },
+  "cmdCamera": {
+    "message": "Mostrar u ocultar la cámara"
+  },
+  "cmdToolbar": {
+    "message": "Mostrar u ocultar la barra de grabación"
+  },
+  "modeTab": {
+    "message": "Pestaña"
+  },
+  "modeArea": {
+    "message": "Área"
+  },
+  "modeWindow": {
+    "message": "Ventana"
+  },
+  "modeScreen": {
+    "message": "Pantalla"
+  },
+  "modeCamera": {
+    "message": "Solo cámara"
+  },
+  "modeTabSub": {
+    "message": "Esta pestaña, con su sonido"
+  },
+  "modeAreaSub": {
+    "message": "Una parte de esta pestaña"
+  },
+  "modeWindowSub": {
+    "message": "Cualquier ventana abierta"
+  },
+  "modeScreenSub": {
+    "message": "Todo lo que ves"
+  },
+  "modeCameraSub": {
+    "message": "Solo tú, a pantalla completa"
+  },
+  "record": {
+    "message": "Grabar"
+  },
+  "pause": {
+    "message": "Pausar"
+  },
+  "resume": {
+    "message": "Reanudar"
+  },
+  "stop": {
+    "message": "Detener"
+  },
+  "stopSave": {
+    "message": "Detener"
+  },
+  "restart": {
+    "message": "Reiniciar"
+  },
+  "discard": {
+    "message": "Descartar"
+  },
+  "close": {
+    "message": "Cerrar"
+  },
+  "confirmDiscard": {
+    "message": "¿Descartar esta grabación? Se perderá lo grabado."
+  },
+  "countdownCancel": {
+    "message": "Cancelar"
+  },
+  "recTitlePreparing": {
+    "message": "Preparando la grabación…"
+  },
+  "recBodyPreparing": {
+    "message": "Un momento: Grabazo está abriendo la captura."
+  },
+  "recTitlePicking": {
+    "message": "Elige qué grabar"
+  },
+  "recBodyPicking": {
+    "message": "En la ventana de Chrome, elige la pantalla o la ventana y pulsa «Compartir»."
+  },
+  "recTitleReady": {
+    "message": "Todo listo"
+  },
+  "recBodyReady": {
+    "message": "La grabación empieza tras la cuenta regresiva."
+  },
+  "recTitleRecording": {
+    "message": "Grabando"
+  },
+  "recTitlePaused": {
+    "message": "En pausa"
+  },
+  "recBodyRecording": {
+    "message": "Puedes seguir trabajando en tus pestañas. Controla la grabación desde la barra, el ícono de Grabazo o tu celular."
+  },
+  "recTitleSaving": {
+    "message": "Guardando…"
+  },
+  "recBodySaving": {
+    "message": "Uniendo las partes de la grabación. En un momento se abre el estudio."
+  },
+  "recTitleDone": {
+    "message": "Grabación guardada"
+  },
+  "recBodyDone": {
+    "message": "Abriendo el estudio…"
+  },
+  "recTitleError": {
+    "message": "No se pudo grabar"
+  },
+  "recTitleCanceled": {
+    "message": "Grabación cancelada"
+  },
+  "recBodyCanceled": {
+    "message": "No se eligió nada para grabar. Puedes cerrar esta pestaña."
+  },
+  "recKeepTab": {
+    "message": "No cierres esta pestaña mientras grabas: aquí se guarda tu video, en tu computadora."
+  },
+  "recWarnMicDenied": {
+    "message": "Chrome no dio acceso al micrófono: se graba sin tu voz. Permítelo en Ajustes › Permisos."
+  },
+  "recWarnMicFailed": {
+    "message": "No se pudo abrir el micrófono: se graba sin tu voz."
+  },
+  "recWarnMixer": {
+    "message": "Chrome no permitió mezclar el audio: se graba una sola fuente de sonido."
+  },
+  "recWarnDisk": {
+    "message": "No se pudo guardar una parte de la grabación. Revisa el espacio libre del disco."
+  },
+  "errTabPermission": {
+    "message": "Chrome no permitió grabar esa pestaña. Abre Grabazo con un clic en su ícono, estando en la pestaña que quieres grabar, y vuelve a intentarlo."
+  },
+  "errTabBusy": {
+    "message": "Esa pestaña ya se está grabando o compartiendo."
+  },
+  "errTabCapture": {
+    "message": "No se pudo capturar la pestaña. Las páginas de Chrome y de la tienda no se pueden grabar."
+  },
+  "errCamera": {
+    "message": "No llegó la imagen de la cámara. Revisa que esté conectada (o que el celular esté transmitiendo) y vuelve a intentarlo."
+  },
+  "errCapture": {
+    "message": "No se pudo iniciar la captura. Vuelve a intentarlo."
+  },
+  "errRecorder": {
+    "message": "Chrome no pudo grabar el video. Prueba con otra calidad o con el formato WebM en los ajustes."
+  },
+  "errStale": {
+    "message": "Esta grabación ya terminó. Puedes cerrar esta pestaña."
+  },
+  "camStarting": {
+    "message": "Encendiendo la cámara…"
+  },
+  "camDenied": {
+    "message": "Grabazo no tiene permiso para usar la cámara. Permítelo en Ajustes › Permisos."
+  },
+  "camFailed": {
+    "message": "No se pudo abrir la cámara. Revisa que esté conectada y que otra app no la esté usando."
+  },
+  "camWaitPhone": {
+    "message": "Esperando la cámara del celular… Toca «Usar mi cámara» en tu celular."
+  },
+  "camWaitLink": {
+    "message": "Conecta tu celular: abre Grabazo y escanea el QR."
+  },
+  "bubbleDenied": {
+    "message": "Permite la cámara para verte aquí"
+  },
+  "bubbleAllow": {
+    "message": "Permitir"
+  },
+  "bubbleBusy": {
+    "message": "Otra app está usando la cámara"
+  },
+  "bubbleFailed": {
+    "message": "No se pudo abrir la cámara"
+  },
+  "bubblePhoneWait": {
+    "message": "Toca «Usar mi cámara» en tu celular"
+  },
+  "bubblePhoneLink": {
+    "message": "Conecta tu celular con el QR de Grabazo"
+  },
+  "camShape": {
+    "message": "Círculo o rectángulo"
+  },
+  "camSize": {
+    "message": "Cambiar tamaño"
+  },
+  "camMirror": {
+    "message": "Modo espejo"
+  },
+  "camMirrorSub": {
+    "message": "Te ves como en un espejo, en la burbuja y en el video."
+  },
+  "camPip": {
+    "message": "Ventana flotante sobre todas las apps"
+  },
+  "camHide": {
+    "message": "Ocultar la cámara"
+  },
+  "camInPip": {
+    "message": "Cámara en ventana flotante"
+  },
+  "tbMove": {
+    "message": "Arrastra para mover la barra"
+  },
+  "tbStop": {
+    "message": "Detener y abrir el estudio"
+  },
+  "tbDraw": {
+    "message": "Dibujar"
+  },
+  "tbPalette": {
+    "message": "Herramientas, colores y grosor"
+  },
+  "tbZoom": {
+    "message": "Zoom"
+  },
+  "tbZoomClick": {
+    "message": "Zoom al hacer clic"
+  },
+  "tbSpotlight": {
+    "message": "Foco de luz"
+  },
+  "tbClicks": {
+    "message": "Resaltar clics"
+  },
+  "tbBlur": {
+    "message": "Difuminar"
+  },
+  "tbUnblur": {
+    "message": "Quitar todo lo difuminado"
+  },
+  "tbHideIdle": {
+    "message": "Ocultar el cursor quieto"
+  },
+  "tbEffects": {
+    "message": "Cursor y pantalla"
+  },
+  "tbCamera": {
+    "message": "Cámara"
+  },
+  "tbMic": {
+    "message": "Micrófono"
+  },
+  "tbPtt": {
+    "message": "Mantén pulsado para hablar"
+  },
+  "tbBar": {
+    "message": "Barra"
+  },
+  "tbHide": {
+    "message": "Ocultar la barra (vuelve desde el ícono de Grabazo o tu celular)"
+  },
+  "tbPhoneOn": {
+    "message": "Celulares conectados: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "tbPhoneOff": {
+    "message": "Sin celular conectado"
+  },
+  "tbSaving": {
+    "message": "Guardando…"
+  },
+  "tbColor": {
+    "message": "Color"
+  },
+  "tbWidth": {
+    "message": "Grosor"
+  },
+  "tbUndo": {
+    "message": "Deshacer (Ctrl+Z)"
+  },
+  "tbRedo": {
+    "message": "Rehacer"
+  },
+  "tbClear": {
+    "message": "Borrar todos los dibujos"
+  },
+  "tbFade": {
+    "message": "Tinta que se desvanece"
+  },
+  "tool_pen": {
+    "message": "Lápiz"
+  },
+  "tool_highlighter": {
+    "message": "Resaltador"
+  },
+  "tool_arrow": {
+    "message": "Flecha"
+  },
+  "tool_rect": {
+    "message": "Rectángulo (Shift: cuadrado)"
+  },
+  "tool_ellipse": {
+    "message": "Círculo (Shift: perfecto)"
+  },
+  "tool_text": {
+    "message": "Texto"
+  },
+  "tool_eraser": {
+    "message": "Borrador"
+  },
+  "cdHint": {
+    "message": "Haz clic para cancelar"
+  },
+  "areaHint": {
+    "message": "Arrastra para elegir el área que quieres grabar"
+  },
+  "areaGo": {
+    "message": "Grabar esta área"
+  },
+  "areaFree": {
+    "message": "Libre"
+  },
+  "statusReady": {
+    "message": "Listo"
+  },
+  "statusStarting": {
+    "message": "Preparando…"
+  },
+  "statusPicking": {
+    "message": "Eligiendo qué grabar…"
+  },
+  "statusArea": {
+    "message": "Eligiendo el área…"
+  },
+  "statusCountdown": {
+    "message": "Cuenta regresiva"
+  },
+  "statusRecording": {
+    "message": "Grabando"
+  },
+  "statusPaused": {
+    "message": "En pausa"
+  },
+  "statusSaving": {
+    "message": "Guardando…"
+  },
+  "errRestricted": {
+    "message": "Chrome no permite grabar esta página como pestaña. Elige Ventana, Pantalla o Solo cámara."
+  },
+  "errBusy": {
+    "message": "Ya hay una grabación en curso."
+  },
+  "modesLabel": {
+    "message": "Qué grabar"
+  },
+  "modeBlocked": {
+    "message": "Chrome no permite grabar esta página como pestaña."
+  },
+  "cameraLabel": {
+    "message": "Cámara"
+  },
+  "micLabel": {
+    "message": "Micrófono"
+  },
+  "effectLabel": {
+    "message": "Efecto de fondo"
+  },
+  "filterLabel": {
+    "message": "Filtro de color"
+  },
+  "noCamera": {
+    "message": "Sin cámara"
+  },
+  "noMic": {
+    "message": "Sin micrófono"
+  },
+  "cameraN": {
+    "message": "Cámara $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "micN": {
+    "message": "Micrófono $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "phoneCamera": {
+    "message": "📱 Cámara del celular"
+  },
+  "phoneMic": {
+    "message": "📱 Micrófono del celular"
+  },
+  "shapeCircle": {
+    "message": "Círculo"
+  },
+  "shapeRect": {
+    "message": "Rectángulo"
+  },
+  "fx_none": {
+    "message": "Sin efecto"
+  },
+  "fx_blur": {
+    "message": "Desenfocar el fondo"
+  },
+  "fx_blur_strong": {
+    "message": "Desenfoque fuerte"
+  },
+  "fx_bg_grabazo": {
+    "message": "Fondo Grabazo"
+  },
+  "fx_bg_atardecer": {
+    "message": "Fondo atardecer"
+  },
+  "fx_bg_oceano": {
+    "message": "Fondo océano"
+  },
+  "fx_bg_bosque": {
+    "message": "Fondo bosque"
+  },
+  "fx_bg_grafito": {
+    "message": "Fondo grafito"
+  },
+  "fx_bg_estudio": {
+    "message": "Fondo de estudio"
+  },
+  "filter_none": {
+    "message": "Sin filtro"
+  },
+  "filter_bw": {
+    "message": "Blanco y negro"
+  },
+  "filter_warm": {
+    "message": "Cálido"
+  },
+  "filter_cool": {
+    "message": "Frío"
+  },
+  "filter_vivid": {
+    "message": "Vívido"
+  },
+  "filter_retro": {
+    "message": "Retro"
+  },
+  "systemAudio": {
+    "message": "Sonido de la pestaña o del sistema"
+  },
+  "systemAudioTab": {
+    "message": "El audio de esta pestaña (videos, música…)"
+  },
+  "systemAudioScreen": {
+    "message": "Si Chrome lo permite al elegir la pantalla"
+  },
+  "systemAudioNone": {
+    "message": "No aplica en Solo cámara"
+  },
+  "systemAudioSub": {
+    "message": "En pestaña o área, el sonido de la pestaña; en pantalla o ventana, el del sistema si Chrome lo ofrece."
+  },
+  "pushToTalk": {
+    "message": "Pulsar para hablar"
+  },
+  "pushToTalkSub": {
+    "message": "Tu micrófono solo graba mientras mantienes la tecla"
+  },
+  "pushToTalkLong": {
+    "message": "El micrófono solo graba mientras mantienes pulsada la tecla, el botón del micrófono en la barra o el botón «Hablar» del celular."
+  },
+  "countdown": {
+    "message": "Cuenta regresiva"
+  },
+  "timeLimit": {
+    "message": "Límite"
+  },
+  "noLimit": {
+    "message": "Sin límite"
+  },
+  "minutes": {
+    "message": "$N$ min",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "off": {
+    "message": "No"
+  },
+  "permBannerTitle": {
+    "message": "Permite la cámara y el micrófono"
+  },
+  "permBannerBody": {
+    "message": "Toca aquí para dar acceso una sola vez."
+  },
+  "phoneTitle": {
+    "message": "Tu celular"
+  },
+  "phoneOff": {
+    "message": "Control remoto, guion y cámara: toca para conectar"
+  },
+  "phoneScan": {
+    "message": "Escanea el QR con la cámara de tu celular"
+  },
+  "phoneOne": {
+    "message": "Conectado: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "phoneMany": {
+    "message": "$N$ celulares conectados",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "phoneError": {
+    "message": "Sin conexión con el servidor; reintentando…"
+  },
+  "phoneFeat1": {
+    "message": "Control remoto: graba, pausa, dibuja, zoom y foco"
+  },
+  "phoneFeat2": {
+    "message": "Teleprompter con tu guion"
+  },
+  "phoneFeat3": {
+    "message": "Su cámara y micrófono como burbuja"
+  },
+  "qrAlt": {
+    "message": "Código QR para conectar tu celular"
+  },
+  "copyLink": {
+    "message": "Copiar enlace"
+  },
+  "linkCopied": {
+    "message": "Enlace copiado"
+  },
+  "unlink": {
+    "message": "Desconectar"
+  },
+  "myRecordings": {
+    "message": "Mis grabaciones"
+  },
+  "settings": {
+    "message": "Ajustes"
+  },
+  "heroTitle": {
+    "message": "Bienvenido a Grabazo"
+  },
+  "heroBody": {
+    "message": "Graba tu pestaña, un área, una ventana, tu pantalla o solo tu cámara, sin marcas de agua ni límites. Dibuja y resalta mientras grabas, y usa tu celular como control remoto, teleprompter y cámara."
+  },
+  "step1Title": {
+    "message": "Elige qué grabar"
+  },
+  "step1Body": {
+    "message": "Haz clic en el ícono de Grabazo (o Alt+Shift+G), elige el modo, la cámara y el micrófono, y pulsa Grabar."
+  },
+  "step2Title": {
+    "message": "Anota mientras grabas"
+  },
+  "step2Body": {
+    "message": "Con la barra flotante dibuja, haz zoom, enciende el foco de luz o difumina datos sensibles."
+  },
+  "step3Title": {
+    "message": "Conecta tu celular"
+  },
+  "step3Body": {
+    "message": "Escanea el QR y controla la grabación, lee tu guion o usa la cámara del celular como burbuja."
+  },
+  "allowMedia": {
+    "message": "Permitir cámara y micrófono"
+  },
+  "allow": {
+    "message": "Permitir"
+  },
+  "shortcutHint": {
+    "message": "Atajos: <kbd>Alt+Shift+G</kbd> abrir · <kbd>Alt+Shift+R</kbd> grabar"
+  },
+  "navPermissions": {
+    "message": "Permisos"
+  },
+  "navRecording": {
+    "message": "Grabación"
+  },
+  "navCamera": {
+    "message": "Cámara"
+  },
+  "navAudio": {
+    "message": "Audio"
+  },
+  "navEffects": {
+    "message": "Cursor y pantalla"
+  },
+  "navScript": {
+    "message": "Guion"
+  },
+  "navPhone": {
+    "message": "Celular"
+  },
+  "navShortcuts": {
+    "message": "Atajos"
+  },
+  "permTitle": {
+    "message": "Permisos"
+  },
+  "permBody": {
+    "message": "Grabazo pide cada permiso solo cuando hace falta. Lo que grabas se guarda en tu computadora y no se sube a ningún servidor."
+  },
+  "permMedia": {
+    "message": "Cámara y micrófono"
+  },
+  "permMediaSub": {
+    "message": "Se permiten una vez para toda la extensión: la burbuja, la grabación y la vista previa."
+  },
+  "permCam": {
+    "message": "Cámara"
+  },
+  "permMic": {
+    "message": "Micrófono"
+  },
+  "perm_granted": {
+    "message": "permitido"
+  },
+  "perm_denied": {
+    "message": "bloqueado"
+  },
+  "perm_prompt": {
+    "message": "sin permiso"
+  },
+  "mediaAllowed": {
+    "message": "Listo: cámara y micrófono permitidos"
+  },
+  "micAllowed": {
+    "message": "Micrófono permitido (no se encontró cámara)"
+  },
+  "mediaDenied": {
+    "message": "Chrome bloqueó el acceso. Permítelo desde el ícono de la barra de direcciones."
+  },
+  "mediaFailed": {
+    "message": "No se encontró cámara ni micrófono."
+  },
+  "allSites": {
+    "message": "La barra en todas las páginas"
+  },
+  "allSitesSub": {
+    "message": "Con este permiso, la barra, la cámara y los dibujos siguen en pantalla al cambiar de página o de pestaña mientras grabas. Sin él, aparecen solo en la pestaña donde empezaste."
+  },
+  "remove": {
+    "message": "Quitar"
+  },
+  "recTitle": {
+    "message": "Grabación"
+  },
+  "recBody": {
+    "message": "Sin marcas de agua y sin límite de duración. Los videos quedan en «Mis grabaciones»."
+  },
+  "quality": {
+    "message": "Calidad"
+  },
+  "qualitySub": {
+    "message": "Tamaño máximo del video. 1080p es ideal para tutoriales; 4K pide una computadora potente."
+  },
+  "fps": {
+    "message": "Cuadros por segundo"
+  },
+  "fpsSub": {
+    "message": "60 para animaciones y juegos; 30 para todo lo demás."
+  },
+  "format": {
+    "message": "Formato de grabación"
+  },
+  "formatAuto": {
+    "message": "Automático (MP4)"
+  },
+  "formatSub": {
+    "message": "Automático graba en MP4 (H.264) si tu Chrome puede: usa menos procesador y se exporta al instante. En el estudio puedes exportar a MP4, WebM o GIF."
+  },
+  "countdownSub": {
+    "message": "Segundos para prepararte antes de que empiece a grabar."
+  },
+  "timeLimitSub": {
+    "message": "La grabación se detiene sola al llegar al límite; avisa 10 segundos antes."
+  },
+  "openStudio": {
+    "message": "Abrir el estudio al terminar"
+  },
+  "openStudioSub": {
+    "message": "Para recortar, cortar partes y exportar enseguida."
+  },
+  "camTitle": {
+    "message": "Cámara"
+  },
+  "camBody": {
+    "message": "La burbuja flota sobre la página y se ve en la grabación. Arrástrala donde quieras; al pasar el mouse aparecen sus controles."
+  },
+  "camShapeTitle": {
+    "message": "Forma de la burbuja"
+  },
+  "camSizeTitle": {
+    "message": "Tamaño de la burbuja"
+  },
+  "camSizeSub": {
+    "message": "También se cambia desde la propia burbuja."
+  },
+  "sizeS": {
+    "message": "Chica"
+  },
+  "sizeM": {
+    "message": "Mediana"
+  },
+  "sizeL": {
+    "message": "Grande"
+  },
+  "sizeXL": {
+    "message": "Enorme"
+  },
+  "audioTitle": {
+    "message": "Audio"
+  },
+  "audioBody": {
+    "message": "Graba tu voz y el sonido de la pestaña o del sistema al mismo tiempo, mezclados en una sola pista."
+  },
+  "noiseSuppression": {
+    "message": "Reducción de ruido"
+  },
+  "noiseSuppressionSub": {
+    "message": "Quita el ruido de fondo y el eco de tu micrófono."
+  },
+  "pttKey": {
+    "message": "Tecla para hablar"
+  },
+  "pttKeySub": {
+    "message": "Mantenla pulsada mientras hablas (cuando la página tiene el foco). Pulsa el botón y luego la tecla que prefieras."
+  },
+  "pressKey": {
+    "message": "Pulsa una tecla…"
+  },
+  "keyBackquote": {
+    "message": "Tecla a la izquierda del 1"
+  },
+  "keySpace": {
+    "message": "Espacio"
+  },
+  "fxTitle": {
+    "message": "Cursor y pantalla"
+  },
+  "fxBody": {
+    "message": "Efectos que ayudan a seguir lo que haces. Se activan desde la barra o el celular mientras grabas."
+  },
+  "clicksSub": {
+    "message": "Una onda naranja en cada clic. Activado al empezar cada grabación."
+  },
+  "spotSize": {
+    "message": "Tamaño del foco de luz"
+  },
+  "spotSizeSub": {
+    "message": "El círculo iluminado alrededor del cursor; el resto se oscurece."
+  },
+  "hideIdleSub": {
+    "message": "El cursor desaparece si no se mueve durante 2,5 segundos."
+  },
+  "zoomLevel": {
+    "message": "Nivel de zoom"
+  },
+  "zoomLevelSub": {
+    "message": "Cuánto se acerca la imagen. El zoom sigue al cursor con un movimiento suave."
+  },
+  "zoomClickSub": {
+    "message": "Acerca la imagen en cada clic y se aleja sola a los 3 segundos."
+  },
+  "fadeSub": {
+    "message": "Los dibujos se borran solos a los pocos segundos."
+  },
+  "autoHideBar": {
+    "message": "La barra se oculta sola"
+  },
+  "autoHideBarSub": {
+    "message": "Se desvanece cuando el cursor está lejos, así no aparece en el video."
+  },
+  "scriptTitle": {
+    "message": "Guion del teleprompter"
+  },
+  "scriptBody": {
+    "message": "Escribe o pega aquí tus notas. Se ven en tu celular (pestaña Guion), con desplazamiento automático que empieza solo al grabar. También puedes editarlas desde el celular."
+  },
+  "scriptCount": {
+    "message": "$WORDS$ palabras · unos $MIN$ min leyendo",
+    "placeholders": {
+      "words": {
+        "content": "$1"
+      },
+      "min": {
+        "content": "$2"
+      }
+    }
+  },
+  "scriptSynced": {
+    "message": "Guardado y enviado al celular"
+  },
+  "phoneBody": {
+    "message": "Escanea el código con la cámara del celular: se abre una página (sin instalar nada) con el control remoto, el guion y la cámara. La conexión es directa y cifrada."
+  },
+  "phoneLinkSub": {
+    "message": "El código no cambia: el celular se reconecta solo la próxima vez."
+  },
+  "linkStart": {
+    "message": "Conectar celular"
+  },
+  "newCode": {
+    "message": "Código nuevo"
+  },
+  "confirmNewCode": {
+    "message": "¿Crear un código nuevo? Los celulares conectados se desconectarán y tendrán que escanear otra vez."
+  },
+  "newCodeDone": {
+    "message": "Código nuevo listo"
+  },
+  "disconnect": {
+    "message": "Desconectar"
+  },
+  "tagCam": {
+    "message": "cámara"
+  },
+  "tagMic": {
+    "message": "micrófono"
+  },
+  "shortcutsTitle": {
+    "message": "Atajos de teclado"
+  },
+  "editShortcuts": {
+    "message": "Cambiar atajos"
+  },
+  "noShortcut": {
+    "message": "Sin asignar"
+  },
+  "guideTitle": {
+    "message": "Guía rápida"
+  },
+  "guide1Title": {
+    "message": "Grabar una pestaña o un área"
+  },
+  "guide1Body": {
+    "message": "Abre la página, haz clic en Grabazo y elige <b>Pestaña</b> (graba también su sonido) o <b>Área</b> (arrastra el rectángulo y pulsa <b>Grabar esta área</b>). La barra flotante aparece al empezar."
+  },
+  "guide2Title": {
+    "message": "Grabar una ventana o toda la pantalla"
+  },
+  "guide2Body": {
+    "message": "Elige <b>Ventana</b> o <b>Pantalla</b>: Chrome te pide qué compartir. Para que la burbuja de la cámara se vea sobre otras apps, ábrela en <b>ventana flotante</b> desde sus controles."
+  },
+  "guide3Title": {
+    "message": "Dibujar, zoom y foco"
+  },
+  "guide3Body": {
+    "message": "Con <b>Alt+Shift+A</b> o el lápiz de la barra dibujas; la flecha al lado abre colores, grosores y formas. <b>Esc</b> vuelve a usar el mouse. El zoom sigue al cursor y el foco oscurece el resto de la pantalla."
+  },
+  "guide4Title": {
+    "message": "Tu celular como control, guion y cámara"
+  },
+  "guide4Body": {
+    "message": "Abre <b>Tu celular</b> en el popup y escanea el QR. En el celular tienes tres pestañas: <b>Control</b> (grabar, pausar, herramientas y «Hablar»), <b>Guion</b> (teleprompter) y <b>Cámara</b> (elige «📱 Cámara del celular» en Grabazo)."
+  },
+  "guide5Title": {
+    "message": "Recortar y exportar"
+  },
+  "guide5Body": {
+    "message": "Al detener se abre el <b>estudio</b>: recorta el inicio y el final, corta partes del medio, quita el audio y exporta en MP4, WebM o GIF. Todo se procesa en tu computadora."
+  },
+  "advancedTitle": {
+    "message": "Avanzado"
+  },
+  "remoteUrl": {
+    "message": "Dirección de la página del celular"
+  },
+  "remoteUrlSub": {
+    "message": "Cámbiala solo si publicaste la página del celular en otro sitio."
+  },
+  "reset": {
+    "message": "Restablecer"
+  },
+  "invalidUrl": {
+    "message": "La dirección debe empezar con https://"
+  },
+  "saved": {
+    "message": "Guardado"
+  },
+  "madeBy": {
+    "message": "Creado por Miguel Mogrovejo"
+  },
+  "privacy": {
+    "message": "Privacidad"
+  },
+  "licenses": {
+    "message": "Licencias"
+  },
+  "stPageTitle": {
+    "message": "Mis grabaciones · Grabazo"
+  },
+  "stEditorPageTitle": {
+    "message": "$TITLE$ · Grabazo",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "stStudio": {
+    "message": "Estudio"
+  },
+  "stSettings": {
+    "message": "Ajustes"
+  },
+  "stNewRecording": {
+    "message": "Nueva grabación"
+  },
+  "stNewHint": {
+    "message": "Para grabar, haz clic en el ícono de Grabazo en la barra de Chrome o pulsa Alt+Shift+G."
+  },
+  "stLoading": {
+    "message": "Cargando…"
+  },
+  "stLibraryTitle": {
+    "message": "Mis grabaciones"
+  },
+  "stLibrarySub": {
+    "message": "Se guardan solo en esta computadora. Ábrelas para recortarlas y exportarlas."
+  },
+  "stCountOne": {
+    "message": "1 grabación"
+  },
+  "stCountMany": {
+    "message": "$N$ grabaciones",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "stStorage": {
+    "message": "$SIZE$ usados en esta computadora",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "stEmptyTitle": {
+    "message": "Aún no tienes grabaciones"
+  },
+  "stEmptyBody": {
+    "message": "Haz clic en el ícono de Grabazo en la barra de Chrome o pulsa <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> para empezar. Tus videos se guardan aquí, en tu computadora."
+  },
+  "stOpen": {
+    "message": "Editar"
+  },
+  "stOpenTitle": {
+    "message": "Abrir en el editor"
+  },
+  "stDownload": {
+    "message": "Descargar"
+  },
+  "stDownloadOriginal": {
+    "message": "Descargar original"
+  },
+  "stDownloading": {
+    "message": "Descargando $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "stDownloadFailed": {
+    "message": "No se pudo descargar el video."
+  },
+  "stDelete": {
+    "message": "Eliminar"
+  },
+  "stConfirmDelete": {
+    "message": "¿Eliminar «$TITLE$»? No se puede deshacer.",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "stDeleted": {
+    "message": "Grabación eliminada"
+  },
+  "stDeleteFailed": {
+    "message": "No se pudo eliminar la grabación."
+  },
+  "stEdited": {
+    "message": "Editado"
+  },
+  "stKb": {
+    "message": "$N$ KB",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "stMb": {
+    "message": "$N$ MB",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "stGb": {
+    "message": "$N$ GB",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "stSeconds": {
+    "message": "$N$ s",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "stModeTab": {
+    "message": "Pestaña"
+  },
+  "stModeArea": {
+    "message": "Área"
+  },
+  "stModeWindow": {
+    "message": "Ventana"
+  },
+  "stModeScreen": {
+    "message": "Pantalla"
+  },
+  "stModeCamera": {
+    "message": "Cámara"
+  },
+  "stInterrupted": {
+    "message": "Grabación interrumpida"
+  },
+  "stInterruptedBody": {
+    "message": "$SIZE$ guardados. Recupérala para editarla y exportarla.",
+    "placeholders": {
+      "size": {
+        "content": "$1"
+      }
+    }
+  },
+  "stRecoverBannerTitle": {
+    "message": "Se interrumpió una grabación"
+  },
+  "stRecoverBannerBody": {
+    "message": "Lo grabado hasta ese momento quedó guardado en tu computadora. Recupéralo para editarlo y exportarlo."
+  },
+  "stRecover": {
+    "message": "Recuperar"
+  },
+  "stDiscard": {
+    "message": "Descartar"
+  },
+  "stRecovering": {
+    "message": "Recuperando la grabación…"
+  },
+  "stRecovered": {
+    "message": "Grabación recuperada"
+  },
+  "stRecoverFailed": {
+    "message": "No se pudo recuperar la grabación."
+  },
+  "stRecoverMissing": {
+    "message": "Esa grabación ya no tiene partes guardadas."
+  },
+  "stConfirmDiscard": {
+    "message": "¿Descartar la grabación interrumpida? Se perderá lo grabado."
+  },
+  "stDiscarded": {
+    "message": "Grabación descartada"
+  },
+  "stBack": {
+    "message": "Mis grabaciones"
+  },
+  "stTitleAria": {
+    "message": "Título de la grabación"
+  },
+  "stTitleSaved": {
+    "message": "Título guardado"
+  },
+  "stNotFound": {
+    "message": "No se encontró esa grabación. Quizá se eliminó."
+  },
+  "stLoadFailed": {
+    "message": "Chrome no pudo reproducir este video, pero aún puedes exportarlo."
+  },
+  "stConfirmLeave": {
+    "message": "Se cancelará la exportación en curso. ¿Salir del editor?"
+  },
+  "stPlay": {
+    "message": "Reproducir (Espacio)"
+  },
+  "stPause": {
+    "message": "Pausar (Espacio)"
+  },
+  "stMarkIn": {
+    "message": "Marcar inicio"
+  },
+  "stMarkOut": {
+    "message": "Marcar final"
+  },
+  "stMarkInTitle": {
+    "message": "Marca el inicio de la selección en el cursor (I)"
+  },
+  "stMarkOutTitle": {
+    "message": "Marca el final de la selección en el cursor (O)"
+  },
+  "stCut": {
+    "message": "Cortar selección"
+  },
+  "stCutTitle": {
+    "message": "Quita del video la parte seleccionada (X)"
+  },
+  "stCutAdded": {
+    "message": "Parte cortada. Ctrl+Z para deshacer."
+  },
+  "stCutRemoved": {
+    "message": "Corte eliminado"
+  },
+  "stCutAll": {
+    "message": "No puedes quitar todo el video."
+  },
+  "stSelectFirst": {
+    "message": "Primero selecciona una parte: arrastra sobre la línea de tiempo o usa I y O."
+  },
+  "stRemoveCut": {
+    "message": "Quitar este corte (Supr)"
+  },
+  "stUndo": {
+    "message": "Deshacer (Ctrl+Z)"
+  },
+  "stRedo": {
+    "message": "Rehacer (Mayús+Ctrl+Z)"
+  },
+  "stTrimStartHere": {
+    "message": "Empezar aquí"
+  },
+  "stTrimEndHere": {
+    "message": "Terminar aquí"
+  },
+  "stTrimStartTitle": {
+    "message": "Recorta el inicio en el cursor ([)"
+  },
+  "stTrimEndTitle": {
+    "message": "Recorta el final en el cursor (])"
+  },
+  "stReset": {
+    "message": "Restablecer"
+  },
+  "stResetTitle": {
+    "message": "Quita los recortes y los cortes"
+  },
+  "stTrimStart": {
+    "message": "Inicio del video"
+  },
+  "stTrimEnd": {
+    "message": "Final del video"
+  },
+  "stTimeline": {
+    "message": "Línea de tiempo"
+  },
+  "stDragHint": {
+    "message": "Arrastra sobre la línea de tiempo para elegir una parte y córtala con X. Mueve las asas naranjas para recortar el inicio y el final."
+  },
+  "stResult": {
+    "message": "Duración final: $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "stResultOf": {
+    "message": "Duración final: $TIME$ de $TOTAL$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "stMute": {
+    "message": "Quitar el audio"
+  },
+  "stMuteSub": {
+    "message": "El video se exporta sin sonido (M)."
+  },
+  "stExportTitle": {
+    "message": "Exportar"
+  },
+  "stFormat": {
+    "message": "Formato"
+  },
+  "stFmtMp4": {
+    "message": "MP4"
+  },
+  "stFmtWebm": {
+    "message": "WebM"
+  },
+  "stFmtGif": {
+    "message": "GIF"
+  },
+  "stQuality": {
+    "message": "Calidad"
+  },
+  "stQualityHigh": {
+    "message": "Alta"
+  },
+  "stQualityMedium": {
+    "message": "Media"
+  },
+  "stGifWidth": {
+    "message": "Ancho (px)"
+  },
+  "stGifFps": {
+    "message": "Cuadros por segundo"
+  },
+  "stGifLong": {
+    "message": "El GIF dura $TIME$: con más de 30 s el archivo pesa mucho. Recórtalo para que sea más liviano.",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "stHintInstant": {
+    "message": "Exportación instantánea: se copia el video sin volver a codificarlo."
+  },
+  "stHintEncode": {
+    "message": "Se vuelve a codificar con tus cambios. Puede tardar un poco."
+  },
+  "stHintGif": {
+    "message": "Ideal para clips cortos en chats y documentos. Sin sonido."
+  },
+  "stExport": {
+    "message": "Exportar"
+  },
+  "stPreparing": {
+    "message": "Preparando…"
+  },
+  "stExporting": {
+    "message": "Exportando… $PCT$ %",
+    "placeholders": {
+      "pct": {
+        "content": "$1"
+      }
+    }
+  },
+  "stCancel": {
+    "message": "Cancelar"
+  },
+  "stExported": {
+    "message": "Listo: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "stExportedOriginal": {
+    "message": "Listo: $NAME$ (archivo original)",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "stExportCanceled": {
+    "message": "Exportación cancelada"
+  },
+  "stExportFailed": {
+    "message": "No se pudo exportar. Prueba con otro formato."
+  },
+  "stNothingLeft": {
+    "message": "No queda nada que exportar."
+  },
+  "stDetails": {
+    "message": "Detalles"
+  },
+  "stDetCreated": {
+    "message": "Grabado"
+  },
+  "stDetDuration": {
+    "message": "Duración"
+  },
+  "stDetSize": {
+    "message": "Tamaño"
+  },
+  "stDetResolution": {
+    "message": "Resolución"
+  },
+  "stDetFormat": {
+    "message": "Formato"
+  },
+  "stDetMode": {
+    "message": "Modo"
+  },
+  "stShortcuts": {
+    "message": "Atajos de teclado"
+  },
+  "stKeyPlay": {
+    "message": "<kbd>Espacio</kbd> Reproducir o pausar"
+  },
+  "stKeySeek": {
+    "message": "<kbd>←</kbd> <kbd>→</kbd> Retroceder o avanzar 5 s"
+  },
+  "stKeySeekFine": {
+    "message": "<kbd>Mayús</kbd> + <kbd>←</kbd> <kbd>→</kbd> Retroceder o avanzar 1 s"
+  },
+  "stKeyEnds": {
+    "message": "<kbd>Inicio</kbd> <kbd>Fin</kbd> Ir al inicio o al final"
+  },
+  "stKeyMark": {
+    "message": "<kbd>I</kbd> <kbd>O</kbd> Marcar inicio y final de la selección"
+  },
+  "stKeyCut": {
+    "message": "<kbd>X</kbd> Cortar la selección"
+  },
+  "stKeyDelete": {
+    "message": "<kbd>Supr</kbd> Quitar el corte elegido"
+  },
+  "stKeyTrim": {
+    "message": "<kbd>[</kbd> <kbd>]</kbd> Recortar el inicio o el final en el cursor"
+  },
+  "stKeyMute": {
+    "message": "<kbd>M</kbd> Quitar o devolver el audio"
+  },
+  "stKeyUndo": {
+    "message": "<kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Z</kbd> Deshacer (con <kbd>Mayús</kbd>, rehacer)"
+  }
+}

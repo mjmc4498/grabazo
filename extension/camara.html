@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grabazo</title>
+  <link rel="stylesheet" href="camara.css">
+  <script src="lib/relay.js"></script>
+  <script src="camara.js" type="module"></script>
+</head>
+<body>
+  <video id="video" muted playsinline autoplay></video>
+  <div class="state" id="state">
+    <span class="spinner" id="spin"></span>
+    <svg class="icon" id="icon" viewBox="0 0 24 24" hidden><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>
+    <span class="msg" id="msg"></span>
+    <button class="fix" id="fix" type="button" hidden></button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+Grabazo — avisos de software de terceros
+========================================
+
+La página del celular de Grabazo incluye estas bibliotecas y recursos de código abierto:
+
+  • PeerJS 1.5.5 (peerjs.min.js) — licencia MIT — conexión WebRTC entre el
+    celular y la computadora. © 2015 Michelle Bu y Eric Zhang — https://peerjs.com
+  • Íconos de la interfaz — basados en el estilo de Lucide, licencia ISC (con
+    partes de Feather, MIT). © Lucide Contributors — https://lucide.dev
+
+Resumen de las licencias MIT e ISC (traducción de referencia, sin valor legal):
+Se permite usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar
+y vender copias del software, siempre que se incluya el aviso de copyright y este
+aviso de permiso en todas las copias o partes sustanciales del software. El
+software se entrega «tal cual», sin garantía de ningún tipo; los autores no son
+responsables de ningún reclamo, daño u otra responsabilidad derivada de su uso.
+
+Las licencias exigen conservar el texto original, que se reproduce a continuación
+en su idioma oficial (inglés).
+
+
+---------------------------------------------------------------------------
+TEXTOS ORIGINALES DE LAS LICENCIAS
+---------------------------------------------------------------------------
+
+PeerJS 1.5.5 (peerjs.min.js) — https://peerjs.com
+---------------------------------------------------------
+Copyright (c) 2015 Michelle Bu and Eric Zhang, http://peerjs.com
+
+(The MIT License)
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+Lucide (íconos de la interfaz, adaptados) — https://lucide.dev
+---------------------------------------------------------
+ISC License
+
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part
+of Feather (MIT). All other copyright (c) for Lucide are held by Lucide
+Contributors 2022.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A2A2F"/>
+      <stop offset="1" stop-color="#060607"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E3E3E8"/>
+    </linearGradient>
+    <linearGradient id="cam" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFB347"/>
+      <stop offset="1" stop-color="#FF5E1A"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#FF7A1A" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#FF7A1A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="0" y="0" width="128" height="128" fill="url(#bg)"/>
+  <g transform="translate(64 64) scale(1.12) translate(-60 -57)">
+  <rect x="26" y="31" width="62" height="47" rx="8" fill="url(#screen)"/>
+  <circle cx="33.5" cy="38" r="2.2" fill="#C7C7CC"/>
+  <circle cx="40" cy="38" r="2.2" fill="#D1D1D6"/>
+  <path d="M34 66c5.5-9 10.5-10.5 14.5-4.5s9 5.5 14.5-6" fill="none" stroke="url(#cam)" stroke-width="4.6" stroke-linecap="round"/>
+  <circle cx="84" cy="80" r="27" fill="url(#glow)"/>
+  <circle cx="84" cy="80" r="19" fill="url(#cam)" stroke="#0B0B0C" stroke-width="4"/>
+  <rect x="73.5" y="74" width="14.5" height="12" rx="3" fill="#fff"/>
+  <path d="M89.5 78.3l5.8-3.4v10.2l-5.8-3.4z" fill="#fff"/>
+  </g>
+</svg>

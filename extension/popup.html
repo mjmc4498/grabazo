@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grabazo</title>
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="popup.css">
+  <script src="popup.js" type="module"></script>
+</head>
+<body data-view="idle">
+  <header class="bar">
+    <div class="brand">
+      <img src="icons/icon-32.png" width="22" height="22" alt="">
+      <span>Grabazo</span>
+    </div>
+    <span class="pill" id="status" data-tone="muted"><i></i><span id="status-text" data-i18n="statusReady"></span></span>
+  </header>
+
+  <main>
+    <button class="banner" id="perm-banner" type="button" hidden>
+      <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      <span><b data-i18n="permBannerTitle"></b><span class="muted" data-i18n="permBannerBody"></span></span>
+    </button>
+
+    <!-- ============ antes de grabar ============ -->
+    <section class="idle" id="idle">
+      <div class="modes" id="modes" role="radiogroup" data-i18n-aria="modesLabel">
+        <button type="button" role="radio" data-mode="tab" aria-checked="false">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="M2 9h20M6 4v5"/></svg>
+          <span data-i18n="modeTab"></span>
+        </button>
+        <button type="button" role="radio" data-mode="area" aria-checked="false">
+          <svg viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><rect x="7" y="8" width="10" height="8" rx="1.5"/></svg>
+          <span data-i18n="modeArea"></span>
+        </button>
+        <button type="button" role="radio" data-mode="window" aria-checked="false">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="10" rx="2"/><path d="M8 19h11a2 2 0 0 0 2-2V9"/></svg>
+          <span data-i18n="modeWindow"></span>
+        </button>
+        <button type="button" role="radio" data-mode="screen" aria-checked="false">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span data-i18n="modeScreen"></span>
+        </button>
+        <button type="button" role="radio" data-mode="camera" aria-checked="false">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+          <span data-i18n="modeCamera"></span>
+        </button>
+      </div>
+      <p class="mode-sub muted" id="mode-sub"></p>
+
+      <div class="card">
+        <div class="field">
+          <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="m16 10 6-3.5v11L16 14"/></svg>
+          <select class="input" id="cam-select" data-i18n-aria="cameraLabel"></select>
+        </div>
+        <div class="cam-opts" id="cam-opts">
+          <div class="seg" id="cam-shape" role="radiogroup">
+            <button type="button" role="radio" data-v="circle" data-i18n-title="shapeCircle">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
+            </button>
+            <button type="button" role="radio" data-v="rect" data-i18n-title="shapeRect">
+              <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3"/></svg>
+            </button>
+          </div>
+          <div class="seg" id="cam-size" role="radiogroup">
+            <button type="button" role="radio" data-v="s">S</button>
+            <button type="button" role="radio" data-v="m">M</button>
+            <button type="button" role="radio" data-v="l">L</button>
+            <button type="button" role="radio" data-v="xl">XL</button>
+          </div>
+          <select class="input" id="cam-effect" data-i18n-aria="effectLabel"></select>
+          <select class="input" id="cam-filter" data-i18n-aria="filterLabel"></select>
+        </div>
+        <div class="sep-line"></div>
+        <div class="field">
+          <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg>
+          <select class="input" id="mic-select" data-i18n-aria="micLabel"></select>
+        </div>
+        <label class="row-switch">
+          <span><span data-i18n="systemAudio"></span><span class="muted small" id="system-sub"></span></span>
+          <input type="checkbox" class="switch" id="system-audio">
+        </label>
+        <label class="row-switch">
+          <span><span data-i18n="pushToTalk"></span><span class="muted small" data-i18n="pushToTalkSub"></span></span>
+          <input type="checkbox" class="switch" id="ptt">
+        </label>
+      </div>
+
+      <div class="opts">
+        <div class="opt">
+          <span class="label" data-i18n="countdown"></span>
+          <div class="seg" id="countdown" role="radiogroup">
+            <button type="button" role="radio" data-v="0" data-i18n="off"></button>
+            <button type="button" role="radio" data-v="3">3 s</button>
+            <button type="button" role="radio" data-v="5">5 s</button>
+            <button type="button" role="radio" data-v="10">10 s</button>
+          </div>
+        </div>
+        <div class="opt">
+          <span class="label" data-i18n="timeLimit"></span>
+          <select class="input" id="limit"></select>
+        </div>
+      </div>
+
+      <button class="rec-btn" id="record" type="button">
+        <i></i><span data-i18n="record"></span><kbd>Alt+Shift+R</kbd>
+      </button>
+      <p class="alert" id="alert" hidden></p>
+    </section>
+
+    <!-- ============ grabando ============ -->
+    <section class="live" id="live" hidden>
+      <div class="live-head">
+        <span class="live-dot"></span>
+        <span class="live-state" id="live-state"></span>
+        <span class="live-time" id="live-time">0:00</span>
+      </div>
+      <div class="controls">
+        <button class="ctl" id="pause" type="button">
+          <svg viewBox="0 0 24 24"><path class="i-pause" d="M9 5v14M15 5v14"/><path class="i-play" d="M7 4.5v15l12-7.5z"/></svg>
+          <span id="pause-label" data-i18n="pause"></span>
+        </button>
+        <button class="ctl stop" id="stop" type="button">
+          <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
+          <span data-i18n="stopSave"></span>
+        </button>
+        <button class="ctl" id="restart" type="button">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          <span data-i18n="restart"></span>
+        </button>
+        <button class="ctl" id="discard" type="button">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg>
+          <span data-i18n="discard"></span>
+        </button>
+      </div>
+      <div class="toggles" id="toggles">
+        <button type="button" data-key="tool"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i18n="tbDraw"></span></button>
+        <button type="button" data-key="zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg><span data-i18n="tbZoom"></span></button>
+        <button type="button" data-key="spotlight"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2"/></svg><span data-i18n="tbSpotlight"></span></button>
+        <button type="button" data-key="clicks"><svg viewBox="0 0 24 24"><path d="m9 9 5 12 1.8-5.2L21 14z"/><path d="M7.2 2.2 8 5.1M5.1 8l-2.9-.8"/></svg><span data-i18n="tbClicks"></span></button>
+        <button type="button" data-key="blur"><svg viewBox="0 0 24 24"><path d="M12 2.7s7 7.4 7 12.1a7 7 0 0 1-14 0c0-4.7 7-12.1 7-12.1z"/></svg><span data-i18n="tbBlur"></span></button>
+        <button type="button" data-key="camera"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="m16 10 6-3.5v11L16 14"/></svg><span data-i18n="tbCamera"></span></button>
+        <button type="button" data-key="mic"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span data-i18n="tbMic"></span></button>
+        <button type="button" data-key="toolbar"><svg viewBox="0 0 24 24"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 17h.01M11 17h6"/></svg><span data-i18n="tbBar"></span></button>
+      </div>
+    </section>
+
+    <!-- ============ celular ============ -->
+    <section class="phone card" id="phone">
+      <button class="phone-head" id="phone-toggle" type="button" aria-expanded="false">
+        <svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>
+        <span class="phone-text">
+          <b data-i18n="phoneTitle"></b>
+          <span class="muted small" id="phone-sub"></span>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="phone-body" id="phone-body" hidden>
+        <div class="qr-card" id="qr-card">
+          <div class="qr" id="qr" role="img" data-i18n-aria="qrAlt"></div>
+          <div class="qr-loading"><span class="spinner"></span></div>
+        </div>
+        <ul class="phone-feats">
+          <li data-i18n="phoneFeat1"></li>
+          <li data-i18n="phoneFeat2"></li>
+          <li data-i18n="phoneFeat3"></li>
+        </ul>
+        <div class="phone-actions">
+          <button class="btn small" id="copy-link" type="button" data-i18n="copyLink"></button>
+          <button class="btn small ghost" id="unlink" type="button" data-i18n="unlink"></button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="actions">
+    <button class="btn ghost" id="library" type="button">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="m10 9 5 3-5 3z"/></svg>
+      <span data-i18n="myRecordings"></span>
+    </button>
+    <span class="spacer"></span>
+    <button class="btn icon" id="options" type="button" data-i18n-title="settings" data-i18n-aria="settings">
+      <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+    </button>
+  </footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

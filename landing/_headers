@@ -1,0 +1,29 @@
+# Cabeceras para Cloudflare Pages (grabazo.com)
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), display-capture=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+/assets/*
+  Cache-Control: public, max-age=604800
+
+/*.css
+  Cache-Control: public, max-age=86400
+
+/*.js
+  Cache-Control: public, max-age=86400
+
+/downloads/*
+  Cache-Control: public, max-age=3600
+  Content-Disposition: attachment
+  X-Robots-Tag: noindex
+
+/404.html
+  X-Robots-Tag: noindex
+
+/README.md
+  X-Robots-Tag: noindex

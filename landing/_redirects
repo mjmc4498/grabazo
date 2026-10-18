@@ -1,0 +1,14 @@
+# Redirecciones amigables para Cloudflare Pages (grabazo.com)
+/descargar     /downloads/grabazo-chrome-v1.0.0.zip              302
+/zip           /downloads/grabazo-chrome-v1.0.0.zip              302
+/control       https://mjmc4498.github.io/grabazo/               302
+/celular       https://mjmc4498.github.io/grabazo/               302
+/privacidad    https://mjmc4498.github.io/grabazo/privacy.html   302
+/privacy       https://mjmc4498.github.io/grabazo/privacy.html   302
+/github        https://github.com/mjmc4498/grabazo               302
+/releases      https://github.com/mjmc4498/grabazo/releases      302
+/simulador     /#pruebalo                                        302
+/demo          /#pruebalo                                        302
+
+# Cuando Grabazo esté publicado en la Chrome Web Store, descomenta y pon la URL real:
+# /chrome      https://chromewebstore.google.com/detail/grabazo/ID_DE_LA_EXTENSION   302

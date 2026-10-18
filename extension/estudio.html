@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grabazo</title>
+  <link rel="icon" href="icons/icon-32.png">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="estudio.css">
+  <script src="estudio.js" type="module"></script>
+</head>
+<body data-view="loading">
+  <header class="top">
+    <a class="brand" href="#" id="home" data-i18n-title="stLibraryTitle">
+      <img src="icons/icon-32.png" width="26" height="26" alt="">
+      <span class="brand-name">Grabazo</span>
+      <span class="brand-sub" data-i18n="stStudio"></span>
+    </a>
+    <div class="top-right">
+      <span class="storage" id="storage"></span>
+      <a class="btn ghost" href="options.html" target="_blank" rel="noopener" data-i18n-title="stSettings" data-i18n-aria="stSettings">
+        <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+        <span data-i18n="stSettings"></span>
+      </a>
+      <button class="btn accent" id="new-rec" type="button" data-i18n-title="stNewHint" data-i18n-aria="stNewRecording">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle class="dot" cx="12" cy="12" r="3.5"/></svg>
+        <span data-i18n="stNewRecording"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================ biblioteca -->
+  <main class="library" id="library" hidden>
+    <div class="lib-head">
+      <h1 data-i18n="stLibraryTitle"></h1>
+      <p class="muted"><span id="lib-count"></span> <span data-i18n="stLibrarySub"></span></p>
+    </div>
+
+    <section class="banner" id="recover-banner" hidden>
+      <div class="banner-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      </div>
+      <div class="banner-text">
+        <b data-i18n="stRecoverBannerTitle"></b>
+        <span class="muted" id="recover-body" data-i18n="stRecoverBannerBody"></span>
+      </div>
+      <div class="banner-actions">
+        <button class="btn ghost" id="recover-discard" type="button" data-i18n="stDiscard"></button>
+        <button class="btn accent" id="recover-go" type="button">
+          <span class="spinner small" hidden></span>
+          <span data-i18n="stRecover"></span>
+        </button>
+      </div>
+    </section>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="empty" id="empty" hidden>
+      <div class="empty-art">
+        <svg viewBox="0 0 64 64">
+          <rect x="6" y="14" width="52" height="34" rx="6"/>
+          <path d="M24 56h16M32 48v8"/>
+          <circle class="rec" cx="32" cy="31" r="7"/>
+        </svg>
+      </div>
+      <h2 data-i18n="stEmptyTitle"></h2>
+      <p class="muted" data-i18n-html="stEmptyBody"></p>
+    </div>
+  </main>
+
+  <!-- ============================================================ editor -->
+  <main class="editor" id="editor" hidden>
+    <div class="ed-head">
+      <button class="btn ghost back" id="back" type="button">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        <span data-i18n="stBack"></span>
+      </button>
+      <input class="title-input" id="title" maxlength="120" spellcheck="false" autocomplete="off" data-i18n-aria="stTitleAria">
+      <span class="spacer"></span>
+      <button class="btn" id="download-original" type="button" data-i18n-aria="stDownloadOriginal">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        <span data-i18n="stDownloadOriginal"></span>
+      </button>
+      <button class="btn icon danger" id="delete" type="button" data-i18n-title="stDelete" data-i18n-aria="stDelete">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
+      </button>
+    </div>
+
+    <div class="ed-layout">
+      <section class="ed-main">
+        <div class="stage" id="stage">
+          <video id="video" preload="auto" playsinline></video>
+          <button class="big-play" id="big-play" type="button" data-i18n-aria="stPlay">
+            <svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+          </button>
+          <div class="stage-msg" id="stage-msg"><span class="spinner light"></span><span data-i18n="stLoading"></span></div>
+        </div>
+
+        <div class="transport">
+          <button class="btn icon play" id="play" type="button" aria-pressed="false" data-i18n-title="stPlay" data-i18n-aria="stPlay">
+            <svg viewBox="0 0 24 24"><path class="i-play" d="M8 5.5v13l10.5-6.5z"/><path class="i-pause" d="M9 5v14M15 5v14"/></svg>
+          </button>
+          <span class="time" id="time">0:00 / 0:00</span>
+          <span class="spacer"></span>
+          <button class="btn small ghost" id="mark-in" type="button" data-i18n-title="stMarkInTitle">
+            <svg viewBox="0 0 24 24"><path d="M9 4H6v16h3M13 12h7M17 9l3 3-3 3"/></svg>
+            <span data-i18n="stMarkIn"></span>
+          </button>
+          <button class="btn small ghost" id="mark-out" type="button" data-i18n-title="stMarkOutTitle">
+            <svg viewBox="0 0 24 24"><path d="M15 4h3v16h-3M11 12H4M7 9l-3 3 3 3"/></svg>
+            <span data-i18n="stMarkOut"></span>
+          </button>
+          <button class="btn small cut-btn" id="cut" type="button" data-i18n-title="stCutTitle" disabled>
+            <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
+            <span data-i18n="stCut"></span>
+          </button>
+          <span class="divider"></span>
+          <button class="btn icon" id="undo" type="button" data-i18n-title="stUndo" data-i18n-aria="stUndo" disabled>
+            <svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>
+          </button>
+          <button class="btn icon" id="redo" type="button" data-i18n-title="stRedo" data-i18n-aria="stRedo" disabled>
+            <svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg>
+          </button>
+        </div>
+
+        <div class="tl" id="tl" data-i18n-aria="stTimeline">
+          <div class="ruler" id="ruler"></div>
+          <div class="track" id="track">
+            <div class="strip" id="strip"></div>
+            <div class="dim" id="dim-start"></div>
+            <div class="dim" id="dim-end"></div>
+            <div class="cuts" id="cuts"></div>
+            <div class="sel" id="sel" hidden></div>
+            <div class="trim-box" id="trim-box"></div>
+            <div class="handle start" id="h-start" data-which="start" role="slider" tabindex="0" data-i18n-aria="stTrimStart"></div>
+            <div class="handle end" id="h-end" data-which="end" role="slider" tabindex="0" data-i18n-aria="stTrimEnd"></div>
+          </div>
+          <div class="playhead" id="playhead"><i></i></div>
+        </div>
+
+        <div class="edit-bar">
+          <button class="btn small ghost" id="trim-in" type="button" data-i18n-title="stTrimStartTitle">
+            <svg viewBox="0 0 24 24"><path d="M6 4v16M10 12h10M14 8l-4 4 4 4"/></svg>
+            <span data-i18n="stTrimStartHere"></span>
+          </button>
+          <button class="btn small ghost" id="trim-out" type="button" data-i18n-title="stTrimEndTitle">
+            <svg viewBox="0 0 24 24"><path d="M18 4v16M14 12H4M10 8l4 4-4 4"/></svg>
+            <span data-i18n="stTrimEndHere"></span>
+          </button>
+          <button class="btn small ghost" id="reset" type="button" data-i18n-title="stResetTitle" disabled>
+            <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+            <span data-i18n="stReset"></span>
+          </button>
+          <span class="spacer"></span>
+          <span class="result" id="result"></span>
+        </div>
+        <p class="drag-hint muted" data-i18n="stDragHint"></p>
+      </section>
+
+      <aside class="ed-side">
+        <div class="card">
+          <label class="row">
+            <span>
+              <span class="row-title" data-i18n="stMute"></span>
+              <span class="row-sub muted" data-i18n="stMuteSub"></span>
+            </span>
+            <input type="checkbox" class="switch" id="mute">
+          </label>
+        </div>
+
+        <div class="card export" id="export-card">
+          <h2 data-i18n="stExportTitle"></h2>
+          <div class="field">
+            <span class="label" data-i18n="stFormat"></span>
+            <div class="seg" id="fmt" role="radiogroup">
+              <button type="button" role="radio" data-v="mp4" aria-checked="true" data-i18n="stFmtMp4"></button>
+              <button type="button" role="radio" data-v="webm" aria-checked="false" data-i18n="stFmtWebm"></button>
+              <button type="button" role="radio" data-v="gif" aria-checked="false" data-i18n="stFmtGif"></button>
+            </div>
+          </div>
+          <div class="field" id="video-opts">
+            <span class="label" data-i18n="stQuality"></span>
+            <div class="seg" id="quality" role="radiogroup">
+              <button type="button" role="radio" data-v="high" aria-checked="true" data-i18n="stQualityHigh"></button>
+              <button type="button" role="radio" data-v="medium" aria-checked="false" data-i18n="stQualityMedium"></button>
+            </div>
+          </div>
+          <div class="gif-opts" id="gif-opts" hidden>
+            <div class="field">
+              <span class="label" data-i18n="stGifWidth"></span>
+              <div class="seg" id="gif-width" role="radiogroup">
+                <button type="button" role="radio" data-v="480" aria-checked="false">480</button>
+                <button type="button" role="radio" data-v="640" aria-checked="true">640</button>
+                <button type="button" role="radio" data-v="800" aria-checked="false">800</button>
+              </div>
+            </div>
+            <div class="field">
+              <span class="label" data-i18n="stGifFps"></span>
+              <div class="seg" id="gif-fps" role="radiogroup">
+                <button type="button" role="radio" data-v="10" aria-checked="false">10</button>
+                <button type="button" role="radio" data-v="15" aria-checked="true">15</button>
+                <button type="button" role="radio" data-v="20" aria-checked="false">20</button>
+              </div>
+            </div>
+          </div>
+          <p class="note warn-note" id="gif-warn" hidden></p>
+          <p class="note" id="export-hint"></p>
+          <button class="btn accent big" id="export" type="button">
+            <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span data-i18n="stExport"></span>
+          </button>
+          <div class="progress" id="progress" hidden>
+            <div class="bar"><i id="bar"></i></div>
+            <div class="progress-row">
+              <span id="progress-text" data-i18n="stPreparing"></span>
+              <button class="btn small ghost" id="cancel" type="button" data-i18n="stCancel"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 data-i18n="stDetails"></h2>
+          <dl class="details" id="details"></dl>
+        </div>
+
+        <details class="card keys">
+          <summary><span data-i18n="stShortcuts"></span><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <ul>
+            <li data-i18n-html="stKeyPlay"></li>
+            <li data-i18n-html="stKeySeek"></li>
+            <li data-i18n-html="stKeySeekFine"></li>
+            <li data-i18n-html="stKeyEnds"></li>
+            <li data-i18n-html="stKeyMark"></li>
+            <li data-i18n-html="stKeyCut"></li>
+            <li data-i18n-html="stKeyDelete"></li>
+            <li data-i18n-html="stKeyTrim"></li>
+            <li data-i18n-html="stKeyMute"></li>
+            <li data-i18n-html="stKeyUndo"></li>
+          </ul>
+        </details>
+      </aside>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

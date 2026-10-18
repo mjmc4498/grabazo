@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Escena de demostración</title>
+<!--
+  Escena ilustrada que hace de «cámara» en las pruebas y en las capturas de la tienda
+  (scripts/demo-media.py la convierte en video para la cámara simulada de Chrome).
+  ?f=0..1 mueve la mano que saluda y ?blink parpadea.
+-->
+<style>
+  html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: #d8c9b4; }
+  .wrap { position: relative; width: 1280px; height: 720px; overflow: hidden; }
+  .bg { position: absolute; inset: -20px; filter: blur(5px) saturate(1.05); }
+  .fg { position: absolute; inset: 0; }
+  .grain { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(30, 18, 8, .38)); mix-blend-mode: multiply; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <svg class="bg" viewBox="0 0 1320 760" width="1320" height="760" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7d9c4"/><stop offset="1" stop-color="#cdb898"/></linearGradient>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd3f2"/><stop offset="1" stop-color="#e9f4fa"/></linearGradient>
+      <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff3c9" stop-opacity=".95"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+      <linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6b43"/><stop offset="1" stop-color="#6e4a2c"/></linearGradient>
+    </defs>
+    <rect width="1320" height="760" fill="url(#wall)"/>
+    <!-- ventana -->
+    <rect x="70" y="70" width="330" height="400" rx="10" fill="#f6efe4"/>
+    <rect x="88" y="88" width="294" height="364" rx="4" fill="url(#sky)"/>
+    <ellipse cx="190" cy="390" rx="160" ry="70" fill="#8fc48a"/>
+    <ellipse cx="330" cy="410" rx="140" ry="60" fill="#79b277"/>
+    <rect x="232" y="88" width="6" height="364" fill="#f6efe4"/>
+    <rect x="88" y="262" width="294" height="6" fill="#f6efe4"/>
+    <rect x="60" y="470" width="350" height="14" rx="4" fill="#efe4d3"/>
+    <!-- repisa con libros -->
+    <rect x="900" y="210" width="330" height="12" rx="3" fill="#8a5f3b"/>
+    <rect x="915" y="128" width="26" height="82" rx="3" fill="#2f6f8f"/>
+    <rect x="944" y="140" width="22" height="70" rx="3" fill="#e0a43a"/>
+    <rect x="969" y="120" width="30" height="90" rx="3" fill="#b5523b"/>
+    <rect x="1002" y="146" width="20" height="64" rx="3" fill="#4f8a5b"/>
+    <rect x="1036" y="160" width="58" height="50" rx="25" fill="#f2e8da"/>
+    <path d="M1150 210c-18-40-6-80 24-92 28 14 40 52 24 92z" fill="#5f9e62"/>
+    <rect x="1150" y="186" width="48" height="26" rx="6" fill="#c97a4f"/>
+    <rect x="900" y="360" width="330" height="12" rx="3" fill="#8a5f3b"/>
+    <rect x="922" y="290" width="70" height="70" rx="8" fill="#26445c"/>
+    <rect x="1000" y="300" width="24" height="60" rx="3" fill="#d9c08f"/>
+    <rect x="1028" y="282" width="26" height="78" rx="3" fill="#8e3f5a"/>
+    <rect x="1058" y="296" width="22" height="64" rx="3" fill="#3d7a86"/>
+    <!-- lámpara -->
+    <circle cx="760" cy="150" r="120" fill="url(#lamp)"/>
+    <path d="M720 120h80l-14-46h-52z" fill="#f4e6c8"/>
+    <rect x="757" y="30" width="6" height="44" fill="#6c5a48"/>
+    <!-- planta -->
+    <path d="M1180 760c-30-120-90-200-150-230 40 70 70 150 80 230z" fill="#3f7d4b"/>
+    <path d="M1230 760c10-140 60-240 110-270-20 80-40 190-50 270z" fill="#4f9a5c"/>
+    <path d="M1205 760c-10-160 10-260 40-320 10 90 10 220 0 320z" fill="#5aa866"/>
+    <!-- escritorio -->
+    <rect x="0" y="640" width="1320" height="120" fill="url(#desk)"/>
+  </svg>
+
+  <svg class="fg" viewBox="0 0 1280 720" width="1280" height="720" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sweater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b6f8e"/><stop offset="1" stop-color="#1d4f68"/></linearGradient>
+      <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3a67f"/><stop offset="1" stop-color="#cf8d66"/></linearGradient>
+      <radialGradient id="cheek" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#e57f6b" stop-opacity=".45"/><stop offset="1" stop-color="#e57f6b" stop-opacity="0"/></radialGradient>
+    </defs>
+    <!-- cuerpo -->
+    <path d="M370 720c8-150 90-238 270-238s262 88 270 238z" fill="url(#sweater)"/>
+    <path d="M582 486c18 34 38 48 58 48s40-14 58-48c-18-6-38-9-58-9s-40 3-58 9z" fill="#174257"/>
+    <!-- brazo que saluda (se mueve con --wave) -->
+    <g id="arm" style="transform-origin: 846px 560px; transform: rotate(var(--wave, 0deg))">
+      <path d="M800 560c40-30 80-120 92-200l44 10c-6 96-44 196-92 236z" fill="url(#sweater)"/>
+      <g transform="translate(905 312)">
+        <ellipse cx="0" cy="0" rx="40" ry="48" fill="url(#skin)"/>
+        <rect x="-36" y="-92" width="17" height="64" rx="8.5" fill="url(#skin)" transform="rotate(-14 -27 -60)"/>
+        <rect x="-16" y="-104" width="17" height="70" rx="8.5" fill="url(#skin)" transform="rotate(-4 -8 -70)"/>
+        <rect x="4" y="-100" width="17" height="68" rx="8.5" fill="url(#skin)" transform="rotate(6 12 -66)"/>
+        <rect x="22" y="-84" width="15" height="56" rx="7.5" fill="url(#skin)" transform="rotate(16 30 -56)"/>
+        <rect x="30" y="-12" width="16" height="50" rx="8" fill="url(#skin)" transform="rotate(58 38 12)"/>
+      </g>
+    </g>
+    <!-- cuello -->
+    <path d="M604 420h72v74c-12 14-24 20-36 20s-24-6-36-20z" fill="#c98861"/>
+    <!-- cabeza -->
+    <ellipse cx="640" cy="330" rx="112" ry="130" fill="url(#skin)"/>
+    <ellipse cx="528" cy="340" rx="18" ry="30" fill="#d39570"/>
+    <ellipse cx="752" cy="340" rx="18" ry="30" fill="#d39570"/>
+    <!-- pelo -->
+    <path d="M526 320c-12-120 50-176 124-176 86 0 132 58 124 170-16-58-52-92-118-96-46-2-96 26-130 102z" fill="#3a2418"/>
+    <path d="M560 200c40-38 130-50 186 4-40-12-120-18-186-4z" fill="#4a2f20"/>
+    <!-- cara -->
+    <ellipse cx="596" cy="334" rx="11" ry="13" class="eye" fill="#2a1a12"/>
+    <ellipse cx="684" cy="334" rx="11" ry="13" class="eye" fill="#2a1a12"/>
+    <circle cx="600" cy="329" r="3.2" fill="#fff" opacity=".85"/>
+    <circle cx="688" cy="329" r="3.2" fill="#fff" opacity=".85"/>
+    <path d="M572 300c14-10 34-12 48-4M660 296c14-8 34-6 48 4" stroke="#3a2418" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M640 346c-6 20-10 30-2 36" stroke="#b87452" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M598 398c24 26 62 26 86 0" stroke="#8e3b2f" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M606 404c20 16 50 16 70 0" fill="#fff" opacity=".9"/>
+    <ellipse cx="570" cy="384" rx="30" ry="18" fill="url(#cheek)"/>
+    <ellipse cx="710" cy="384" rx="30" ry="18" fill="url(#cheek)"/>
+  </svg>
+  <div class="grain"></div>
+</div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const f = Number(q.get('f') || 0);
+  document.documentElement.style.setProperty('--wave', `${Math.sin(f * Math.PI * 2) * 12 - 4}deg`);
+  if (q.has('blink')) for (const e of document.querySelectorAll('.eye')) e.setAttribute('ry', '2');
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+/* Grabazo — pestaña del grabador */
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(900px 520px at 70% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%), var(--bg);
+}
+
+svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+.brand img { border-radius: 7px; }
+
+.stage {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+  align-items: center;
+  gap: 40px;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 10px 28px 20px;
+}
+
+.preview-wrap {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 0 0 1px var(--line), 0 30px 70px -30px rgba(0, 0, 0, .55);
+}
+.preview-wrap video { width: 100%; height: 100%; object-fit: contain; display: block; }
+body[data-mode="camera"] .preview-wrap video { object-fit: cover; }
+
+.rec-dot {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--rec);
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, .25);
+  opacity: 0;
+}
+body[data-phase="recording"] .rec-dot { opacity: 1; animation: pulse 1.4s ease-in-out infinite; }
+body[data-phase="paused"] .rec-dot { opacity: 1; background: var(--warn); box-shadow: 0 0 0 4px rgba(255, 159, 10, .25); }
+
+.cam-wait {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: #fff;
+  font-size: 15px;
+  text-align: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, .55);
+}
+.cam-wait .spinner { border-color: rgba(255, 255, 255, .2); border-top-color: #fff; }
+
+.countdown {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: rgba(0, 0, 0, .45);
+  color: #fff;
+  font: 800 min(22vw, 180px)/1 var(--font);
+  letter-spacing: -.04em;
+  cursor: pointer;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, .5);
+}
+
+.info { display: flex; flex-direction: column; gap: 8px; }
+.info h1 { font-size: 26px; font-weight: 750; letter-spacing: -.03em; }
+.info p { font-size: 14.5px; max-width: 42ch; }
+
+.clock {
+  margin-top: 14px;
+  font-size: 54px;
+  font-weight: 750;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+body[data-phase="recording"] .clock { color: var(--text); }
+body[data-phase="paused"] .clock { color: var(--warn); }
+body.ending .clock { color: var(--rec); animation: pulse 1s ease-in-out infinite; }
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+.ctl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 6px 10px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  font: 500 12px/1.2 var(--font);
+  cursor: pointer;
+  transition: background .15s ease, transform .1s ease;
+}
+.ctl:hover { background: var(--surface-2); }
+.ctl:active { transform: scale(.97); }
+.ctl svg { width: 22px; height: 22px; }
+.ctl.stop { background: var(--rec); color: #fff; }
+.ctl.stop svg { fill: currentColor; stroke: none; }
+.ctl.stop:hover { background: #e2342a; }
+.ctl .i-play { display: none; fill: currentColor; stroke: none; }
+.ctl[aria-pressed="true"] .i-pause { display: none; }
+.ctl[aria-pressed="true"] .i-play { display: block; }
+
+body:not([data-phase="recording"]):not([data-phase="paused"]) .controls { opacity: .4; pointer-events: none; }
+body[data-phase="error"] .controls,
+body[data-phase="canceled"] .controls,
+body[data-phase="error"] .clock,
+body[data-phase="canceled"] .clock { display: none; }
+
+.warn {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--warn) 14%, transparent);
+  font-size: 13px;
+}
+#close { align-self: flex-start; margin-top: 12px; }
+
+.foot { padding: 0 28px 22px; text-align: center; font-size: 12.5px; }
+
+@media (max-width: 860px) {
+  .stage { grid-template-columns: 1fr; }
+}

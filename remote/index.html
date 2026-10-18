@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Grabazo">
+  <meta name="description" content="Grabazo: controla tu grabación de pantalla desde el celular, lee tu guion en el teleprompter y usa la cámara del celular.">
+  <meta name="author" content="Miguel Mogrovejo">
+  <meta name="referrer" content="no-referrer">
+  <title>Grabazo</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="app.css?v=1.0.0">
+</head>
+<body>
+  <div class="app" id="app" data-conn="connecting" data-rec="idle" data-view="control">
+    <header class="top">
+      <div class="brand">
+        <img src="icon.svg" width="34" height="34" alt="">
+        <div class="brand-text">
+          <b>Grabazo</b>
+          <span class="status"><i class="dot"></i><span id="status-text"></span></span>
+        </div>
+      </div>
+      <div class="rec-chip" id="rec-chip" hidden><i></i><span id="chip-time">0:00</span></div>
+      <button class="icon-btn" id="open-settings" type="button" data-t-aria="settings">
+        <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      </button>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" data-view="control" aria-selected="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" class="fill"/></svg>
+        <span data-t="tabControl"></span>
+      </button>
+      <button type="button" role="tab" data-view="script" aria-selected="false">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></svg>
+        <span data-t="tabScript"></span>
+      </button>
+      <button type="button" role="tab" data-view="camera" aria-selected="false">
+        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="m16 10 6-3.5v11L16 14"/></svg>
+        <span data-t="tabCamera"></span><i class="badge" id="cam-badge" hidden></i>
+      </button>
+    </nav>
+
+    <main class="views">
+      <!-- ================= Control remoto ================= -->
+      <section class="view" id="view-control">
+        <div class="stage-card">
+          <div class="stage-top">
+            <span class="chip" id="state-chip"><i></i><span id="state-text"></span></span>
+            <span class="muted small" id="mode-text"></span>
+          </div>
+          <div class="big-time" id="big-time">0:00</div>
+          <div class="limit muted small" id="limit-text"></div>
+          <div class="transport">
+            <button class="round ghost" id="restart" type="button" data-t-aria="restart">
+              <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+              <span data-t="restart"></span>
+            </button>
+            <button class="rec-button" id="rec" type="button" data-t-aria="record">
+              <span class="rec-core"></span>
+            </button>
+            <button class="round ghost" id="pause" type="button" data-t-aria="pause">
+              <svg viewBox="0 0 24 24"><path class="i-pause" d="M9 5v14M15 5v14"/><path class="i-play" d="M7 4.5v15l12-7.5z"/></svg>
+              <span id="pause-label" data-t="pause"></span>
+            </button>
+          </div>
+          <div class="transport-sub">
+            <span class="muted small" id="rec-hint"></span>
+            <button class="link-btn danger" id="discard" type="button" data-t="discard"></button>
+          </div>
+        </div>
+
+        <button class="talk" id="talk" type="button" hidden>
+          <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg>
+          <span data-t="talkHold"></span>
+        </button>
+
+        <div class="block">
+          <div class="label" data-t="drawTitle"></div>
+          <div class="tools" id="tools">
+            <button type="button" data-tool="pen"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-t="toolPen"></span></button>
+            <button type="button" data-tool="highlighter"><svg viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg><span data-t="toolHighlighter"></span></button>
+            <button type="button" data-tool="arrow"><svg viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10"/></svg><span data-t="toolArrow"></span></button>
+            <button type="button" data-tool="rect"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/></svg><span data-t="toolRect"></span></button>
+            <button type="button" data-tool="ellipse"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="7"/></svg><span data-t="toolEllipse"></span></button>
+            <button type="button" data-tool="text"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg><span data-t="toolText"></span></button>
+            <button type="button" data-tool="eraser"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L13 19"/><path d="M22 21H7M5 11l9 9"/></svg><span data-t="toolEraser"></span></button>
+            <button type="button" data-tool="none"><svg viewBox="0 0 24 24"><path d="m4 4 7 17 2.5-7.5L21 11z"/></svg><span data-t="toolMouse"></span></button>
+          </div>
+          <div class="colors" id="colors"></div>
+          <div class="draw-row">
+            <div class="seg" id="widths" role="radiogroup">
+              <button type="button" role="radio" data-v="3"><i style="width:6px;height:6px"></i></button>
+              <button type="button" role="radio" data-v="6"><i style="width:9px;height:9px"></i></button>
+              <button type="button" role="radio" data-v="11"><i style="width:14px;height:14px"></i></button>
+            </div>
+            <button class="pill-btn" id="undo" type="button"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg><span data-t="undo"></span></button>
+            <button class="pill-btn" id="clear" type="button"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg><span data-t="clearAll"></span></button>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="label" data-t="fxTitle"></div>
+          <div class="toggles" id="toggles">
+            <button type="button" data-key="zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg><span data-t="zoom"></span></button>
+            <button type="button" data-key="spotlight"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span data-t="spotlight"></span></button>
+            <button type="button" data-key="clicks"><svg viewBox="0 0 24 24"><path d="m9 9 5 12 1.8-5.2L21 14z"/><path d="M7.2 2.2 8 5.1M5.1 8l-2.9-.8M14 4.1 12 6.2M6.2 12l-2.1 2"/></svg><span data-t="clicks"></span></button>
+            <button type="button" data-key="blur"><svg viewBox="0 0 24 24"><path d="M12 2.7s7 7.4 7 12.1a7 7 0 0 1-14 0c0-4.7 7-12.1 7-12.1z"/><path d="M9 15h.01M12 12h.01M15 15h.01"/></svg><span data-t="blur"></span></button>
+            <button type="button" data-key="camera"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="m16 10 6-3.5v11L16 14"/></svg><span data-t="bubble"></span></button>
+            <button type="button" data-key="mic"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span data-t="mic"></span></button>
+            <button type="button" data-key="toolbar"><svg viewBox="0 0 24 24"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 17h.01M11 17h6"/></svg><span data-t="toolbar"></span></button>
+            <button type="button" data-key="unblur" class="action"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg><span data-t="unblur"></span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= Guion (teleprompter) ================= -->
+      <section class="view prompter-view" id="view-script" hidden>
+        <div class="prompter" id="prompter">
+          <div class="prompter-text" id="prompter-text"></div>
+          <div class="guide" aria-hidden="true"></div>
+          <div class="prompter-count" id="prompter-count" hidden></div>
+          <div class="prompter-empty" id="prompter-empty" hidden>
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></svg>
+            <b data-t="scriptEmptyTitle"></b>
+            <span data-t="scriptEmptyBody"></span>
+          </div>
+        </div>
+        <div class="prompter-bar">
+          <button class="round-sm" id="p-top" type="button" data-t-aria="toTop"><svg viewBox="0 0 24 24"><path d="M5 4h14M12 20V8M7 13l5-5 5 5"/></svg></button>
+          <button class="play" id="p-play" type="button" data-t-aria="play"><svg viewBox="0 0 24 24"><path class="i-play" d="M7 4.5v15l12-7.5z"/><path class="i-pause" d="M9 5v14M15 5v14"/></svg></button>
+          <label class="speed"><span data-t="speed"></span><input type="range" id="p-speed" min="1" max="10" step="1"></label>
+          <button class="round-sm" id="p-more" type="button" data-t-aria="prompterOptions"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+        </div>
+      </section>
+
+      <!-- ================= Cámara del celular ================= -->
+      <section class="view" id="view-camera" hidden>
+        <div class="cam-card">
+          <div class="cam-preview" id="cam-preview">
+            <video id="cam-video" muted playsinline autoplay></video>
+            <div class="cam-off" id="cam-off">
+              <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="m16 10 6-3.5v11L16 14"/></svg>
+              <b data-t="camOffTitle"></b>
+              <span data-t="camOffBody"></span>
+            </div>
+            <span class="live-chip" id="cam-live" hidden><i></i><span data-t="camLive"></span></span>
+          </div>
+          <div class="want" id="cam-want" hidden>
+            <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg>
+            <span data-t="camWanted"></span>
+          </div>
+          <button class="btn accent big" id="cam-start" type="button" data-t="camStart"></button>
+          <div class="cam-controls" id="cam-controls" hidden>
+            <button class="round-sm" id="cam-flip" type="button"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg><span data-t="camFlip"></span></button>
+            <button class="round-sm" id="cam-mic" type="button"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span data-t="mic"></span></button>
+            <button class="round-sm danger" id="cam-stop" type="button"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span data-t="camStop"></span></button>
+          </div>
+        </div>
+        <div class="block">
+          <label class="setting">
+            <span><b data-t="usePhoneCam"></b><span class="muted small" data-t="usePhoneCamSub"></span></span>
+            <input type="checkbox" class="switch" id="use-cam">
+          </label>
+          <label class="setting">
+            <span><b data-t="usePhoneMic"></b><span class="muted small" data-t="usePhoneMicSub"></span></span>
+            <input type="checkbox" class="switch" id="use-mic">
+          </label>
+        </div>
+      </section>
+    </main>
+
+    <!-- Conexión -->
+    <div class="screen gate" id="gate">
+      <div class="screen-inner">
+        <img src="icon.svg" class="screen-logo" width="84" height="84" alt="">
+        <h1 id="gate-title"></h1>
+        <p id="gate-body"></p>
+        <div class="spinner" id="gate-spinner"></div>
+        <button class="btn" type="button" id="gate-retry" data-t="retry" hidden></button>
+      </div>
+      <p class="credit">Grabazo · Miguel Mogrovejo</p>
+    </div>
+
+    <!-- Ajustes -->
+    <dialog class="sheet" id="settings">
+      <form method="dialog">
+        <div class="sheet-handle"></div>
+        <h2 data-t="settings"></h2>
+        <label class="field field-row">
+          <span data-t="haptics"></span>
+          <input type="checkbox" class="switch" id="haptics">
+        </label>
+        <label class="field field-row">
+          <span data-t="keepAwake"></span>
+          <input type="checkbox" class="switch" id="wake">
+        </label>
+        <div class="field field-row muted">
+          <span data-t="latency"></span>
+          <span id="latency">—</span>
+        </div>
+        <button type="button" class="btn danger" id="forget" data-t="forget"></button>
+        <button type="submit" class="btn primary" value="close" data-t="done"></button>
+        <p class="credit-in">Grabazo <span id="version"></span> · <span data-t="madeBy"></span> · <a href="privacy.html" target="_blank" rel="noopener" data-t="privacy"></a></p>
+      </form>
+    </dialog>
+
+    <!-- Opciones del teleprompter -->
+    <dialog class="sheet" id="p-sheet">
+      <form method="dialog">
+        <div class="sheet-handle"></div>
+        <h2 data-t="prompterOptions"></h2>
+        <div class="field">
+          <span class="field-label" data-t="fontSize"></span>
+          <input type="range" id="p-size" min="22" max="64" step="2">
+        </div>
+        <label class="field field-row">
+          <span data-t="mirrorText"></span>
+          <input type="checkbox" class="switch" id="p-mirror">
+        </label>
+        <label class="field field-row">
+          <span><span data-t="autoStart"></span><span class="muted small block-line" data-t="autoStartSub"></span></span>
+          <input type="checkbox" class="switch" id="p-auto">
+        </label>
+        <button type="button" class="btn" id="p-edit" data-t="editScript"></button>
+        <button type="submit" class="btn primary" value="close" data-t="done"></button>
+      </form>
+    </dialog>
+
+    <!-- Editar el guion -->
+    <dialog class="sheet tall" id="p-editor">
+      <form method="dialog" id="p-editor-form">
+        <div class="sheet-handle"></div>
+        <h2 data-t="editScript"></h2>
+        <textarea class="script-input" id="p-input" data-t-ph="scriptPlaceholder"></textarea>
+        <button type="submit" class="btn primary" value="save" data-t="saveScript"></button>
+        <button type="button" class="btn ghost" id="p-cancel" data-t="cancel"></button>
+      </form>
+    </dialog>
+
+    <div class="countdown" id="countdown" hidden><span id="countdown-n"></span></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="peerjs.min.js"></script>
+  <script src="app.js?v=1.0.0"></script>
+</body>
+</html>

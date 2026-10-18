@@ -1,0 +1,20 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><link rel="stylesheet" href="store.css">
+<style>
+  /* Chrome sin interfaz dibuja como mínimo 500 px de ancho y luego se recorta a 440: se posiciona desde la izquierda. */
+  .win { position: absolute; left: 262px; top: 62px; width: 150px; height: 104px; border-radius: 14px; background: linear-gradient(#fff, #e3e3e8); box-shadow: 0 24px 40px -16px rgba(0,0,0,.8); transform: rotate(-5deg); }
+  .win::before { content: ""; position: absolute; left: 12px; top: 11px; width: 8px; height: 8px; border-radius: 50%; background: #c7c7cc; box-shadow: 13px 0 0 #d1d1d6; }
+  .win svg { position: absolute; left: 18px; top: 40px; width: 110px; height: 50px; }
+  .cam { position: absolute; left: 346px; top: 136px; width: 74px; height: 74px; border-radius: 50%; background: linear-gradient(135deg, #ffb347, #ff5e1a); border: 6px solid #0b0b0c; display: grid; place-items: center; box-shadow: 0 0 40px rgba(255,122,26,.55); }
+  .cam svg { width: 36px; height: 36px; }
+  .rec { position: absolute; left: 270px; top: 196px; }
+</style></head>
+<body class="dark" style="background:radial-gradient(260px 200px at 350px 60%, rgba(255,122,26,.3), transparent 70%), #0b0b0c"><div class="stage">
+  <div style="position:absolute;left:30px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;width:230px">
+    <img src="../../extension/icons/icon-128.png" style="width:80px;height:80px;margin:-10px 0 2px -10px">
+    <div style="font-size:36px;font-weight:750;letter-spacing:-.045em">Grabazo</div>
+    <div style="margin-top:6px;font-size:15.5px;line-height:1.4;color:#a1a1a6">Graba pantalla y cámara,<br>anota y controla con<br>tu celular</div>
+  </div>
+  <div class="win"><svg viewBox="0 0 110 50"><path d="M6 38c10-18 20-20 28-9s18 10 28-12 22-6 34 6" fill="none" stroke="#ff7a1a" stroke-width="6" stroke-linecap="round"/></svg></div>
+  <div class="cam"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="3" fill="#fff"/><path d="m17 10.5 5-3v9l-5-3z" fill="#fff"/></svg></div>
+  <div class="rec"><i></i>REC 2:05</div>
+</div></body></html>

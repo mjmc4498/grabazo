@@ -1,0 +1,11 @@
+node_modules/
+keys/
+dist/*.crx
+test/out/
+.DS_Store
+dist/*/
+.wrangler/
+cloudflare/.wrangler/
+cloudflare/.dev.vars
+presentacion/img/generadas/
+landing/.wrangler/

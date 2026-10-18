@@ -1,0 +1,7 @@
+# Configuración de Cloudflare Pages para grabazo.com
+# Despliegue: npx wrangler pages deploy . --project-name grabazo
+# (sitio estático: no hay paso de compilación; _headers y _redirects se aplican solos)
+
+name = "grabazo"
+compatibility_date = "2026-10-01"
+pages_build_output_dir = "."

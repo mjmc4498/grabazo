@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel de ventas — Demo</title>
+  <style>
+    /* Página de ejemplo para las pruebas y las capturas de Grabazo: un panel de ventas. */
+    :root { --bg: #f5f6f8; --card: #fff; --text: #14161a; --muted: #6b7280; --line: #e6e8ec; --blue: #2563eb; --green: #16a34a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    header { display: flex; align-items: center; gap: 16px; padding: 16px 32px; background: var(--card); border-bottom: 1px solid var(--line); }
+    header b { font-size: 18px; letter-spacing: -.02em; }
+    header nav { display: flex; gap: 18px; margin-left: 24px; color: var(--muted); font-weight: 500; }
+    header nav span:first-child { color: var(--text); }
+    header .user { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--muted); }
+    header .user i { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #93c5fd, #2563eb); }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 32px 60px; }
+    h1 { margin: 0 0 4px; font-size: 28px; letter-spacing: -.03em; }
+    .sub { margin: 0 0 24px; color: var(--muted); }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .kpi { padding: 18px 20px; border-radius: 16px; background: var(--card); box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .kpi span { color: var(--muted); font-size: 13px; }
+    .kpi b { display: block; margin-top: 6px; font-size: 26px; letter-spacing: -.02em; }
+    .kpi em { font-style: normal; font-size: 13px; color: var(--green); font-weight: 600; }
+    .grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin-top: 16px; }
+    .card { padding: 20px; border-radius: 16px; background: var(--card); box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .card h2 { margin: 0 0 14px; font-size: 16px; }
+    .bars { display: flex; align-items: flex-end; gap: 14px; height: 220px; padding-top: 10px; }
+    .bars div { flex: 1; border-radius: 8px 8px 3px 3px; background: linear-gradient(#60a5fa, #2563eb); position: relative; }
+    .bars div::after { content: attr(data-m); position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 12px; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td, th { padding: 10px 6px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--muted); font-weight: 500; font-size: 12.5px; }
+    .tag { padding: 2px 8px; border-radius: 99px; background: #dcfce7; color: var(--green); font-size: 12px; font-weight: 600; }
+    .secret { font-family: ui-monospace, Menlo, monospace; }
+    button.cta { margin-top: 18px; padding: 10px 18px; border: 0; border-radius: 10px; background: var(--blue); color: #fff; font: 600 14px/1 inherit; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header>
+    <b>Ventas+</b>
+    <nav><span>Resumen</span><span>Clientes</span><span>Productos</span><span>Reportes</span></nav>
+    <div class="user"><span>Ana Torres</span><i></i></div>
+  </header>
+  <main>
+    <h1>Resumen del trimestre</h1>
+    <p class="sub">Del 1 de julio al 30 de septiembre de 2026</p>
+    <section class="kpis">
+      <div class="kpi"><span>Ingresos</span><b>S/ 482 900</b><em>▲ 12,4 %</em></div>
+      <div class="kpi"><span>Clientes nuevos</span><b>1 284</b><em>▲ 8,1 %</em></div>
+      <div class="kpi"><span>Ticket promedio</span><b>S/ 376</b><em>▲ 3,9 %</em></div>
+      <div class="kpi"><span>Retención</span><b>91 %</b><em>▲ 1,2 pts</em></div>
+    </section>
+    <section class="grid">
+      <div class="card">
+        <h2>Ingresos por mes</h2>
+        <div class="bars">
+          <div data-m="Ene" style="height:38%"></div><div data-m="Feb" style="height:44%"></div><div data-m="Mar" style="height:52%"></div>
+          <div data-m="Abr" style="height:49%"></div><div data-m="May" style="height:61%"></div><div data-m="Jun" style="height:66%"></div>
+          <div data-m="Jul" style="height:72%"></div><div data-m="Ago" style="height:80%"></div><div data-m="Sep" style="height:92%"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Últimos pedidos</h2>
+        <table>
+          <tr><th>Cliente</th><th>Tarjeta</th><th>Estado</th></tr>
+          <tr><td>Lucía Ramos</td><td class="secret">•••• 4821</td><td><span class="tag">Pagado</span></td></tr>
+          <tr><td>Diego Salas</td><td class="secret">•••• 1170</td><td><span class="tag">Pagado</span></td></tr>
+          <tr><td>Marta Quispe</td><td class="secret">•••• 9034</td><td><span class="tag">Pagado</span></td></tr>
+          <tr><td>Jorge Vela</td><td class="secret">•••• 3388</td><td><span class="tag">Pagado</span></td></tr>
+        </table>
+        <button class="cta" type="button">Ver todos los pedidos</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

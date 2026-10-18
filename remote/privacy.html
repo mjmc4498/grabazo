@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Grabazo · Política de privacidad</title>
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    :root { --bg: #fff; --text: #0b0b0c; --muted: #6e6e73; --line: rgba(0,0,0,.08); --surface: #f5f5f7; color-scheme: light; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0b0b0c; --text: #f5f5f7; --muted: #8e8e93; --line: rgba(255,255,255,.08); --surface: #161618; color-scheme: dark; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    main { max-width: 720px; margin: 0 auto; padding: 56px 20px 80px; }
+    header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+    header img { width: 56px; height: 56px; }
+    h1 { margin: 0; font-size: 30px; letter-spacing: -.03em; line-height: 1.15; }
+    h2 { margin: 40px 0 8px; font-size: 19px; letter-spacing: -.015em; }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); }
+    .card { padding: 18px 20px; margin-top: 20px; border-radius: 14px; background: var(--surface); }
+    ul { padding-left: 20px; }
+    li + li { margin-top: 6px; }
+    code { font-size: .92em; }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="icon.svg" alt="">
+    <div>
+      <h1>Política de privacidad</h1>
+      <div class="muted">Grabazo · Grabación de pantalla, cámara y anotaciones</div>
+    </div>
+  </header>
+  <section>
+    <p class="muted" style="margin-top:20px">Última actualización: 17 de octubre de 2026 (versión 1.0) · Autor: Miguel Mogrovejo</p>
+
+    <div class="card">
+      <strong>En resumen:</strong> Grabazo no tiene servidores propios ni base de datos, y no recopila, vende ni comparte datos personales. No usa cuentas, analítica, publicidad ni cookies. Tus videos se graban y se guardan en tu computadora. Si conectas tu celular, la conexión es directa y cifrada entre tu celular y tu computadora, y nada llega al autor.
+    </div>
+
+    <h2>Qué hace Grabazo</h2>
+    <p>Grabazo es una extensión de Chrome para grabar en video una pestaña, un área de una pestaña, una ventana, la pantalla completa o solo tu cámara, con tu micrófono, tu cámara en una burbuja y herramientas para anotar la pantalla (dibujo, zoom, foco de luz y difuminar). Al terminar, el video se abre en el estudio de la extensión para recortarlo y exportarlo. Opcionalmente puedes conectar tu celular escaneando un QR: esta página web lo convierte en control remoto de la grabación, en teleprompter con tu guion y en cámara.</p>
+
+    <h2>Tus grabaciones</h2>
+    <ul>
+      <li><strong>Se guardan solo en tu computadora</strong>, en el almacenamiento interno de la extensión (IndexedDB), parte por parte mientras grabas, para poder recuperarlas si Chrome se cierra. Puedes borrarlas desde «Mis grabaciones».</li>
+      <li>Al exportar (MP4, WebM o GIF), el archivo se procesa en tu computadora y se guarda en tu carpeta de Descargas. Ningún video se sube a internet.</li>
+      <li>Solo se graba lo que tú eliges: la pestaña desde la que abres Grabazo, el área que marcas o la ventana o pantalla que eliges en el selector de Chrome.</li>
+    </ul>
+
+    <h2>Cámara y micrófono</h2>
+    <ul>
+      <li>Grabazo usa la cámara y el micrófono solo mientras se ve la burbuja, la vista previa de los ajustes o mientras grabas, y los apaga al terminar.</li>
+      <li>El fondo desenfocado y los fondos virtuales se calculan en tu computadora con un modelo de MediaPipe incluido en la extensión; la imagen no sale de Chrome.</li>
+      <li>La burbuja de la cámara es una página de la extensión que se muestra sobre la página que grabas; la página no puede ver tu cámara.</li>
+    </ul>
+
+    <h2>Si usas tu celular</h2>
+    <ul>
+      <li>Esta página guarda en el almacenamiento local de tu navegador la clave de conexión con tu computadora (para reconectarse sola) y tus preferencias (tamaño de letra del guion, vibración…). Puedes borrarlas con «Olvidar esta computadora» o borrando los datos del sitio.</li>
+      <li>El guion que escribes viaja entre tu celular y tu computadora y se guarda solo en tu Chrome.</li>
+      <li>Si eliges «Usar mi cámara», el navegador te pide permiso para la cámara y el micrófono del celular. La imagen y el sonido viajan directo a tu computadora para la burbuja y la grabación, y se detienen cuando pulsas «Apagar».</li>
+    </ul>
+
+    <h2>Cómo se establece la conexión</h2>
+    <ul>
+      <li>Todo viaja por conexiones <strong>WebRTC</strong> de punto a punto, cifradas (DTLS), entre tu celular y tu computadora.</li>
+      <li>Para encontrarse, los dispositivos usan el servidor público de señalización de <a href="https://peerjs.com" rel="noopener">PeerJS</a>. Solo recibe un identificador aleatorio de la conexión y los datos técnicos de red necesarios para conectar (por ejemplo, direcciones IP). No recibe órdenes, guion, imagen ni sonido.</li>
+      <li>Si una red impide la conexión directa, el tráfico cifrado pasa por el servidor de retransmisión (TURN) de <a href="https://www.cloudflare.com/es-es/privacypolicy/" rel="noopener">Cloudflare</a>, que no puede leerlo. Para usarlo, la extensión y el celular piden credenciales temporales a un pequeño servicio del autor alojado en Cloudflare, que no guarda ningún dato.</li>
+      <li>La clave de conexión va en la parte de la dirección que nunca se envía a los servidores web (después del signo <code>#</code>), y el celular la quita de la barra de direcciones al conectarse.</li>
+    </ul>
+
+    <h2>Sobre las páginas que grabas</h2>
+    <p>Para mostrar la barra, la burbuja y los dibujos, la extensión agrega una capa sobre la página que grabas. Grabazo no lee, guarda ni envía el contenido de las páginas. La función «Difuminar» solo aplica un desenfoque visual a los elementos que tú eliges, en tu pantalla.</p>
+
+    <h2>Permisos de la extensión</h2>
+    <ul>
+      <li><strong>Captura de pestañas (<code>tabCapture</code>) y de escritorio (<code>desktopCapture</code>):</strong> grabar la pestaña, la ventana o la pantalla que eliges.</li>
+      <li><strong>Pestaña activa (<code>activeTab</code>) y ejecución de scripts (<code>scripting</code>):</strong> mostrar la barra, la burbuja y los dibujos en la pestaña donde abres Grabazo, sin pedir acceso a todos los sitios.</li>
+      <li><strong>Documento en segundo plano (<code>offscreen</code>):</strong> mantener la conexión con tu celular y preparar la imagen de la cámara para la burbuja.</li>
+      <li><strong>Almacenamiento (<code>storage</code> y <code>unlimitedStorage</code>):</strong> guardar tus ajustes, tu guion y tus grabaciones en tu computadora.</li>
+      <li><strong>Descargas (<code>downloads</code>):</strong> guardar en Descargas › Grabazo los videos que exportas.</li>
+      <li><strong>Acceso a sitios web (opcional):</strong> solo si activas «La barra en todas las páginas», para que la barra y la cámara sigan en pantalla al cambiar de página mientras grabas. Se quita en los ajustes de Grabazo o en <code>chrome://extensions</code>.</li>
+    </ul>
+
+    <h2>Cambios y contacto</h2>
+    <p>Si esta política cambia, se actualizará en esta misma página. Para dudas o sugerencias, escribe al autor, Miguel Mogrovejo, a través de <a href="https://github.com/mjmc4498" rel="noopener">github.com/mjmc4498</a>.</p>
+  </section>
+
+</main>
+</body>
+</html>

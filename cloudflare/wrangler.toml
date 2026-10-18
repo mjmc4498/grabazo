@@ -1,0 +1,49 @@
+# Worker de Grabazo: entrega credenciales temporales del servidor de retransmisión
+# (TURN) de Cloudflare a la extensión y a la página del celular, y pausa la
+# retransmisión si el consumo del mes se acerca a la cuota gratuita.
+#
+# OPCIONAL: hoy Grabazo usa el Worker ya desplegado de Presentazo
+# (https://mando-turn.mjmc4498.workers.dev), que acepta cualquier extensión de Chrome y
+# el origen https://mjmc4498.github.io. Despliega este solo si quieres uno propio y
+# cambia ICE_ENDPOINT en extension/config.js y remote/app.js.
+#
+# Usa la misma cuenta y el mismo espacio KV que el de Presentazo: como comparten la
+# clave TURN (y la cuota gratuita), la pausa por consumo también se comparte.
+#
+# Secretos (se configuran una sola vez, nunca van en el código):
+#   npx wrangler secret put TURN_KEY_ID          ← ID de la clave TURN (32 caracteres)
+#   npx wrangler secret put TURN_KEY_API_TOKEN   ← API Token de la clave TURN (64 caracteres)
+#   npx wrangler secret put CF_ANALYTICS_TOKEN   ← token de solo lectura «Account Analytics»
+name = "grabazo-turn"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+# Orígenes web que pueden pedir credenciales (además de cualquier extensión de Chrome).
+ALLOWED_ORIGINS = "https://mjmc4498.github.io,https://grabazo.com,http://localhost:8769"
+# Duración de las credenciales en segundos (4 h).
+CREDENTIAL_TTL = "14400"
+# Consumo mensual (GB enviados por TURN) al que se pausa la retransmisión.
+# La cuota gratuita es de 1.000 GB; se deja margen porque las estadísticas tardan.
+MONTHLY_LIMIT_GB = "900"
+# Cuenta de Cloudflare (no es secreto).
+CF_ACCOUNT_ID = "4aaa8bdb57cdfc0e9b81ba5ca88f13a8"
+
+# Estado de la pausa mensual.
+[[kv_namespaces]]
+binding = "ESTADO"
+id = "fa13c4b3f72340cfbc482a91a7c084f7"
+
+# Límite oficial de Cloudflare: pedidos por minuto y por dirección IP.
+[[ratelimits]]
+name = "LIMITADOR"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
+# Revisión del consumo cada 15 minutos.
+[triggers]
+crons = ["*/15 * * * *"]

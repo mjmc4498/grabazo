@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap oficial de Grabazo para Google Search Console y otros buscadores
+Sitemap: https://grabazo.com/sitemap.xml
