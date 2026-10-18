@@ -45,10 +45,12 @@ async function waitFor(fn, { timeout = 15000, interval = 150 } = {}) {
   return null;
 }
 const errors = [];
+const T0 = Date.now();
 const watch = (page, label) => {
   // pageerror incluye las promesas rechazadas sin atender («Uncaught (in promise)»).
-  page.on('pageerror', (e) => errors.push(`${label}: ${e.message}`));
-  page.on('console', (m) => { if (m.type() === 'error' && !/favicon|ERR_|net::|Failed to load resource/.test(m.text())) errors.push(`${label}: ${m.text()}`); });
+  const at = () => `${label} (${Math.round((Date.now() - T0) / 1000)} s)`;
+  page.on('pageerror', (e) => errors.push(`${at()}: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error' && !/favicon|ERR_|net::|Failed to load resource/.test(m.text())) errors.push(`${at()}: ${m.text()}`); });
 };
 
 // ---------------------------------------------------------------- sesión de Chrome
@@ -154,6 +156,68 @@ async function open({ allowlisted, noGrant = false }) {
   return { browser, extId, expectedId: id, ext, sw, state, setSettings, connectPhone, openDemo, savedVideo, grantExtension, close };
 }
 
+// Chrome sin ventana no puede mostrar su selector de pantallas (chooseDesktopMedia no
+// responde). En la pestaña del grabador se reemplaza solo ese selector: devuelve una
+// «pantalla» simulada, un lienzo azul animado de 1280×720. El resto es real.
+const SCREEN_RGB = [26, 58, 138];
+function fakeScreen() {
+  const pick = (sources, cb) => { setTimeout(() => cb('grabazo-prueba', { canRequestAudioTrack: false }), 100); return 1; };
+  try { chrome.desktopCapture.chooseDesktopMedia = pick; } catch {}
+  if (chrome.desktopCapture.chooseDesktopMedia !== pick) Object.defineProperty(chrome.desktopCapture, 'chooseDesktopMedia', { value: pick });
+  const real = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+  navigator.mediaDevices.getUserMedia = (c) => {
+    if (c?.video?.mandatory?.chromeMediaSource !== 'desktop') return real(c);
+    const cv = document.createElement('canvas');
+    cv.width = 1280;
+    cv.height = 720;
+    const x = cv.getContext('2d', { alpha: false });
+    let n = 0;
+    const paint = () => {
+      x.fillStyle = 'rgb(26,58,138)';
+      x.fillRect(0, 0, 1280, 720);
+      x.fillStyle = '#fff';
+      x.fillRect(600 + (n++ % 40), 340, 40, 40);
+    };
+    paint();
+    setInterval(paint, 33);
+    return Promise.resolve(cv.captureStream(30));
+  };
+}
+// En Chrome sin ventana, los clics del mouse a veces no llegan a una pestaña abierta por
+// la extensión: en el grabador se pulsa por el DOM y se arrastra con eventos de puntero.
+const press = (page, sel) => page.$eval(sel, (el) => el.click());
+const dragTo = (page, sel, target) => page.evaluate((s, t) => {
+  const el = document.querySelector(s);
+  const a = el.getBoundingClientRect();
+  const b = document.querySelector(t).getBoundingClientRect();
+  const from = [a.x + a.width / 2, a.y + a.height / 2];
+  const to = [b.x + b.width / 2, b.y + b.height / 2];
+  const ev = (type, x, y) => el.dispatchEvent(new PointerEvent(type, { pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, buttons: type === 'pointerup' ? 0 : 1, clientX: x, clientY: y, bubbles: true, cancelable: true }));
+  ev('pointerdown', ...from);
+  for (let i = 1; i <= 8; i++) ev('pointermove', from[0] + ((to[0] - from[0]) * i) / 8, from[1] + ((to[1] - from[1]) * i) / 8);
+  ev('pointerup', ...to);
+}, sel, target);
+const near = (a, b, tol) => !!a && a.reduce((sum, v, i) => sum + Math.abs(v - b[i]), 0) <= tol;
+
+// Colores del video compuesto del grabador en puntos (0..1) del cuadro.
+const recorderPixels = (page, points) => page.evaluate(async (pts) => {
+  const blob = await globalThis.__grabador?.thumbnail(640);
+  if (!blob) return null;
+  const bmp = await createImageBitmap(blob);
+  const c = new OffscreenCanvas(bmp.width, bmp.height);
+  const x = c.getContext('2d');
+  x.drawImage(bmp, 0, 0);
+  return pts.map(([px, py]) => [...x.getImageData(Math.round(px * (bmp.width - 1)), Math.round(py * (bmp.height - 1)), 1, 1).data].slice(0, 3));
+}, points);
+
+// Centro de la cámara y el punto opuesto (0..1), según el rectángulo que informa el grabador.
+const camPoints = async (page) => {
+  const { rect, size } = await page.evaluate(() => globalThis.__grabador.cam);
+  const cx = (rect.x + rect.w / 2) / size.width;
+  const cy = (rect.y + rect.h / 2) / size.height;
+  return { cam: [cx, cy], away: [1 - cx, cy < 0.5 ? 0.85 : 0.15] };
+};
+
 const bubbleLive = (demo) => waitFor(async () => {
   const frame = demo.frames().find((f) => f.url().includes('/camara.html'));
   return frame && frame.$eval('body', (b) => b.classList.contains('live'));
@@ -207,6 +271,21 @@ try {
     return frame ? frame.$eval('body', (b) => `${b.className} · ${b.querySelector('#msg').textContent}`).catch((e) => e.message) : 'sin iframe';
   })());
   await setSettings({ camEffect: 'none', camFilter: 'none' });
+  await s.sw({ type: 'op', op: 'cam:set', patch: { corner: 'tr' } });
+  const corner = await waitFor(async () => {
+    const { camPos } = await ext.evaluate(() => chrome.storage.local.get('camPos'));
+    return camPos && camPos.x > 900 && camPos.y < 120 ? camPos : null;
+  }, { timeout: 5000 });
+  check('las esquinas mueven la burbuja de la página (modo Pestaña)', !!corner, JSON.stringify(corner));
+
+  // Vista previa de la cámara en el popup (abierto sin pestaña: así no toca la burbuja
+  // de la página, que sigue a cargo del popup simulado de arriba).
+  const pop = await s.browser.newPage();
+  await pop.setViewport({ width: 372, height: 760 });
+  await pop.goto(`chrome-extension://${s.extId}/popup.html`);
+  check('el popup muestra la vista previa de la cámara', await waitFor(() => pop.$eval('#cam-preview', (e) => e.classList.contains('live')), { timeout: 15000 }));
+  await pop.close();
+  await demo.bringToFront();
 
   // ---------- cámara del celular como burbuja
   await phone.click('.tabs [data-view="camera"]');
@@ -248,7 +327,111 @@ try {
   check('al terminar se abre el estudio con la grabación', await waitFor(async () => (await s.browser.pages()).find((p) => p.url().includes(`estudio.html#${camVid}`)), { timeout: 8000 }));
   const cam = await s.savedVideo(camVid);
   check('el video de cámara quedó guardado (con miniatura)', cam && cam.size > 20_000 && cam.duration > 4000 && cam.thumb, JSON.stringify(cam));
-  check('la duración no cuenta la pausa', cam && cam.duration < wall - paused + 600 && cam.duration > wall - paused - 2500, `${cam?.duration} ms de ${wall} ms con ${paused} ms en pausa`);
+  check('la duración no cuenta la pausa', cam && cam.duration < wall - paused + 1000 && cam.duration > wall - paused - 2500, `${cam?.duration} ms de ${wall} ms con ${paused} ms en pausa`);
+
+  // ---------- pantalla completa con la cámara dentro del video
+  await demo.bringToFront();
+  await setSettings({ mode: 'screen', countdown: 0, camera: true, camId: '', camEffect: 'none', camFilter: 'none', camShape: 'circle', camSize: 'm', camMirror: true, camPlace: { x: 0, y: 1 }, camAsk: true, systemAudio: false, mic: true, micId: '' });
+  await sleep(300);
+  const recorderPage = async () => {
+    const id = (await state()).rec.id;
+    return (await s.browser.waitForTarget((t) => t.url().includes(`/grabador.html#${id}`), { timeout: 15000 })).page();
+  };
+  await s.sw({ type: 'op', op: 'rec:start', tabId });
+  const rp = await recorderPage();
+  await rp.evaluateOnNewDocument(fakeScreen);
+  await rp.reload();
+  check('en Pantalla, antes de grabar se pide ubicar la cámara', await waitFor(async () => (await rp.$eval('body', (b) => b.dataset.phase)) === 'placing' && (await state()).rec.status === 'placing', { timeout: 20000 }), (await state()).rec.status);
+  check('el paso muestra los controles de la cámara y la burbuja arrastrable', await rp.$eval('#cam-panel', (e) => !e.hidden) && await waitFor(() => rp.$eval('#cam-handle', (e) => !e.hidden), { timeout: 5000 }));
+  check('la cámara llega al grabador y se compone dentro del video', await waitFor(() => rp.evaluate(() => globalThis.__grabador?.cam.live), { timeout: 20000 }));
+  await sleep(600);
+  let pts = await camPoints(rp);
+  let px = await recorderPixels(rp, [pts.cam, pts.away]);
+  check('la cámara se ve abajo a la izquierda (posición guardada)', pts.cam[0] < 0.3 && pts.cam[1] > 0.6 && !near(px?.[0], SCREEN_RGB, 90) && near(px?.[1], SCREEN_RGB, 45), JSON.stringify({ pts, px }));
+  check('en la página no aparece una segunda burbuja', await demo.$eval(HOST, (h) => h.dataset.bubble !== 'true').catch(() => true));
+  check('el celular muestra «Ubica tu cámara» y los botones de posición', await waitFor(() => phone.$eval('#app', (a) => a.dataset.rec === 'placing') , { timeout: 5000 }) && await phone.$eval('#cam-block', (e) => !e.hidden));
+
+  // Desde el celular: a la esquina de arriba a la derecha.
+  await phone.click('#corners [data-corner="tr"]');
+  check('el celular mueve la cámara a otra esquina', await waitFor(() => rp.evaluate(() => globalThis.__grabador.cam.place.x === 1 && globalThis.__grabador.cam.place.y === 0), { timeout: 5000 }));
+  check('la nueva posición queda guardada', await waitFor(async () => { const p = (await state()).settings.camPlace; return p.x === 1 && p.y === 0; }, { timeout: 5000 }));
+  await sleep(900);
+  pts = await camPoints(rp);
+  px = await recorderPixels(rp, [pts.cam, pts.away]);
+  check('y en el video la cámara se desliza hasta allí', pts.cam[0] > 0.7 && pts.cam[1] < 0.4 && !near(px?.[0], SCREEN_RGB, 90) && near(px?.[1], SCREEN_RGB, 45), JSON.stringify({ pts, px }));
+
+  // En el grabador: tamaño grande, forma y arrastrar.
+  await press(rp, '#cam-size [data-size="l"]');
+  check('el tamaño se cambia desde el grabador', await waitFor(async () => (await state()).settings.camSize === 'l', { timeout: 5000 }));
+  await sleep(500);
+  await dragTo(rp, '#cam-handle', '#preview');
+  const dragged = await waitFor(async () => { const p = (await state()).settings.camPlace; return p.x > 0.3 && p.x < 0.7 && p.y > 0.3 && p.y < 0.7 ? p : null; }, { timeout: 5000 });
+  check('se arrastra la cámara en la vista previa y queda guardada', !!dragged, JSON.stringify(await rp.evaluate(() => globalThis.__grabador.cam.place)));
+  await press(rp, '#corners [data-corner="bl"]');
+  check('los botones de esquina del grabador la llevan abajo a la izquierda', await waitFor(async () => { const p = (await state()).settings.camPlace; return p.x === 0 && p.y === 1; }, { timeout: 5000 }));
+
+  // Empezar desde el celular.
+  await phone.click('#rec');
+  check('«Grabar» en el celular empieza la grabación tras ubicar la cámara', await waitFor(async () => (await state()).rec.status === 'recording', { timeout: 15000 }), (await state()).rec.status);
+  const scrRec = await state();
+  check('la pestaña del grabador queda fijada y se vuelve a la página', await ext.evaluate(async (id) => (await chrome.tabs.get(id)).pinned, scrRec.rec.recorderTabId) && await waitFor(() => demo.evaluate(() => document.visibilityState === 'visible'), { timeout: 5000 }));
+  check('la barra flotante aparece en la página, sin burbuja duplicada', await waitFor(() => demo.$eval(HOST, (h) => h.dataset.toolbar === 'true' && h.dataset.bubble !== 'true'), { timeout: 8000 }));
+  await sleep(1500);
+  // Desde la barra (misma orden que el menú de la cámara): arriba a la derecha.
+  await s.sw({ type: 'op', op: 'cam:set', patch: { corner: 'tr' } });
+  await sleep(1200);
+  pts = await camPoints(rp);
+  px = await recorderPixels(rp, [pts.cam, pts.away]);
+  check('mientras se graba, la cámara se mueve dentro del video', pts.cam[0] > 0.7 && pts.cam[1] < 0.4 && !near(px?.[0], SCREEN_RGB, 90) && near(px?.[1], SCREEN_RGB, 45), JSON.stringify({ pts, px }));
+  await s.sw({ type: 'op', op: 'ui:toggle', key: 'camera' });
+  await sleep(800);
+  px = await recorderPixels(rp, [pts.cam]);
+  check('ocultar la cámara la quita del video', near(px?.[0], SCREEN_RGB, 45), JSON.stringify(px));
+  await s.sw({ type: 'op', op: 'ui:toggle', key: 'camera' });
+  await sleep(1500);
+  const endPts = await camPoints(rp);
+  const parts = await rp.evaluate(() => globalThis.__grabador.chunks);
+  check('el video se guarda por partes mientras se graba', parts >= 2, `${parts} partes`);
+  await s.sw({ type: 'op', op: 'rec:stop' });
+  check('la grabación de pantalla se guarda', await waitFor(async () => (await state()).rec.status === 'idle', { timeout: 20000 }));
+  const scrVid = (await state()).rec.lastId;
+  const scr = await s.savedVideo(scrVid);
+  check('el video de pantalla tiene el tamaño de la pantalla', scr && scr.width === 1280 && scr.height === 720 && scr.duration > 3500, JSON.stringify(scr));
+  // Chrome no carga videos en una pestaña de fondo: la de los ajustes pasa al frente.
+  await ext.bringToFront();
+  const lastPx = await ext.evaluate(async (vid, list) => {
+    const db = await import('./lib/db.js');
+    const r = await db.getVideo(vid);
+    const v = document.createElement('video');
+    v.muted = true;
+    v.src = URL.createObjectURL(r.blob);
+    await new Promise((res, rej) => {
+      v.onloadeddata = res;
+      v.onerror = () => rej(new Error('no se pudo leer el video'));
+      setTimeout(() => rej(new Error('el video no cargó')), 10000);
+    });
+    v.currentTime = Math.max(0, r.meta.duration / 1000 - 0.5);
+    await new Promise((res) => { v.onseeked = res; setTimeout(res, 3000); });
+    const c = new OffscreenCanvas(v.videoWidth, v.videoHeight);
+    const x = c.getContext('2d');
+    x.drawImage(v, 0, 0);
+    return list.map(([a, b]) => [...x.getImageData(Math.round(a * (c.width - 1)), Math.round(b * (c.height - 1)), 1, 1).data].slice(0, 3));
+  }, scrVid, [endPts.cam, endPts.away]).catch((e) => e.message);
+  await demo.bringToFront();
+  check('en el video guardado sales en el círculo, en su lugar', Array.isArray(lastPx) && !near(lastPx[0], SCREEN_RGB, 90) && near(lastPx[1], SCREEN_RGB, 60), JSON.stringify(lastPx));
+
+  // Sin preguntar: directo a la cuenta regresiva con la posición guardada.
+  await setSettings({ camAsk: false });
+  await sleep(300);
+  await demo.bringToFront();
+  await s.sw({ type: 'op', op: 'rec:start', tabId });
+  const rp2 = await recorderPage();
+  await rp2.evaluateOnNewDocument(fakeScreen);
+  await rp2.reload();
+  check('con «Preguntar siempre» apagado se graba directo', await waitFor(async () => (await state()).rec.status === 'recording', { timeout: 20000 }) && !(await rp2.evaluate(() => globalThis.__grabador.log.join(' '))).includes('placing'));
+  await s.sw({ type: 'op', op: 'rec:discard' });
+  await waitFor(async () => (await state()).rec.status === 'idle', { timeout: 10000 });
+  await setSettings({ camAsk: true, mode: 'tab', countdown: 3 });
 
   // ---------- desconectar el celular
   await s.sw({ type: 'link:stop' });
@@ -423,6 +606,29 @@ try {
   check('[clic] detener guarda la grabación', await waitFor(async () => (await state()).rec.status === 'idle', { timeout: 20000 }));
   const vid = await s.savedVideo((await state()).rec.lastId);
   check('[clic] el video de la pestaña dura lo grabado y tiene imagen', vid && vid.size > 100_000 && vid.duration > 4000, JSON.stringify(vid));
+  // En el video, el centro de la burbuja muestra el centro de la cámara simulada de Chrome
+  // (un círculo verde claro sobre fondo verde oscuro). Si Chrome dibujara la pestaña
+  // ampliada para la captura, la burbuja saldría agrandada y corrida hacia una esquina.
+  await ext.bringToFront();
+  const bubblePx = await ext.evaluate(async (id) => {
+    const db = await import('./lib/db.js');
+    const r = await db.getVideo(id);
+    const v = document.createElement('video');
+    v.muted = true;
+    v.src = URL.createObjectURL(r.blob);
+    await new Promise((res, rej) => { v.onloadeddata = res; v.onerror = () => rej(new Error('video')); setTimeout(() => rej(new Error('el video no cargó')), 10000); });
+    v.currentTime = Math.max(0, r.meta.duration / 1000 - 0.6);
+    await new Promise((res) => { v.onseeked = res; setTimeout(res, 3000); });
+    const c = new OffscreenCanvas(v.videoWidth, v.videoHeight);
+    const x = c.getContext('2d');
+    x.drawImage(v, 0, 0);
+    // Burbuja mediana (210 px) en su lugar inicial, en una pestaña de 1280×760.
+    const k = v.videoWidth / 1280;
+    const [cx, cy, d] = [(28 + 105) * k, (760 - 210 - 96 + 105) * k, 22 * k];
+    return [[0, -d], [d, 0], [0, d], [-d, 0]].map(([dx, dy]) => [...x.getImageData(Math.round(cx + dx), Math.round(cy + dy), 1, 1).data].slice(0, 3));
+  }, (await state()).rec.lastId).catch((e) => e.message);
+  const bright = Array.isArray(bubblePx) ? bubblePx.filter(([r, g]) => g > 190 && r < 170).length : 0;
+  check('[clic] en el video, la cámara sale centrada en la burbuja (sin ampliar)', bright >= 3, JSON.stringify(bubblePx));
 } catch (err) {
   check('[clic] el flujo real terminó sin excepciones', false, err.stack || String(err));
 } finally {

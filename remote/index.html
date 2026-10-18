@@ -108,6 +108,30 @@
           </div>
         </div>
 
+        <div class="block" id="cam-block" hidden>
+          <div class="label" data-t="camPlaceTitle"></div>
+          <div class="cam-place">
+            <div class="corners" id="corners">
+              <button type="button" data-corner="tl" data-t-aria="cornerTL"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="7" cy="9.5" r="2.6" fill="currentColor" stroke="none"/></svg></button>
+              <button type="button" data-corner="tr" data-t-aria="cornerTR"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="17" cy="9.5" r="2.6" fill="currentColor" stroke="none"/></svg></button>
+              <button type="button" data-corner="bl" data-t-aria="cornerBL"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="7" cy="14.5" r="2.6" fill="currentColor" stroke="none"/></svg></button>
+              <button type="button" data-corner="br" data-t-aria="cornerBR"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="17" cy="14.5" r="2.6" fill="currentColor" stroke="none"/></svg></button>
+            </div>
+            <div class="cam-opts">
+              <div class="seg" id="cam-size" role="radiogroup">
+                <button type="button" role="radio" data-size="s">S</button>
+                <button type="button" role="radio" data-size="m">M</button>
+                <button type="button" role="radio" data-size="l">L</button>
+                <button type="button" role="radio" data-size="xl">XL</button>
+              </div>
+              <div class="seg" id="cam-shape" role="radiogroup">
+                <button type="button" role="radio" data-shape="circle" data-t-aria="shapeCircle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/></svg></button>
+                <button type="button" role="radio" data-shape="rect" data-t-aria="shapeRect"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="block">
           <div class="label" data-t="fxTitle"></div>
           <div class="toggles" id="toggles">

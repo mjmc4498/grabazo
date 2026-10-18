@@ -2,7 +2,7 @@
 
 /* global GrabazoRelay */
 
-import { ALL_SITES, CAM_EFFECTS, CAM_FILTERS, LIMITS, PHONE, REMOTE_URL, buildRemoteUrl, getSettings, grantedOrigins, hasAllSites, removeOrigins, requestOrigins, saveSettings } from './config.js';
+import { ALL_SITES, CAM_CORNERS, CAM_EFFECTS, CAM_FILTERS, LIMITS, PHONE, REMOTE_URL, buildRemoteUrl, getSettings, grantedOrigins, hasAllSites, removeOrigins, requestOrigins, saveSettings } from './config.js';
 import { qrSvg } from './lib/qr.js';
 import { applyI18n, t } from './lib/i18n.js';
 
@@ -55,7 +55,16 @@ function render() {
   $('remote-url').value = settings.remoteUrl || '';
   $('remote-url').placeholder = REMOTE_URL;
   $('cam-preview').classList.toggle('mirror', !!settings.camMirror);
+  for (const b of $('cam-corner').querySelectorAll('button')) {
+    const c = CAM_CORNERS[b.dataset.corner];
+    b.setAttribute('aria-checked', String(c.x === settings.camPlace?.x && c.y === settings.camPlace?.y));
+  }
 }
+
+$('cam-corner').addEventListener('click', (e) => {
+  const c = CAM_CORNERS[e.target.closest('button[data-corner]')?.dataset.corner];
+  if (c) save({ camPlace: { ...c } });
+});
 
 const cast = (el, v) => (el.dataset.type === 'number' ? Number(v) : v);
 

@@ -66,9 +66,6 @@
       <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3a67f"/><stop offset="1" stop-color="#cf8d66"/></linearGradient>
       <radialGradient id="cheek" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#e57f6b" stop-opacity=".45"/><stop offset="1" stop-color="#e57f6b" stop-opacity="0"/></radialGradient>
     </defs>
-    <!-- cuerpo -->
-    <path d="M370 720c8-150 90-238 270-238s262 88 270 238z" fill="url(#sweater)"/>
-    <path d="M582 486c18 34 38 48 58 48s40-14 58-48c-18-6-38-9-58-9s-40 3-58 9z" fill="#174257"/>
     <!-- brazo que saluda (se mueve con --wave) -->
     <g id="arm" style="transform-origin: 846px 560px; transform: rotate(var(--wave, 0deg))">
       <path d="M800 560c40-30 80-120 92-200l44 10c-6 96-44 196-92 236z" fill="url(#sweater)"/>
@@ -81,15 +78,23 @@
         <rect x="30" y="-12" width="16" height="50" rx="8" fill="url(#skin)" transform="rotate(58 38 12)"/>
       </g>
     </g>
+    <!-- cuerpo: hombros caídos; el brazo sale por detrás del hombro -->
+    <path d="M374 720C378 604 424 540 520 510C556 499 598 492 640 492C682 492 724 499 760 510C856 540 902 604 906 720Z" fill="url(#sweater)"/>
+    <path d="M582 494c18 32 38 46 58 46s40-14 58-46c-18-5-38-8-58-8s-40 3-58 8z" fill="#174257"/>
     <!-- cuello -->
     <path d="M604 420h72v74c-12 14-24 20-36 20s-24-6-36-20z" fill="#c98861"/>
+    <!-- pelo (volumen detrás de la cabeza: asoma arriba y en las sienes) -->
+    <path d="M521 352C507 252 552 170 640 168C728 170 773 252 759 352Z" fill="#33201a"/>
     <!-- cabeza -->
     <ellipse cx="640" cy="330" rx="112" ry="130" fill="url(#skin)"/>
-    <ellipse cx="528" cy="340" rx="18" ry="30" fill="#d39570"/>
-    <ellipse cx="752" cy="340" rx="18" ry="30" fill="#d39570"/>
-    <!-- pelo -->
-    <path d="M526 320c-12-120 50-176 124-176 86 0 132 58 124 170-16-58-52-92-118-96-46-2-96 26-130 102z" fill="#3a2418"/>
-    <path d="M560 200c40-38 130-50 186 4-40-12-120-18-186-4z" fill="#4a2f20"/>
+    <ellipse cx="530" cy="344" rx="17" ry="29" fill="#d39570"/>
+    <ellipse cx="750" cy="344" rx="17" ry="29" fill="#d39570"/>
+    <ellipse cx="531" cy="346" rx="7" ry="14" fill="#bf7d59" opacity=".55"/>
+    <ellipse cx="749" cy="346" rx="7" ry="14" fill="#bf7d59" opacity=".55"/>
+    <!-- pelo (flequillo peinado al costado, siguiendo el contorno de la cabeza) -->
+    <path d="M529 316C517 230 566 172 644 172C722 174 765 230 752 312C745 280 729 254 704 242C688 258 652 268 612 262C586 258 562 266 548 288C540 298 534 306 529 316Z" fill="#3a2418"/>
+    <path d="M598 198C636 182 690 186 724 214" stroke="#5c3b28" stroke-width="7" stroke-linecap="round" fill="none" opacity=".75"/>
+    <path d="M566 236C590 214 622 206 652 208" stroke="#5c3b28" stroke-width="5" stroke-linecap="round" fill="none" opacity=".55"/>
     <!-- cara -->
     <ellipse cx="596" cy="334" rx="11" ry="13" class="eye" fill="#2a1a12"/>
     <ellipse cx="684" cy="334" rx="11" ry="13" class="eye" fill="#2a1a12"/>

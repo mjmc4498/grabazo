@@ -231,11 +231,15 @@ try {
     return { hint, ...(await inspect()) };
   }
 
-  async function downloaded(filename) {
+  // Todas las exportaciones se llaman igual: se busca la de la extensión y el tamaño
+  // esperados (si no, podría tomarse una descarga anterior mientras la nueva termina).
+  async function downloaded(filename, size = 0) {
     const base = path.basename(filename).replace(/\.[a-z0-9]+$/i, '');
+    const ext = path.extname(filename).toLowerCase();
     const item = await waitFor(async () => {
       const items = await page.evaluate(() => new Promise((r) => chrome.downloads.search({ orderBy: ['-startTime'], limit: 20 }, r)));
-      return items.find((d) => d.state === 'complete' && path.basename(d.filename).startsWith(base) && d.filename.includes(`${path.sep}Grabazo${path.sep}`));
+      return items.find((d) => d.state === 'complete' && path.basename(d.filename).startsWith(base) && path.extname(d.filename).toLowerCase() === ext
+        && d.filename.includes(`${path.sep}Grabazo${path.sep}`) && (!size || d.fileSize === size || d.totalBytes === size));
     }, { timeout: 20000 });
     if (!item) {
       const items = await page.evaluate(() => new Promise((r) => chrome.downloads.search({ orderBy: ['-startTime'], limit: 5 }, r)));
@@ -330,7 +334,7 @@ try {
   check('MP4: archivo válido con video y audio', mp4.type === 'video/mp4' && mp4.size > 5000 && mp4.video && mp4.audio, `${mp4.container}, ${mp4.video} + ${mp4.audio}, ${mp4.size} bytes, ${mp4.ms} ms`);
   check('MP4: dura lo que queda tras recortar y cortar (2,5 s)', near(mp4.duration, expected, 0.25), `${fmt(mp4.duration)} s, ${mp4.frames} cuadros`);
   check('MP4: audio y video duran lo mismo (sin desfase en los cortes)', near(mp4.aDur, mp4.vDur, 0.1), `video ${fmt(mp4.vDur)} s, audio ${fmt(mp4.aDur)} s`);
-  const dlMp4 = await downloaded(mp4.filename || '');
+  const dlMp4 = await downloaded(mp4.filename || '', mp4.size);
   check('MP4: se descarga', dlMp4?.bytes === mp4.size, dlMp4?.file || dlMp4?.missing);
 
   const webm = await exportAs('webm', { quality: 'medium' });
@@ -347,7 +351,7 @@ try {
   check('GIF: archivo GIF89a de 480 px', gif.type === 'image/gif' && gif.head === 'GIF89a' && gif.width === 480, `${gif.size} bytes, ${gif.ms} ms`);
   check('GIF: 10 cuadros por segundo y 2,5 s', Math.abs(gif.frames - 25) <= 2 && near(gif.duration, expected, 0.2), `${gif.frames} cuadros, ${fmt(gif.duration)} s`);
   check('GIF: los cuadros cambian (la imagen no se congela)', gif.colors >= Math.min(15, gif.frames - 2), `${gif.colors} colores en ${gif.frames} cuadros`);
-  const dlGif = await downloaded(gif.filename || '');
+  const dlGif = await downloaded(gif.filename || '', gif.size);
   check('GIF: se descarga', dlGif?.bytes === gif.size, dlGif?.file || dlGif?.missing);
 
   // ---------- cancelar

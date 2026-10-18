@@ -183,6 +183,7 @@ def lista(s, x, y, w, items, size=15, gap=0.62):
 phones = {n: celular(n) for n in ["phone-control", "phone-guion", "phone-camara"]}
 r = lambda n, radio=36: redondear(IMG / f"{n}.png", GEN / f"{n}-r.png", radio)
 dibujos = r("grabando-dibujos")
+ubicar = r("ubicar-camara")
 foco = r("grabando-foco")
 difuminar = r("grabando-difuminar")
 estudio = r("estudio", 28)
@@ -259,9 +260,9 @@ lista(s, 0.7, 2.35, 5.4, [
     ("Flotante y arrastrable", "Círculo o rectángulo, cuatro tamaños y modo espejo."),
     ("Fondos y desenfoque", "Separa a la persona del fondo en la propia computadora."),
     ("Filtros de color", "Blanco y negro, cálido, frío, vívido y retro."),
-    ("Sobre todas las apps", "Ventana flotante al grabar la pantalla completa."),
+    ("Dentro del video", "En ventana y pantalla: la ubicas antes de grabar y la mueves al grabar."),
 ], gap=0.88)
-foto(s, dibujos, 6.4, 1.9, w=6.4)
+foto(s, ubicar, 6.4, 1.9, w=6.4)
 
 # ---------------------------------------------------------------- 7. dibujo
 
@@ -361,14 +362,14 @@ for i, (t, c) in enumerate([
 # ---------------------------------------------------------------- 14. estado y publicación
 
 s = nueva()
-cabecera(s, "Estado · versión 1.0.0", "Listo para publicar")
+cabecera(s, "Estado · versión 1.1.0", "Listo para publicar")
 for i, (t, c) in enumerate([
-    ("Probado de punta a punta", "77 comprobaciones con la extensión real y un celular conectado, más 51 del estudio (recortes, cortes y exportación)."),
-    ("Paquete listo", "dist/grabazo-1.0.0.zip para la Chrome Web Store, Manifest V3, con acceso a sitios opcional."),
+    ("Probado de punta a punta", "102 comprobaciones con la extensión real y un celular conectado, más 51 del estudio (recortes, cortes y exportación)."),
+    ("Paquete listo", "dist/grabazo-1.1.0.zip para la Chrome Web Store, Manifest V3, con acceso a sitios opcional."),
     ("Ficha completa", "Textos, 5 capturas, 2 mosaicos, política de privacidad, justificación de permisos y landing page."),
 ]):
     tarjeta(s, 0.7 + i * 4.05, 2.25, 3.85, 2.6, t, c, numero=i + 1)
-texto(s, 0.7, 5.35, 11.9, 1.2, ["Siguiente paso: publicar la página del celular en mjmc4498.github.io/grabazo, la landing en grabazo.com y subir el ZIP 1.0.0 en el panel del desarrollador."], size=16, color=MUTED, line=1.3)
+texto(s, 0.7, 5.35, 11.9, 1.2, ["Siguiente paso: publicar la página del celular en mjmc4498.github.io/grabazo, la landing en grabazo.com y subir el ZIP 1.1.0 en el panel del desarrollador."], size=16, color=MUTED, line=1.3)
 
 # ---------------------------------------------------------------- 15. cierre
 

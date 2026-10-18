@@ -104,6 +104,7 @@ function renderSettings() {
   const blocked = (settings.mode === 'tab' && !canTab) || (settings.mode === 'area' && !canOverlay);
   $('#mode-sub').textContent = blocked ? t('modeBlocked') : t(subs[settings.mode]);
   $('#cam-opts').hidden = !settings.camera;
+  renderPreview();
   setSeg('cam-shape', settings.camShape);
   setSeg('cam-size', settings.camSize);
   $('#cam-effect').value = settings.camEffect;
@@ -169,7 +170,7 @@ $('#record').addEventListener('click', async () => {
 
 // ================================================================ grabando
 
-const STATES = { starting: 'statusStarting', picking: 'statusPicking', area: 'statusArea', countdown: 'statusCountdown', recording: 'statusRecording', paused: 'statusPaused', saving: 'statusSaving' };
+const STATES = { starting: 'statusStarting', picking: 'statusPicking', area: 'statusArea', placing: 'statusPlacing', countdown: 'statusCountdown', recording: 'statusRecording', paused: 'statusPaused', saving: 'statusSaving' };
 
 function renderLive() {
   const live = rec.status !== 'idle';
@@ -202,6 +203,7 @@ function tick() {
 }
 setInterval(tick, 250);
 
+$('#placed').addEventListener('click', () => toSW({ type: 'op', op: 'rec:placed' }).then(() => window.close()));
 $('#pause').addEventListener('click', () => toSW({ type: 'op', op: 'rec:togglePause' }));
 $('#stop').addEventListener('click', () => toSW({ type: 'op', op: 'rec:stop' }));
 $('#restart').addEventListener('click', () => toSW({ type: 'op', op: 'rec:restart' }));
@@ -290,6 +292,54 @@ function toast(text) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
 
+// ================================================================ vista previa de la cámara
+
+// Antes de grabar se ve la cámara (con sus efectos) en un círculo pequeño, también en los
+// modos ventana y pantalla, donde la burbuja no está en la página.
+let preview = null;
+let previewState = null;
+
+function renderPreview() {
+  const want = !!settings.camera && settings.mode !== 'camera' && rec.status === 'idle';
+  if (want && !preview && globalThis.GrabazoRelay) {
+    preview = GrabazoRelay.connect({
+      kind: 'preview',
+      onStream: (stream) => {
+        const v = $('#cam-video');
+        if (v.srcObject !== stream) v.srcObject = stream;
+        v.play().catch(() => {});
+        paintPreview();
+      },
+      onState: (s) => {
+        previewState = s;
+        paintPreview();
+      },
+      onIdle: () => toSW({ type: 'cam:wake' }),
+    });
+  } else if (!want && preview) {
+    preview.close();
+    preview = null;
+    $('#cam-video').srcObject = null;
+  }
+  paintPreview();
+}
+
+function paintPreview() {
+  const el = $('#cam-preview');
+  const s = previewState || {};
+  const live = !!s.live && !!preview?.stream.getVideoTracks().some((tr) => tr.readyState === 'live');
+  el.classList.toggle('live', live);
+  el.classList.toggle('rect', settings.camShape === 'rect');
+  el.classList.toggle('mirror', settings.camMirror !== false);
+  el.classList.toggle('error', !live && !!s.error && s.source !== 'phone');
+  el.classList.toggle('phone', !live && s.source === 'phone');
+  el.title = live ? t('camPreview') : s.source === 'phone' ? t('bubblePhoneLink') : s.error === 'denied' ? t('bubbleDenied') : s.error ? t('bubbleFailed') : t('camStarting');
+}
+$('#cam-video').addEventListener('playing', paintPreview);
+$('#cam-preview').addEventListener('click', () => {
+  if (previewState?.error === 'denied') toSW({ type: 'open:permissions' });
+});
+
 // ================================================================ estado
 
 function apply(s) {
@@ -300,6 +350,7 @@ function apply(s) {
   if (s.settings) settings = s.settings;
   renderLive();
   renderPhone();
+  renderPreview();
 }
 
 chrome.runtime.onMessage.addListener((msg, sender) => {

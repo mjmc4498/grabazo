@@ -61,10 +61,39 @@ async function save(page, name, opts = {}) {
   const file = path.join(SHOTS, `${name}.png`);
   // Las pestañas en segundo plano no dibujan: se trae al frente antes de capturar.
   await page.bringToFront();
-  // Al volver al frente, Chrome sin ventana puede perder la emulación de tamaño.
-  if (opts.viewport) await page.setViewport(opts.viewport);
+  // Al volver al frente, Chrome sin ventana puede perder la emulación de tamaño, quedar con
+  // un zoom pasajero o pintar el video de la burbuja (un iframe de la extensión) ampliado
+  // hacia una esquina. Un cambio mínimo de tamaño obliga a repintar todo bien.
+  if (opts.viewport) {
+    await page.setViewport({ ...opts.viewport, width: opts.viewport.width + 2 });
+    await sleep(250);
+    await page.setViewport(opts.viewport);
+    for (let i = 0; i < 10; i++) {
+      const v = await page.evaluate(() => ({ scale: visualViewport.scale, w: innerWidth, x: visualViewport.offsetLeft, y: visualViewport.offsetTop }));
+      if (v.scale === 1 && v.w === opts.viewport.width && !v.x && !v.y) break;
+      await sleep(300);
+    }
+    // El primer cuadro tras el cambio puede ser el anterior estirado: se descarta.
+    await sleep(500);
+    await page.screenshot();
+  }
   await sleep(opts.wait ?? 400);
-  if (opts.element) await (await page.$(opts.element)).screenshot({ path: file });
+  // Si Chrome entregó la página ampliada (artefacto de Chrome sin ventana), se repite y
+  // se guarda la toma ya comprobada.
+  if (opts.verify) {
+    let shot = null;
+    for (let i = 0; i < 8; i++) {
+      shot = await page.screenshot({ encoding: 'base64' });
+      if (await opts.verify(shot)) break;
+      console.log(`   (${name}: imagen ampliada o burbuja mal pintada, se repite)`);
+      await page.setViewport({ ...opts.viewport, width: opts.viewport.width + 2 });
+      await sleep(300);
+      await page.setViewport(opts.viewport);
+      await opts.repair?.();
+      await sleep(900);
+    }
+    fs.writeFileSync(file, Buffer.from(shot, 'base64'));
+  } else if (opts.element) await (await page.$(opts.element)).screenshot({ path: file });
   else await page.screenshot({ path: file, clip: opts.clip });
   fs.copyFileSync(file, path.join(PRES, `${name}.png`));
   console.log('  ', path.relative(ROOT, file));
@@ -90,6 +119,38 @@ try {
   const ext = await browser.newPage();
   await ext.goto(`chrome-extension://${extId}/options.html`);
   const sw = (msg) => ext.evaluate((m) => chrome.runtime.sendMessage({ to: 'sw', ...m }), msg);
+  // Comprueba una captura de la página de ejemplo. Bien capturada, la barra de navegación
+  // blanca llega hasta y≈66 (en y=80 ya se ve el fondo) y en el centro de la burbuja de la
+  // cámara (tamaño L, 290 px) se ve la cara de la persona, no la pared de atrás.
+  // El iframe de la burbuja puede quedarse con el tamaño de un zoom pasajero (se ve
+  // ampliado hacia una esquina): ocultar y mostrar la cámara lo crea de nuevo.
+  const repairBubble = async () => {
+    await sw({ type: 'op', op: 'ui:set', patch: { camera: false } });
+    await sleep(600);
+    await sw({ type: 'op', op: 'ui:set', patch: { camera: true } });
+    await waitFor(() => demo.frames().find((f) => f.url().includes('/camara.html'))?.$eval('body', (b) => b.classList.contains('live')), { timeout: 8000 });
+    await sleep(800);
+  };
+  const notZoomed = async (b64) => {
+    const { camPos } = await ext.evaluate(() => chrome.storage.local.get('camPos'));
+    const center = camPos ? [camPos.x + 145, camPos.y + 145] : [28 + 145, DEMO_VIEW.height - 290 - 96 + 145];
+    return ext.evaluate(async (data, [cx, cy]) => {
+      const bmp = await createImageBitmap(await (await fetch(`data:image/png;base64,${data}`)).blob());
+      const c = new OffscreenCanvas(bmp.width, bmp.height);
+      const x = c.getContext('2d');
+      x.drawImage(bmp, 0, 0);
+      const px = (a, b) => [...x.getImageData(a, b, 1, 1).data].slice(0, 3);
+      const [n, g] = [px(1000, 40), px(1000, 80)];
+      const page = n.reduce((sum, v, i) => sum + Math.abs(v - g[i]), 0) > 4;
+      const d = x.getImageData(Math.round(cx) - 4, Math.round(cy) - 4, 9, 9).data;
+      let r = 0, gg = 0, b = 0;
+      for (let i = 0; i < d.length; i += 4) { r += d[i]; gg += d[i + 1]; b += d[i + 2]; }
+      const k = d.length / 4;
+      [r, gg, b] = [r / k, gg / k, b / k];
+      const face = r - gg > 30 && r - b > 60;
+      return page && face;
+    }, b64, center);
+  };
   const state = () => sw({ type: 'state:get' });
   const setSettings = (patch) => ext.evaluate(async (p) => {
     const { settings } = await chrome.storage.sync.get('settings');
@@ -197,13 +258,13 @@ try {
   await demo.setViewport(DEMO_VIEW);
   await demo.screenshot();
   await sleep(500);
-  await save(demo, 'grabando-dibujos', { wait: 900, viewport: DEMO_VIEW });
+  await save(demo, 'grabando-dibujos', { wait: 900, viewport: DEMO_VIEW, verify: notZoomed, repair: repairBubble });
 
   // Foco de luz sobre los indicadores.
   await sw({ type: 'op', op: 'ui:set', patch: { spotlight: true } });
   await demo.mouse.move(260, 175, { steps: 6 });
   await sleep(700);
-  await save(demo, 'grabando-foco', { wait: 500, viewport: DEMO_VIEW });
+  await save(demo, 'grabando-foco', { wait: 500, viewport: DEMO_VIEW, verify: notZoomed, repair: repairBubble });
   await sw({ type: 'op', op: 'ui:set', patch: { spotlight: false } });
 
   // Difuminar los números de tarjeta.
@@ -212,7 +273,7 @@ try {
   for (const y of [447, 489, 531, 573]) await demo.mouse.click(985, y);
   await sw({ type: 'op', op: 'ui:set', patch: { blur: false } });
   await demo.mouse.move(820, 660);
-  await save(demo, 'grabando-difuminar', { wait: 600, viewport: DEMO_VIEW });
+  await save(demo, 'grabando-difuminar', { wait: 600, viewport: DEMO_VIEW, verify: notZoomed, repair: repairBubble });
 
   // El celular como control remoto, teleprompter y cámara durante la grabación.
   await sw({ type: 'op', op: 'ui:set', patch: { tool: 'pen', color: '#FF9F0A', spotlight: true } });
@@ -261,6 +322,44 @@ try {
   await studio.goto(`chrome-extension://${extId}/estudio.html`);
   await sleep(1500);
   await save(studio, 'biblioteca', { wait: 600 });
+
+  // ---------- Ventana: «Ubica tu cámara» (la cámara va dentro del video)
+  // Chrome sin ventana no muestra su selector de ventanas: en la pestaña del grabador se
+  // reemplaza por la página de ejemplo (una imagen de ella). La cámara es la del celular.
+  await demo.bringToFront();
+  await demo.setViewport(DEMO_VIEW);
+  await sleep(600);
+  const pageShot = await demo.screenshot({ encoding: 'base64' });
+  await setSettings({ mode: 'window', camAsk: true, camShape: 'circle', camSize: 'm', camPlace: { x: 0, y: 1 }, systemAudio: false });
+  await sw({ type: 'op', op: 'rec:start', tabId });
+  const placeId = (await state()).rec.id;
+  const placer = await (await browser.waitForTarget((t) => t.url().includes(`grabador.html#${placeId}`), { timeout: 15000 })).page();
+  await placer.evaluateOnNewDocument((src) => {
+    const pick = (sources, cb) => { setTimeout(() => cb('grabazo-captura', { canRequestAudioTrack: false }), 100); return 1; };
+    try { chrome.desktopCapture.chooseDesktopMedia = pick; } catch {}
+    const real = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+    navigator.mediaDevices.getUserMedia = async (c) => {
+      if (c?.video?.mandatory?.chromeMediaSource !== 'desktop') return real(c);
+      const img = new Image();
+      img.src = src;
+      await img.decode();
+      const canvas = Object.assign(document.createElement('canvas'), { width: img.width, height: img.height });
+      const ctx = canvas.getContext('2d', { alpha: false });
+      setInterval(() => ctx.drawImage(img, 0, 0), 33);
+      ctx.drawImage(img, 0, 0);
+      return canvas.captureStream(30);
+    };
+  }, `data:image/png;base64,${pageShot}`);
+  await placer.setViewport({ width: 1280, height: 800 });
+  await placer.reload();
+  const placing = await waitFor(() => placer.evaluate(() => document.body.dataset.phase === 'placing' && globalThis.__grabador?.cam.live), { timeout: 25000 });
+  if (!placing) throw new Error('no apareció «Ubica tu cámara»');
+  await placer.evaluate(() => document.activeElement?.blur());
+  await sleep(1500);
+  await save(placer, 'ubicar-camara', { wait: 800, viewport: { width: 1280, height: 800 }, clip: { x: 50, y: 180, width: 1180, height: 460 } });
+  await sw({ type: 'op', op: 'rec:discard' });
+  await waitFor(async () => (await state()).rec.status === 'idle', { timeout: 10000 });
+  await setSettings({ mode: 'tab', systemAudio: true });
 
   // ---------- bienvenida y popup antes de grabar
   await ext.setViewport({ width: 1280, height: 800 });

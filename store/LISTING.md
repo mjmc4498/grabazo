@@ -8,7 +8,7 @@ Todo lo que pide el [Panel del desarrollador](https://chrome.google.com/webstore
 
 | Campo | Valor |
 |---|---|
-| Archivo para subir | `dist/grabazo-1.0.0.zip` · versión 1.0.0 |
+| Archivo para subir | `dist/grabazo-1.1.0.zip` · versión 1.1.0 |
 | Autor | Miguel Mogrovejo |
 
 > Antes de enviar a revisión publica el repositorio `grabazo` con GitHub Pages (ver README, paso 1): el QR abre `https://mjmc4498.github.io/grabazo/` en el celular y la política de privacidad vive en esa misma dirección.
@@ -44,7 +44,7 @@ Graba tutoriales, clases, demostraciones y mensajes en video directamente desde 
 🙂 TU CÁMARA EN UNA BURBUJA
 • Burbuja flotante y arrastrable, en círculo o rectángulo, con cuatro tamaños y modo espejo.
 • Fondo desenfocado o fondos virtuales (la separación de la persona se hace en tu computadora) y filtros de color.
-• Ventana flotante sobre todas las apps al grabar la pantalla completa.
+• Al grabar una ventana o toda la pantalla, tu cámara va dentro del video: eliges dónde antes de grabar y la mueves mientras grabas (desde la barra o el celular), aunque cambies de app.
 
 🎙️ AUDIO
 • Micrófono y sonido de la pestaña o del sistema al mismo tiempo, con reducción de ruido.

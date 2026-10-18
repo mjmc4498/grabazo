@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.request
 from pathlib import Path
 
@@ -56,7 +57,15 @@ def screenshot(url: str, out: Path, width: int, height: int, scale: float = 1, t
         if transparent:
             args.append("--default-background-color=00000000")
         args.append(url)
-        subprocess.run(args, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # Chrome sin interfaz a veces termina con error al arrancar (sobre todo si hay
+        # otro Chrome de pruebas abierto): se reintenta un par de veces.
+        for attempt in range(3):
+            done = subprocess.run(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if done.returncode == 0 and out.exists():
+                break
+            time.sleep(1.5)
+        else:
+            done.check_returncode()
     img = Image.open(out)
     expected = (round(width * scale), round(height * scale))
     if img.size != expected:

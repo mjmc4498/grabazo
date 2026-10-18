@@ -100,10 +100,40 @@ main {
 .card select.input { background: var(--bg); }
 .cam-opts {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 64px auto 1fr;
+  align-items: center;
   gap: 6px;
-  padding-left: 28px;
+  padding-left: 0;
 }
+/* Vista previa de la cámara (círculo o rectángulo, según la forma elegida). */
+.cam-preview {
+  position: relative;
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #111113;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line);
+  cursor: default;
+}
+.cam-preview.rect { border-radius: 12px; }
+.cam-preview video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .2s ease; }
+.cam-preview.mirror video { transform: scaleX(-1); }
+.cam-preview.live video { opacity: 1; }
+.cam-preview .spinner { width: 18px; height: 18px; border-color: rgba(255, 255, 255, .18); border-top-color: #fff; }
+.cam-preview.live .spinner, .cam-preview.error .spinner, .cam-preview.phone .spinner { display: none; }
+.cam-err { display: none; color: #ff9f0a; font-size: 20px; }
+.cam-preview.error { cursor: pointer; }
+.cam-preview.error .cam-err { display: block; }
+.placing { display: none; flex-direction: column; gap: 10px; }
+body[data-status="placing"] .placing { display: flex; }
+body[data-status="placing"] .controls,
+body[data-status="placing"] .toggles { display: none; }
 .cam-opts .seg { background: var(--bg); }
 .cam-opts .seg button[aria-checked="true"] { background: var(--surface-2); }
 .cam-opts .seg svg { width: 15px; height: 15px; display: block; margin: auto; }

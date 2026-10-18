@@ -3,7 +3,7 @@
   "name": "__MSG_extName__",
   "short_name": "Grabazo",
   "description": "__MSG_extDescription__",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Miguel Mogrovejo",
   "homepage_url": "https://mjmc4498.github.io/grabazo/",
   "default_locale": "es",

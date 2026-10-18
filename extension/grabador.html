@@ -22,6 +22,9 @@
   <main class="stage">
     <div class="preview-wrap">
       <video id="preview" muted playsinline autoplay></video>
+      <div class="cam-handle" id="cam-handle" hidden data-i18n-title="camDrag">
+        <span class="cam-handle-msg" id="cam-handle-msg"></span>
+      </div>
       <div class="cam-wait" id="cam-wait" hidden>
         <span class="spinner"></span>
         <span id="cam-wait-text"></span>
@@ -53,6 +56,46 @@
           <span data-i18n="discard"></span>
         </button>
       </div>
+
+      <section class="cam-panel" id="cam-panel" hidden>
+        <div class="cam-head">
+          <span class="label" data-i18n="camPanel"></span>
+          <input class="switch" id="cam-visible" type="checkbox" checked data-i18n-title="camShowHide">
+        </div>
+        <div class="cam-body">
+          <div class="corners" id="corners" role="group" data-i18n-aria="camCorner">
+            <button type="button" data-corner="tl" data-i18n-title="cornerTL" data-i18n-aria="cornerTL"><i></i></button>
+            <button type="button" data-corner="tr" data-i18n-title="cornerTR" data-i18n-aria="cornerTR"><i></i></button>
+            <button type="button" data-corner="bl" data-i18n-title="cornerBL" data-i18n-aria="cornerBL"><i></i></button>
+            <button type="button" data-corner="br" data-i18n-title="cornerBR" data-i18n-aria="cornerBR"><i></i></button>
+          </div>
+          <div class="cam-opts">
+            <div class="seg" id="cam-size" role="radiogroup" data-i18n-aria="camSizeTitle">
+              <button type="button" role="radio" data-size="s" data-i18n-title="sizeS">S</button>
+              <button type="button" role="radio" data-size="m" data-i18n-title="sizeM">M</button>
+              <button type="button" role="radio" data-size="l" data-i18n-title="sizeL">L</button>
+              <button type="button" role="radio" data-size="xl" data-i18n-title="sizeXL">XL</button>
+            </div>
+            <div class="seg" id="cam-shape" role="radiogroup" data-i18n-aria="camShapeTitle">
+              <button type="button" role="radio" data-shape="circle" data-i18n-title="shapeCircle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/></svg></button>
+              <button type="button" role="radio" data-shape="rect" data-i18n-title="shapeRect"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/></svg></button>
+              <button type="button" id="cam-mirror" aria-pressed="false" data-i18n-title="camMirror"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M8 7 3 12l5 5z"/><path d="m16 7 5 5-5 5z"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <p class="cam-hint muted" id="cam-hint"></p>
+        <div class="place-actions" id="place-actions">
+          <button class="btn accent big" id="place-go" type="button">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5" fill="currentColor" stroke="none"/></svg>
+            <span data-i18n="placeStart"></span>
+          </button>
+          <button class="btn ghost" id="place-cancel" type="button" data-i18n="placeCancel"></button>
+        </div>
+        <label class="check" id="ask-row">
+          <input type="checkbox" id="cam-ask" checked>
+          <span data-i18n="placeAsk"></span>
+        </label>
+      </section>
 
       <p class="warn" id="warn" hidden></p>
       <button class="btn primary" id="close" type="button" data-i18n="close" hidden></button>

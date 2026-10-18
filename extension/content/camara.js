@@ -2,8 +2,8 @@
 // Un marco arrastrable (círculo o rectángulo, cuatro tamaños, espejo) con la cámara
 // adentro: camara.html, una página de la extensión que recibe la imagen (de la cámara
 // de la computadora o del celular, con sus efectos) desde el documento offscreen. Como
-// está en la página, se ve en la grabación. También puede salir a una ventana flotante
-// sobre todas las apps (Picture-in-Picture).
+// está en la página, se ve en la grabación de la pestaña o del área. (En los modos
+// ventana y pantalla la cámara no va aquí: la compone el grabador dentro del video.)
 
 (() => {
   'use strict';
@@ -21,19 +21,13 @@
     }
     .bubble.rect { border-radius: 20px; }
     .bubble.dragging { cursor: grabbing; transition: none; }
+    .bubble.gliding { transition: transform .4s cubic-bezier(.3,.7,.3,1), width .25s ease, height .25s ease, border-radius .25s ease; }
     .bubble[hidden] { display: none; }
     .bubble .frame {
       position: absolute; inset: 0; border-radius: inherit; overflow: hidden; background: #111113;
       box-shadow: 0 0 0 3px rgba(255,255,255,.92);
     }
     .bubble iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; background: #111113; color-scheme: normal; }
-    .bubble.popped .frame { display: none; }
-    .bubble.popped { width: 120px !important; height: 44px !important; border-radius: 22px; }
-    .bubble .pip-note {
-      display: none; position: absolute; inset: 0; align-items: center; justify-content: center; border-radius: 22px;
-      background: rgba(17,17,19,.92); color: #fff; font: 600 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    .bubble.popped .pip-note { display: flex; }
     .bubble .cam-tools {
       position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); display: flex; gap: 2px; padding: 3px;
       border-radius: 999px; background: rgba(17,17,19,.92); box-shadow: 0 6px 18px rgba(0,0,0,.35);
@@ -53,7 +47,6 @@
     shape: '<svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="5"/><rect x="14" y="7" width="8" height="10" rx="2"/></svg>',
     size: '<svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>',
     mirror: '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M8 7 3 12l5 5V7zM16 7l5 5-5 5V7z"/></svg>',
-    pip: '<svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="15" rx="2"/><rect x="12" y="11" width="7" height="5" rx="1"/></svg>',
     hide: '<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>',
   };
 
@@ -63,9 +56,6 @@
     bubble.hidden = true;
     const frame = document.createElement('div');
     frame.className = 'frame';
-    const note = document.createElement('div');
-    note.className = 'pip-note';
-    note.textContent = t('camInPip');
     const tools = document.createElement('div');
     tools.className = 'cam-tools';
     const btn = (key, title, fn) => {
@@ -79,13 +69,12 @@
       tools.append(b);
       return b;
     };
-    bubble.append(frame, note, tools);
+    bubble.append(frame, tools);
     root.append(bubble);
 
     let iframe = null;
     let opts = { shape: 'circle', size: 'm', mirror: true };
     let pos = null; // { x, y } esquina superior izquierda
-    let pip = null;
 
     function dims() {
       const d = SIZES[opts.size] || SIZES.m;
@@ -157,52 +146,35 @@
     btn('shape', t('camShape'), () => onSettings?.({ camShape: opts.shape === 'circle' ? 'rect' : 'circle' }));
     btn('size', t('camSize'), () => onSettings?.({ camSize: ORDER[(ORDER.indexOf(opts.size) + 1) % ORDER.length] }));
     btn('mirror', t('camMirror'), () => onSettings?.({ camMirror: !opts.mirror }));
-    const pipBtn = btn('pip', t('camPip'), () => togglePip());
     btn('hide', t('camHide'), () => onHide?.());
-    if (!('documentPictureInPicture' in window)) pipBtn.remove();
-
-    // Ventana flotante sobre todas las apps: útil al grabar la pantalla completa.
-    async function togglePip() {
-      if (pip) { pip.close(); return; }
-      try {
-        const { w, h } = dims();
-        const win = await window.documentPictureInPicture.requestWindow({ width: Math.max(w, 200), height: Math.max(h, 200) });
-        pip = win;
-        const style = win.document.createElement('style');
-        style.textContent = 'html,body{margin:0;height:100%;background:#111113;overflow:hidden}iframe{width:100%;height:100%;border:0;display:block}';
-        win.document.head.append(style);
-        const inner = win.document.createElement('iframe');
-        inner.src = chrome.runtime.getURL('camara.html');
-        win.document.body.append(inner);
-        bubble.classList.add('popped');
-        iframe?.remove();
-        iframe = null;
-        win.addEventListener('pagehide', () => {
-          pip = null;
-          bubble.classList.remove('popped');
-          if (!bubble.hidden) ensureFrame();
-        });
-      } catch {
-        pip = null;
-      }
-    }
 
     return {
       show(next, savedPos) {
         if (savedPos && !pos) pos = { x: savedPos.x, y: savedPos.y };
         opts = { ...opts, ...next };
         bubble.hidden = false;
-        if (!pip) ensureFrame();
+        ensureFrame();
         layout();
       },
       set(next) {
         opts = { ...opts, ...next };
         layout();
       },
+      // A una esquina o posición ({ x, y } de 0 a 1 dentro del espacio libre), deslizándose.
+      place(p) {
+        if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) return;
+        const { w, h } = dims();
+        const m = 12;
+        pos = clampPos({ x: m + p.x * (innerWidth - w - m * 2), y: m + p.y * (innerHeight - h - m * 2 - 18) });
+        bubble.classList.add('gliding');
+        layout();
+        clearTimeout(this.glide);
+        this.glide = setTimeout(() => bubble.classList.remove('gliding'), 450);
+        onSave?.(pos);
+      },
       hide() {
         bubble.hidden = true;
         bubble.classList.remove('tools');
-        pip?.close();
         // Sin la burbuja no hace falta la cámara: el iframe se quita y la luz se apaga.
         iframe?.remove();
         iframe = null;
@@ -210,7 +182,6 @@
       get visible() { return !bubble.hidden; },
       destroy() {
         removeEventListener('resize', layout);
-        pip?.close();
         bubble.remove();
       },
     };

@@ -213,6 +213,7 @@ svg .fill { fill: currentColor; stroke: none; }
 .app[data-rec="paused"] .chip { background: rgba(255, 159, 10, .16); color: #ffc46b; }
 .app[data-rec="paused"] .chip i { background: var(--warn); }
 .app[data-rec="countdown"] .chip i,
+.app[data-rec="placing"] .chip i,
 .app[data-rec="saving"] .chip i { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
 
 .big-time {
@@ -223,7 +224,8 @@ svg .fill { fill: currentColor; stroke: none; }
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-.app[data-rec="idle"] .big-time { color: var(--surface-3); }
+.app[data-rec="idle"] .big-time,
+.app[data-rec="placing"] .big-time { color: var(--surface-3); }
 .app[data-rec="paused"] .big-time { color: #ffc46b; }
 .app.ending .big-time { color: #ff6961; animation: pulse 1s ease-in-out infinite; }
 .limit { min-height: 18px; margin-top: 4px; }
@@ -338,6 +340,23 @@ svg .fill { fill: currentColor; stroke: none; }
 .toggles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .toggles button.action { color: var(--muted); }
 .toggles button.off { color: #ff6961; }
+
+.cam-place { display: flex; gap: 10px; align-items: stretch; }
+.cam-place .corners { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; flex: none; width: 132px; }
+.cam-place .corners button {
+  display: grid;
+  place-items: center;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.cam-place .corners svg { width: 26px; height: 26px; }
+.cam-place .corners button[aria-pressed="true"] { background: var(--accent-soft); color: #ffa45c; box-shadow: inset 0 0 0 1.5px rgba(255, 122, 26, .55); }
+.cam-place .corners button:active { transform: scale(.96); }
+.cam-opts { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cam-opts .seg button { display: grid; place-items: center; height: 38px; }
+.cam-opts .seg svg { width: 20px; height: 20px; }
 
 .colors { display: flex; justify-content: space-between; gap: 6px; padding: 4px 2px; }
 .colors button {

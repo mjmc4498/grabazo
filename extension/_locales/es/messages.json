@@ -143,6 +143,48 @@
   "recBodyCanceled": {
     "message": "No se eligió nada para grabar. Puedes cerrar esta pestaña."
   },
+  "recTitlePlacing": {
+    "message": "Ubica tu cámara"
+  },
+  "recBodyPlacing": {
+    "message": "Así saldrás en el video. Arrastra la cámara en la vista previa o elige una esquina, el tamaño y la forma. Mientras grabas también la puedes mover."
+  },
+  "placeStart": {
+    "message": "Empezar a grabar"
+  },
+  "placeCancel": {
+    "message": "Cancelar"
+  },
+  "placeAsk": {
+    "message": "Preguntar siempre antes de grabar"
+  },
+  "camPanel": {
+    "message": "Tu cámara en el video"
+  },
+  "camShowHide": {
+    "message": "Mostrar u ocultar la cámara en el video"
+  },
+  "camCorner": {
+    "message": "Esquina de la cámara"
+  },
+  "cornerTL": {
+    "message": "Arriba a la izquierda"
+  },
+  "cornerTR": {
+    "message": "Arriba a la derecha"
+  },
+  "cornerBL": {
+    "message": "Abajo a la izquierda"
+  },
+  "cornerBR": {
+    "message": "Abajo a la derecha"
+  },
+  "camDrag": {
+    "message": "Arrastra para mover la cámara (o usa las flechas del teclado)"
+  },
+  "camHint": {
+    "message": "Arrástrala en la vista previa o elige una esquina: en el video se desliza con suavidad. También desde la barra o tu celular."
+  },
   "recKeepTab": {
     "message": "No cierres esta pestaña mientras grabas: aquí se guarda tu video, en tu computadora."
   },
@@ -224,14 +266,8 @@
   "camMirrorSub": {
     "message": "Te ves como en un espejo, en la burbuja y en el video."
   },
-  "camPip": {
-    "message": "Ventana flotante sobre todas las apps"
-  },
   "camHide": {
     "message": "Ocultar la cámara"
-  },
-  "camInPip": {
-    "message": "Cámara en ventana flotante"
   },
   "tbMove": {
     "message": "Arrastra para mover la barra"
@@ -283,6 +319,9 @@
   },
   "tbHide": {
     "message": "Ocultar la barra (vuelve desde el ícono de Grabazo o tu celular)"
+  },
+  "tbCamPlace": {
+    "message": "Posición y tamaño de la cámara"
   },
   "tbPhoneOn": {
     "message": "Celulares conectados: $N$",
@@ -357,6 +396,15 @@
   },
   "statusPicking": {
     "message": "Eligiendo qué grabar…"
+  },
+  "statusPlacing": {
+    "message": "Ubicando la cámara…"
+  },
+  "placingPopup": {
+    "message": "Elige dónde va tu cámara en la pestaña de Grabazo, o empieza ya con la posición guardada."
+  },
+  "camPreview": {
+    "message": "Vista previa de tu cámara"
   },
   "statusArea": {
     "message": "Eligiendo el área…"
@@ -735,7 +783,19 @@
     "message": "Cámara"
   },
   "camBody": {
-    "message": "La burbuja flota sobre la página y se ve en la grabación. Arrástrala donde quieras; al pasar el mouse aparecen sus controles."
+    "message": "En Pestaña y Área, la burbuja flota sobre la página: arrástrala donde quieras y al pasar el mouse aparecen sus controles. En Ventana y Pantalla, la cámara va dentro del video: antes de grabar eliges dónde, y la puedes mover mientras grabas."
+  },
+  "camPlaceTitle": {
+    "message": "Posición en Ventana y Pantalla"
+  },
+  "camPlaceSub": {
+    "message": "Dónde aparece la cámara dentro del video. También se arrastra antes de grabar."
+  },
+  "camAskTitle": {
+    "message": "Preguntar dónde va la cámara"
+  },
+  "camAskSub": {
+    "message": "En Ventana y Pantalla, muestra la vista previa para ubicarla antes de cada grabación."
   },
   "camShapeTitle": {
     "message": "Forma de la burbuja"
@@ -890,7 +950,7 @@
     "message": "Grabar una ventana o toda la pantalla"
   },
   "guide2Body": {
-    "message": "Elige <b>Ventana</b> o <b>Pantalla</b>: Chrome te pide qué compartir. Para que la burbuja de la cámara se vea sobre otras apps, ábrela en <b>ventana flotante</b> desde sus controles."
+    "message": "Elige <b>Ventana</b> o <b>Pantalla</b>: Chrome te pide qué compartir. Luego, en <b>Ubica tu cámara</b>, arrastra tu cámara (o elige una esquina, el tamaño y la forma) y pulsa <b>Empezar a grabar</b>. La cámara va dentro del video, así sales aunque cambies de app; la mueves desde la barra, el celular o la pestaña de Grabazo."
   },
   "guide3Title": {
     "message": "Dibujar, zoom y foco"

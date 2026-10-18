@@ -163,6 +163,11 @@ function phoneState() {
       camPhone: settings.camId === PHONE,
       micPhone: settings.micId === PHONE,
       zoomLevel: settings.zoomLevel,
+      camera: !!settings.camera,
+      camSize: settings.camSize,
+      camShape: settings.camShape,
+      camMirror: settings.camMirror !== false,
+      camPlace: settings.camPlace,
     },
     camWant: wantsPhoneCam(),
     micWant: wantsPhoneMic(),
@@ -213,7 +218,7 @@ function onConnection(conn) {
   conn.on('error', () => {});
 }
 
-const PHONE_OPS = new Set(['rec:start', 'rec:toggle', 'rec:stop', 'rec:pause', 'rec:resume', 'rec:togglePause', 'rec:restart', 'rec:discard', 'ui:set', 'ui:toggle', 'ui:clear', 'ui:undo', 'ui:unblur', 'ptt', 'prefs:set']);
+const PHONE_OPS = new Set(['rec:start', 'rec:toggle', 'rec:stop', 'rec:pause', 'rec:resume', 'rec:togglePause', 'rec:restart', 'rec:discard', 'ui:set', 'ui:toggle', 'ui:clear', 'ui:undo', 'ui:unblur', 'ptt', 'prefs:set', 'rec:placed', 'cam:set']);
 const UI_TOGGLES = new Set(['spotlight', 'zoom', 'clicks', 'blur', 'toolbar', 'camera', 'mic', 'tool']);
 
 function cleanPatch(p) {
@@ -249,6 +254,13 @@ async function onPhoneMessage(phone, msg) {
       if (msg.op === 'prefs:set' && msg.patch && typeof msg.patch === 'object') {
         op.patch = {};
         for (const k of ['camPhone', 'micPhone']) if (typeof msg.patch[k] === 'boolean') op.patch[k] = msg.patch[k];
+      }
+      // Cámara en la grabación: esquina, tamaño, forma y espejo (el service worker valida).
+      if (msg.op === 'cam:set' && msg.patch && typeof msg.patch === 'object') {
+        const q = msg.patch;
+        op.patch = {};
+        for (const k of ['corner', 'size', 'shape']) if (typeof q[k] === 'string') op.patch[k] = str(q[k], 8);
+        if (typeof q.mirror === 'boolean') op.patch.mirror = q.mirror;
       }
       const res = await toSW(op);
       if (Number.isInteger(msg.rid)) send(phone.conn, { t: 'ack', rid: msg.rid, ok: res?.ok !== false, error: res?.error || null });

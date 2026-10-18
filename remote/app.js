@@ -40,10 +40,11 @@
     gateKickedTitle: 'Desconectado', gateKickedBody: 'La computadora cerró la conexión con este celular.',
     gateFullTitle: 'Demasiados celulares', gateFullBody: 'Ya hay seis celulares conectados a esta computadora.',
     gateUnsupportedTitle: 'Navegador no compatible', gateUnsupportedBody: 'Abre este enlace en Chrome o Safari actualizados.',
-    stIdle: 'Lista para grabar', stStarting: 'Preparando…', stPicking: 'Elige qué grabar en la computadora', stArea: 'Elige el área en la computadora',
+    stIdle: 'Lista para grabar', stStarting: 'Preparando…', stPicking: 'Elige qué grabar en la computadora', stArea: 'Elige el área en la computadora', stPlacing: 'Ubica tu cámara',
     stCountdown: 'Cuenta regresiva', stRecording: 'Grabando', stPaused: 'En pausa', stSaving: 'Guardando…',
     modeTab: 'Pestaña', modeArea: 'Área', modeWindow: 'Ventana', modeScreen: 'Pantalla', modeCamera: 'Solo cámara',
     hintIdle: 'Toca el botón para empezar', hintRec: 'Toca para detener y guardar', hintCountdown: 'Toca para cancelar', hintSaving: 'Abriendo el estudio en la computadora',
+    hintPlacing: 'Elige una esquina abajo y toca el botón para empezar',
     limitLeft: 'Quedan {t}', stop: 'Detener', restart: 'Reiniciar', pause: 'Pausar', resume: 'Reanudar', discard: 'Descartar', record: 'Grabar',
     confirmRestart: '¿Reiniciar? Se borra lo grabado hasta ahora y empieza otra vez.', confirmDiscard: '¿Descartar la grabación? Se perderá lo grabado.',
     talkHold: 'Mantén pulsado para hablar', talking: 'Hablando…',
@@ -51,6 +52,8 @@
     toolEllipse: 'Círculo', toolText: 'Texto', toolEraser: 'Borrador', toolMouse: 'Mouse', undo: 'Deshacer', clearAll: 'Borrar todo',
     fxTitle: 'Cursor y pantalla', zoom: 'Zoom', spotlight: 'Foco', clicks: 'Clics', blur: 'Difuminar', bubble: 'Burbuja', mic: 'Micrófono',
     toolbar: 'Barra', unblur: 'Quitar difuminado',
+    camPlaceTitle: 'Tu cámara en el video', cornerTL: 'Arriba a la izquierda', cornerTR: 'Arriba a la derecha', cornerBL: 'Abajo a la izquierda',
+    cornerBR: 'Abajo a la derecha', shapeCircle: 'Círculo', shapeRect: 'Rectángulo',
     onlyWhileRec: 'Se aplica mientras grabas',
     scriptEmptyTitle: 'Tu guion aparece aquí', scriptEmptyBody: 'Escríbelo en Grabazo (Ajustes › Guion) o toca ··· › Editar guion.',
     speed: 'Velocidad', toTop: 'Volver al inicio', play: 'Reproducir', prompterOptions: 'Opciones del guion', fontSize: 'Tamaño de la letra',
@@ -145,6 +148,8 @@
   let rec = { status: 'idle' };
   let ui = {};
   let hostPrefs = {};
+  // Esquinas de la cámara en el video (posición dentro del espacio libre, de 0 a 1).
+  const CORNERS = { tl: { x: 0, y: 0 }, tr: { x: 1, y: 0 }, bl: { x: 0, y: 1 }, br: { x: 1, y: 1 } };
   let camWant = false;
   let script = { text: '', updated: 0 };
 
@@ -169,7 +174,7 @@
   function renderStatus() {
     const s = rec.status || 'idle';
     app.dataset.rec = s;
-    const names = { idle: 'stIdle', starting: 'stStarting', picking: 'stPicking', area: 'stArea', countdown: 'stCountdown', recording: 'stRecording', paused: 'stPaused', saving: 'stSaving' };
+    const names = { idle: 'stIdle', starting: 'stStarting', picking: 'stPicking', area: 'stArea', placing: 'stPlacing', countdown: 'stCountdown', recording: 'stRecording', paused: 'stPaused', saving: 'stSaving' };
     $('#state-text').textContent = t(names[s] || 'stIdle');
     const modes = { tab: 'modeTab', area: 'modeArea', window: 'modeWindow', screen: 'modeScreen', camera: 'modeCamera' };
     const mode = s === 'idle' ? hostPrefs.mode : rec.mode;
@@ -178,11 +183,18 @@
     $('#rec-chip').hidden = !active;
     $('#pause').disabled = !active;
     $('#restart').disabled = !active;
-    $('#discard').hidden = !(active || s === 'countdown');
+    $('#discard').hidden = !(active || s === 'countdown' || s === 'placing');
     $('#pause').setAttribute('aria-pressed', String(s === 'paused'));
     $('#pause-label').textContent = t(s === 'paused' ? 'resume' : 'pause');
-    $('#rec-hint').textContent = s === 'idle' ? t('hintIdle') : active ? t('hintRec') : s === 'countdown' ? t('hintCountdown') : s === 'saving' ? t('hintSaving') : '';
+    $('#rec-hint').textContent = s === 'idle' ? t('hintIdle') : active ? t('hintRec') : s === 'countdown' ? t('hintCountdown') : s === 'saving' ? t('hintSaving') : s === 'placing' ? t('hintPlacing') : '';
     $('#rec').setAttribute('aria-label', active ? t('stop') : t('record'));
+
+    // Cámara en la grabación: esquina, tamaño y forma (no en el modo solo cámara).
+    $('#cam-block').hidden = !hostPrefs.camera || mode === 'camera';
+    const place = hostPrefs.camPlace || {};
+    for (const b of $$('#corners button')) b.setAttribute('aria-pressed', String(CORNERS[b.dataset.corner].x === place.x && CORNERS[b.dataset.corner].y === place.y));
+    for (const b of $$('#cam-size button')) b.setAttribute('aria-checked', String(b.dataset.size === hostPrefs.camSize));
+    for (const b of $$('#cam-shape button')) b.setAttribute('aria-checked', String(b.dataset.shape === hostPrefs.camShape));
 
     // Herramientas y efectos
     for (const b of $$('#tools button')) {
@@ -304,6 +316,7 @@
   $('#rec').addEventListener('click', () => {
     const s = rec.status;
     if (s === 'idle') run('rec:start');
+    else if (s === 'placing') run('rec:placed');
     else if (s === 'recording' || s === 'paused') run('rec:stop');
     else if (s === 'countdown' || s === 'area' || s === 'picking' || s === 'starting') run('rec:discard');
   });
@@ -358,6 +371,24 @@
     ui = { ...ui, width: Number(b.dataset.v) };
     renderStatus();
     run('ui:set', { patch: { width: Number(b.dataset.v) } });
+  });
+  // Cámara en la grabación: se muestra el cambio al instante y se confirma con el estado.
+  function camSet(patch, local) {
+    hostPrefs = { ...hostPrefs, ...local };
+    renderStatus();
+    run('cam:set', { patch });
+  }
+  $('#corners').addEventListener('click', (e) => {
+    const c = e.target.closest('button[data-corner]')?.dataset.corner;
+    if (c) camSet({ corner: c }, { camPlace: { ...CORNERS[c] } });
+  });
+  $('#cam-size').addEventListener('click', (e) => {
+    const size = e.target.closest('button[data-size]')?.dataset.size;
+    if (size) camSet({ size }, { camSize: size });
+  });
+  $('#cam-shape').addEventListener('click', (e) => {
+    const shape = e.target.closest('button[data-shape]')?.dataset.shape;
+    if (shape) camSet({ shape }, { camShape: shape });
   });
   $('#undo').addEventListener('click', () => run('ui:undo'));
   $('#clear').addEventListener('click', () => run('ui:clear'));
@@ -949,7 +980,7 @@
     const status = params.get('rec') || 'recording';
     rec = { status, mode: params.get('mode') || 'tab', elapsed: 83_000, resumedAt: status === 'recording' ? Date.now() : 0, limit: params.has('limit') ? 300_000 : 0, countdownEnd: status === 'countdown' ? Date.now() + 3000 : 0 };
     ui = { tool: params.get('tool') || 'pen', color: '#FF9F0A', width: 6, spotlight: true, zoom: false, clicks: true, blur: false, toolbar: true, camera: true, mic: true, talking: false };
-    hostPrefs = { mode: 'tab', ptt: params.has('ptt'), camPhone: params.has('camphone'), micPhone: false };
+    hostPrefs = { mode: 'tab', ptt: params.has('ptt'), camPhone: params.has('camphone'), micPhone: false, camera: true, camSize: 'm', camShape: 'circle', camPlace: { x: 0, y: 1 } };
     camWant = params.has('want');
     script = {
       text: 'Hola, soy Miguel y hoy te muestro cómo grabar un tutorial en un minuto.\n\nPrimero, abre la página que quieres explicar y haz clic en el ícono de Grabazo.\n\nElige Pestaña, enciende tu cámara y pulsa Grabar. Mientras hablas, usa el lápiz para señalar lo importante y el zoom para acercarte a los detalles.\n\nCuando termines, recorta el inicio y el final en el estudio y exporta a MP4. ¡Listo para compartir!',

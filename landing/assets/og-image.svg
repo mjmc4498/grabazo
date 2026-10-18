@@ -111,7 +111,8 @@
       <rect x="750" y="328" width="90" height="90" fill="#3B4B5F"/>
       <ellipse cx="794" cy="414" rx="34" ry="24" fill="#FF7A1A"/>
       <ellipse cx="794" cy="362" rx="14.5" ry="16" fill="#E8B48A"/>
-      <path d="M779.5 360c0-12 6.5-17 14.5-17s14.5 5 14.5 17c-3-6-8-8-14.5-8s-11.5 2-14.5 8z" fill="#3B2A22"/>
+      <!-- cabello: la forma de design/demo/escena.html, a la escala de esta cabeza -->
+      <path transform="translate(779.5 346) scale(0.129464 0.123077) translate(-528 -200)" d="M529 316C517 230 566 172 644 172C722 174 765 230 752 312C745 280 729 254 704 242C688 258 652 268 612 262C586 258 562 266 548 288C540 298 534 306 529 316Z" fill="#3B2A22"/>
     </g>
   </g>
 

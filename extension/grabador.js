@@ -2,12 +2,12 @@
 // Pestaña propia (fijada a la izquierda mientras se graba) que captura lo que se graba
 // (pestaña, área, ventana, pantalla o solo la cámara), mezcla el audio (micrófono,
 // sonido del sistema y micrófono del celular, con pulsar para hablar), compone el video
-// (área, zoom dinámico y espejo) y lo guarda por partes en la computadora. Al terminar
-// abre el estudio para recortar y exportar.
+// (área, zoom dinámico, espejo y, en los modos ventana y pantalla, la cámara encima) y lo
+// guarda por partes en la computadora. Al terminar abre el estudio para recortar y exportar.
 
 /* global GrabazoRelay */
 
-import { QUALITIES, PHONE, clock, elapsedOf } from './config.js';
+import { QUALITIES, PHONE, CAM_OVERLAY, CAM_CORNERS, clock, elapsedOf, normalizeSettings, normalizePlace, saveSettings } from './config.js';
 import { saveChunk, clearChunks, chunksOf, putVideo, defaultTitle } from './lib/db.js';
 import { createCompositor } from './lib/compositor.js';
 import { t, applyI18n } from './lib/i18n.js';
@@ -39,6 +39,10 @@ let activeSince = 0;
 let warned = false;
 let autoZoomTimer = 0;
 let finished = false;
+// Cámara dentro del video (modos ventana y pantalla): dónde va y si se está arrastrando.
+let overlayCam = false;
+let place = { x: 0, y: 1 };
+let dragging = null;
 
 applyI18n();
 document.title = t('recTitlePreparing');
@@ -57,8 +61,12 @@ async function openCapture() {
   const q = QUALITIES[settings.quality] || QUALITIES[1080];
   const fps = settings.fps || 30;
   if (job.mode === 'tab' || job.mode === 'area') {
-    // En el modo área se captura con más detalle y luego se recorta.
-    const max = job.mode === 'area' ? QUALITIES[2160] : q;
+    // En el modo área se captura con más detalle y luego se recorta. Nunca por encima de
+    // los píxeles reales de la pestaña: para dar más, Chrome la vuelve a dibujar ampliada
+    // y la burbuja de la cámara (un iframe) sale agrandada y recortada en el video.
+    const top = job.mode === 'area' ? QUALITIES[2160] : q;
+    const v = job.view;
+    const max = v ? { w: Math.min(top.w, Math.round(v.w * v.dpr)), h: Math.min(top.h, Math.round(v.h * v.dpr)) } : top;
     const constraints = {
       audio: settings.systemAudio ? { mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: job.streamId } } : false,
       video: {
@@ -105,9 +113,13 @@ function openRelay(kind) {
     relay = GrabazoRelay.connect({
       kind,
       onStream: (stream, track) => {
-        // Solo en el modo cámara la imagen viene de aquí; con el micrófono del celular
-        // también llega una pista de video vacía que no debe reemplazar a la captura.
-        if (kind === 'recorder' && track.kind === 'video' && comp) comp.setInput(track);
+        // En el modo cámara la imagen es la del video; en ventana y pantalla va encima de la
+        // captura. Con el micrófono del celular también llega una pista de video vacía que
+        // no debe reemplazar a la captura.
+        if (kind === 'recorder' && track.kind === 'video' && comp) {
+          if (overlayCam) comp.setCamera(track);
+          else comp.setInput(track);
+        }
         if (track.kind === 'audio') mixer?.addPhone(stream);
         if (kind === 'recorder' ? track.kind === 'video' : track.kind === 'audio') finish();
         renderCamWait();
@@ -115,6 +127,7 @@ function openRelay(kind) {
       onState: (state) => {
         relayState = state;
         renderCamWait();
+        renderHandle();
       },
       onIdle: () => toSW({ type: 'cam:wake' }),
     });
@@ -244,6 +257,8 @@ async function prepare() {
   settings = job.settings || {};
   ui = job.ui || {};
   document.body.dataset.mode = job.mode;
+  overlayCam = (job.mode === 'window' || job.mode === 'screen') && !!settings.camera;
+  place = normalizePlace(settings.camPlace) || place;
   renderInfo();
 
   let videoTrack = null;
@@ -255,7 +270,9 @@ async function prepare() {
     } else {
       capture = await openCapture();
       videoTrack = capture.getVideoTracks()[0];
-      if (settings.micId === PHONE && settings.mic) openRelay('recorder-mic');
+      // La cámara (y el micrófono del celular, si se usa) llegan por la misma conexión.
+      if (overlayCam) openRelay('recorder');
+      else if (settings.micId === PHONE && settings.mic) openRelay('recorder-mic');
     }
   } catch (err) {
     console.warn('[Grabazo] captura', err?.name, err?.message);
@@ -281,6 +298,11 @@ async function prepare() {
     maxH: job.mode === 'area' ? q.h : undefined,
     fps: settings.fps || 30,
   });
+  if (overlayCam) {
+    const camTrack = relay?.stream.getVideoTracks()[0];
+    if (camTrack) comp.setCamera(camTrack);
+    applyCam(true);
+  }
   const preview = $('#preview');
   preview.srcObject = new MediaStream([comp.track]);
   preview.play().catch(() => {});
@@ -294,8 +316,11 @@ async function prepare() {
     size = comp.size.width ? comp.size : await Promise.race([comp.ready, new Promise((r) => setTimeout(() => r(null), 6000))]);
   }
   if (!size) return fail('capture', 'sin imagen de la captura');
-  setPhase('ready');
-  toSW({ type: 'rec:ready', ok: true, width: size.width, height: size.height });
+  // Con la cámara dentro del video, antes de grabar se elige dónde va (si no se pidió
+  // saltar este paso).
+  const ask = overlayCam && settings.camAsk !== false;
+  setPhase(ask ? 'placing' : 'ready');
+  toSW({ type: 'rec:ready', ok: true, width: size.width, height: size.height, place: ask });
 }
 
 function normalizeArea(a) {
@@ -314,11 +339,19 @@ function pickMime(format) {
 }
 
 // Estado interno para diagnóstico (lo leen las pruebas).
-const debug = { chunks: 0, bytes: 0, audio: '', mixer: '', log: [] };
+const debug = {
+  chunks: 0,
+  bytes: 0,
+  audio: '',
+  mixer: '',
+  log: [],
+  get cam() { return { overlay: overlayCam, live: !!comp?.cameraLive, rect: comp?.cameraRect || null, size: comp?.size || null, place, visible: camVisible() }; },
+  thumbnail: (w) => comp?.thumbnail(w),
+};
 globalThis.__grabador = debug;
 
 function go() {
-  if (phase !== 'ready' || !comp) return;
+  if ((phase !== 'ready' && phase !== 'placing') || !comp) return;
   const audio = audioTracks();
   debug.mixer = mixer?.running ? 'running' : 'suspended';
   debug.audio = audio.map((tr) => `${tr.label || tr.kind}:${tr.readyState}`).join(',');
@@ -330,6 +363,9 @@ function go() {
       mimeType: mime,
       videoBitsPerSecond: Math.round(q.bitrate * (settings.fps === 60 ? 1.5 : 1)),
       audioBitsPerSecond: 160_000,
+      // Un cuadro clave cada 2 s: el MP4 sale por partes durante la grabación (y no
+      // todo al final), así lo grabado se guarda en el disco sobre la marcha.
+      videoKeyFrameIntervalDuration: 2000,
     });
   } catch {
     try {
@@ -517,13 +553,204 @@ function applyUi(next) {
   ui = next || ui;
   mixer?.setMic(micOpen());
   if (comp && before.zoom !== ui.zoom) comp.zoomTo(ui.zoom ? settings.zoomLevel || 2 : 1);
+  if (before.camera !== ui.camera) applyCam();
 }
+
+// ================================================================ cámara dentro del video
+
+const camVisible = () => overlayCam && ui.camera !== false;
+
+function applyCam(instant = false) {
+  if (!comp || !overlayCam) return;
+  comp.camera({
+    visible: camVisible(),
+    shape: settings.camShape,
+    mirror: settings.camMirror !== false,
+    size: CAM_OVERLAY[settings.camSize] || CAM_OVERLAY.m,
+    x: place.x,
+    y: place.y,
+    instant,
+  });
+  renderCamPanel();
+  renderHandle();
+}
+
+// Dónde se ve el video dentro de la vista previa (escala y márgenes de «contain»).
+function videoBox() {
+  const wrap = $('.preview-wrap');
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+  const { width: vw, height: vh } = comp?.size || {};
+  if (!vw || !vh || !W || !H) return null;
+  const k = Math.min(W / vw, H / vh);
+  return { k, ox: (W - vw * k) / 2, oy: (H - vh * k) / 2, vw, vh };
+}
+
+const CAM_PHASES = new Set(['placing', 'ready', 'recording', 'paused']);
+
+// Asa transparente sobre la cámara de la vista previa para arrastrarla.
+function renderHandle() {
+  const el = $('#cam-handle');
+  const r = camVisible() && CAM_PHASES.has(phase) ? comp?.cameraRect : null;
+  const box = r && videoBox();
+  el.hidden = !box;
+  if (!box) return;
+  el.dataset.shape = settings.camShape;
+  if (!dragging) {
+    el.style.left = `${box.ox + r.x * box.k}px`;
+    el.style.top = `${box.oy + r.y * box.k}px`;
+  }
+  el.style.width = `${r.w * box.k}px`;
+  el.style.height = `${r.h * box.k}px`;
+  const live = !!comp.cameraLive;
+  el.classList.toggle('waiting', !live);
+  if (!live) {
+    const s = relayState || {};
+    $('#cam-handle-msg').textContent = s.source === 'phone' ? t(s.linked && s.phones ? 'bubblePhoneWait' : 'bubblePhoneLink') : s.error === 'denied' ? t('bubbleDenied') : s.error === 'busy' ? t('bubbleBusy') : s.error ? t('bubbleFailed') : t('camStarting');
+  }
+}
+
+function renderCamPanel() {
+  const panel = $('#cam-panel');
+  panel.hidden = !overlayCam || !CAM_PHASES.has(phase);
+  if (panel.hidden) return;
+  const on = camVisible();
+  panel.classList.toggle('off', !on);
+  $('#cam-visible').checked = on;
+  for (const b of panel.querySelectorAll('[data-size]')) b.setAttribute('aria-checked', String(b.dataset.size === settings.camSize));
+  for (const b of panel.querySelectorAll('[data-shape]')) b.setAttribute('aria-checked', String(b.dataset.shape === settings.camShape));
+  $('#cam-mirror').setAttribute('aria-pressed', String(settings.camMirror !== false));
+  for (const b of panel.querySelectorAll('[data-corner]')) {
+    const c = CAM_CORNERS[b.dataset.corner];
+    b.setAttribute('aria-pressed', String(c.x === place.x && c.y === place.y));
+  }
+  $('#cam-ask').checked = settings.camAsk !== false;
+  $('#cam-hint').textContent = phase === 'placing' ? '' : t('camHint');
+  $('#cam-hint').hidden = phase === 'placing';
+}
+
+// Cambios de la cámara: se aplican al momento y se guardan para la próxima vez.
+function setCam(patch) {
+  if (patch.place) place = patch.place;
+  for (const k of ['camShape', 'camSize', 'camMirror', 'camAsk']) if (k in patch) settings[k] = patch[k];
+  applyCam();
+  const save = { ...patch };
+  if (save.place) {
+    save.camPlace = save.place;
+    delete save.place;
+  }
+  saveSettings(save).catch(() => {});
+}
+
+{
+  const el = $('#cam-handle');
+  el.tabIndex = 0;
+  const wrap = $('.preview-wrap');
+  // Posición dentro del espacio libre a partir de la esquina del asa (px de la vista previa).
+  const toPlace = (left, top) => {
+    const box = videoBox();
+    const r = comp?.cameraRect;
+    if (!box || !r) return place;
+    const fx = (left - box.ox) / box.k - r.m;
+    const fy = (top - box.oy) / box.k - r.m;
+    const free = (v, full, size) => Math.min(1, Math.max(0, v / Math.max(1, full - size - r.m * 2)));
+    return { x: free(fx, box.vw, r.w), y: free(fy, box.vh, r.h) };
+  };
+  el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 || !comp?.cameraRect) return;
+    const rect = el.getBoundingClientRect();
+    dragging = { id: e.pointerId, dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+    try { el.setPointerCapture(e.pointerId); } catch {}
+    el.classList.add('dragging');
+    e.preventDefault();
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!dragging || e.pointerId !== dragging.id) return;
+    const wr = wrap.getBoundingClientRect();
+    const box = videoBox();
+    const r = comp?.cameraRect;
+    if (!box || !r) return;
+    // El asa no sale del video.
+    const minL = box.ox + r.m * box.k;
+    const minT = box.oy + r.m * box.k;
+    const left = Math.min(Math.max(minL, e.clientX - wr.left - dragging.dx), box.ox + (box.vw - r.w - r.m) * box.k);
+    const top = Math.min(Math.max(minT, e.clientY - wr.top - dragging.dy), box.oy + (box.vh - r.h - r.m) * box.k);
+    el.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+    place = toPlace(left, top);
+    comp.camera({ x: place.x, y: place.y, instant: true });
+  });
+  const drop = (e) => {
+    if (!dragging || e.pointerId !== dragging.id) return;
+    dragging = null;
+    el.classList.remove('dragging');
+    // Cerca de un borde, se pega a él.
+    const snap = (v) => (v < 0.06 ? 0 : v > 0.94 ? 1 : Math.round(v * 1000) / 1000);
+    setCam({ place: { x: snap(place.x), y: snap(place.y) } });
+  };
+  el.addEventListener('pointerup', drop);
+  el.addEventListener('pointercancel', drop);
+  // Con el teclado: flechas para moverla (Mayúsculas = más rápido).
+  el.addEventListener('keydown', (e) => {
+    const d = e.shiftKey ? 0.25 : 0.05;
+    const moves = { ArrowLeft: [-d, 0], ArrowRight: [d, 0], ArrowUp: [0, -d], ArrowDown: [0, d] };
+    const m = moves[e.key];
+    if (!m) return;
+    e.preventDefault();
+    const clamp = (v) => Math.round(Math.min(1, Math.max(0, v)) * 1000) / 1000;
+    setCam({ place: { x: clamp(place.x + m[0]), y: clamp(place.y + m[1]) } });
+  });
+  addEventListener('resize', renderHandle);
+}
+
+$('#corners').addEventListener('click', (e) => {
+  const c = CAM_CORNERS[e.target.closest('[data-corner]')?.dataset.corner];
+  if (c) setCam({ place: { ...c } });
+});
+$('#cam-size').addEventListener('click', (e) => {
+  const size = e.target.closest('[data-size]')?.dataset.size;
+  if (size) setCam({ camSize: size });
+});
+$('#cam-shape').addEventListener('click', (e) => {
+  if (e.target.closest('#cam-mirror')) return setCam({ camMirror: settings.camMirror === false });
+  const shape = e.target.closest('[data-shape]')?.dataset.shape;
+  if (shape) setCam({ camShape: shape });
+});
+$('#cam-visible').addEventListener('change', (e) => {
+  ui = { ...ui, camera: e.target.checked };
+  applyCam();
+  toSW({ type: 'op', op: 'ui:set', patch: { camera: e.target.checked } });
+});
+$('#cam-ask').addEventListener('change', (e) => setCam({ camAsk: e.target.checked }));
+$('#place-go').addEventListener('click', placed);
+$('#place-cancel').addEventListener('click', () => toSW({ type: 'op', op: 'rec:discard' }));
+addEventListener('keydown', (e) => {
+  if (phase !== 'placing' || e.key !== 'Enter' || e.target.closest?.('input, button, .cam-handle')) return;
+  placed();
+});
+
+// Lista la ubicación: se vuelve a la página y empieza la cuenta regresiva.
+function placed() {
+  if (phase !== 'placing') return;
+  setPhase('ready');
+  toSW({ type: 'rec:placed' });
+}
+
+// Lo que se cambie desde la barra, el popup o el celular se aplica aquí al momento.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'sync' || !changes.settings || !job) return;
+  const next = normalizeSettings(changes.settings.newValue);
+  for (const k of ['camShape', 'camSize', 'camMirror', 'camAsk', 'zoomLevel', 'zoomOnClick']) settings[k] = next[k];
+  if (!dragging) place = next.camPlace;
+  applyCam();
+});
 
 // ================================================================ interfaz
 
 const PHASES = {
   preparing: ['recTitlePreparing', 'recBodyPreparing'],
   picking: ['recTitlePicking', 'recBodyPicking'],
+  placing: ['recTitlePlacing', 'recBodyPlacing'],
   ready: ['recTitleReady', 'recBodyReady'],
   recording: ['recTitleRecording', 'recBodyRecording'],
   paused: ['recTitlePaused', 'recBodyRecording'],
@@ -541,6 +768,9 @@ function setPhase(next) {
   $('#title').textContent = t(title);
   if (body) $('#body').textContent = t(body);
   renderClock();
+  renderCamPanel();
+  renderHandle();
+  if (next === 'placing') setTimeout(() => $('#place-go').focus(), 0);
 }
 
 function renderInfo() {
@@ -618,7 +848,10 @@ $('#discard').addEventListener('click', () => {
 $('#close').addEventListener('click', () => window.close());
 $('#countdown').addEventListener('click', () => toSW({ type: 'op', op: 'rec:discard' }));
 
-setInterval(renderClock, 500);
+setInterval(() => {
+  renderClock();
+  renderHandle();
+}, 500);
 
 // Cerrar la pestaña a mitad de la grabación: Chrome pide confirmación.
 addEventListener('beforeunload', (e) => {
@@ -632,6 +865,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.to === 'all' && msg.type === 'state') {
     rec = msg.rec || rec;
     applyUi(msg.ui);
+    // Se pulsó «Grabar» en el celular o en el popup mientras se ubicaba la cámara.
+    if (phase === 'placing' && rec.status === 'countdown') setPhase('ready');
     renderClock();
     return;
   }

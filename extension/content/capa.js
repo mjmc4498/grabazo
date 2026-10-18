@@ -42,6 +42,9 @@
     text: '<svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg>',
     eraser: '<svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L13 19"/><path d="M22 21H7M5 11l9 9"/></svg>',
     caret: '<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>',
+    mirror: '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M8 7 3 12l5 5V7zM16 7l5 5-5 5V7z"/></svg>',
+    circle: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/></svg>',
+    rectShape: '<svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/></svg>',
     zoom: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>',
     spotlight: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     clicks: '<svg viewBox="0 0 24 24"><path d="m9 9 5 12 1.8-5.2L21 14z"/><path d="M7.2 2.2 8 5.1M5.1 8l-2.9-.8M14 4.1 12 6.2M6.2 12l-2.1 2"/></svg>',
@@ -128,6 +131,7 @@
     .menu-item.on .sw { background: #30d158; }
     .menu-item.on .sw::after { transform: translateX(12px); }
     .menu-item.action { color: #ffa45c; }
+    .pop .txt { font: 700 12.5px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 
     /* ---------- cuenta regresiva */
     .cd {
@@ -250,9 +254,12 @@
       kickEl.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;pointer-events:none;opacity:.01;background:#000';
       ui.append(kickEl);
     }
+    const el = kickEl;
     let n = 0;
     const step = () => {
-      kickEl.style.background = n % 2 ? '#000' : '#010101';
+      // La capa pudo cerrarse entre un cuadro y otro.
+      if (!el.isConnected) return;
+      el.style.background = n % 2 ? '#000' : '#010101';
       if (++n < 6) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
@@ -282,9 +289,10 @@
     show();
     ensureParts();
 
-    // Burbuja de la cámara
+    // Burbuja de la cámara: solo al grabar una pestaña o un área. En ventana y pantalla la
+    // cámara va dentro del video (la compone el grabador) y aquí se vería dos veces.
     const mode = role === 'prepare' ? settings.mode : rec.mode;
-    const camOn = mode !== 'camera' && (role === 'prepare' ? !!settings.camera : !!st.camera);
+    const camOn = (mode === 'tab' || mode === 'area') && (role === 'prepare' ? !!settings.camera : !!st.camera);
     if (camOn) bubble.show({ shape: settings.camShape, size: settings.camSize, mirror: settings.camMirror }, saved.camPos);
     else bubble.hide();
 
@@ -361,6 +369,7 @@
   let clockTimer = 0;
   let palette = null;
   let menu = null;
+  let camPop = null;
   const els = {};
 
   function button(act, icon, titleKey, cls = '') {
@@ -403,12 +412,13 @@
     els.spotlight = button('spotlight', 'spotlight', 'tbSpotlight');
     els.effects = button('effects', 'caret', 'tbEffects', 'caret');
     els.camera = button('camera', 'camera', 'tbCamera');
+    els.camMenu = button('camMenu', 'caret', 'tbCamPlace', 'caret');
     els.mic = button('mic', 'mic', 'tbMic');
     els.phone = document.createElement('span');
     els.phone.className = 'phone';
     els.phone.innerHTML = `${I.phone}<b></b>`;
     els.hide = button('hide', 'hide', 'tbHide');
-    tb.append(grip, time, sep(), els.pause, els.stop, els.restart, els.discard, sep(), els.draw, els.palette, els.zoom, els.spotlight, els.effects, sep(), els.camera, els.mic, els.phone, els.hide);
+    tb.append(grip, time, sep(), els.pause, els.stop, els.restart, els.discard, sep(), els.draw, els.palette, els.zoom, els.spotlight, els.effects, sep(), els.camera, els.camMenu, els.mic, els.phone, els.hide);
     ui.append(tb);
 
     tb.addEventListener('click', (e) => {
@@ -428,6 +438,7 @@
         case 'zoom': op('ui:toggle', { key: 'zoom' }); break;
         case 'spotlight': op('ui:toggle', { key: 'spotlight' }); break;
         case 'camera': op('ui:toggle', { key: 'camera' }); break;
+        case 'camMenu': togglePop('cam'); break;
         case 'mic': if (!settings.pushToTalk) op('ui:toggle', { key: 'mic' }); break;
         case 'hide': op('ui:set', { patch: { toolbar: false } }); break;
       }
@@ -509,7 +520,7 @@
     toolbar.classList.toggle('saving', saving);
     els.pause.innerHTML = rec.status === 'paused' ? I.play : I.pause;
     els.pause.title = t(rec.status === 'paused' ? 'resume' : 'pause');
-    for (const b of [els.pause, els.stop, els.restart, els.discard, els.draw, els.palette, els.zoom, els.spotlight, els.effects, els.camera, els.mic]) b.disabled = saving;
+    for (const b of [els.pause, els.stop, els.restart, els.discard, els.draw, els.palette, els.zoom, els.spotlight, els.effects, els.camera, els.camMenu, els.mic]) b.disabled = saving;
     if (st.tool && st.tool !== 'eraser') lastTool = st.tool;
     els.draw.innerHTML = I[st.tool && st.tool !== 'eraser' ? st.tool : lastTool];
     els.draw.classList.toggle('on', !!st.tool);
@@ -565,7 +576,7 @@
   let fadeTimer = 0;
   function autoFade() {
     if (!toolbar) return;
-    if (!settings.toolbarAutoHide || palette || menu) {
+    if (!settings.toolbarAutoHide || palette || menu || camPop) {
       toolbar.classList.remove('faded');
       return;
     }
@@ -598,7 +609,8 @@
     openPop = null;
     palette?.remove();
     menu?.remove();
-    palette = menu = null;
+    camPop?.remove();
+    palette = menu = camPop = null;
   }
 
   function popButton(act, inner, title, cls = '') {
@@ -691,9 +703,61 @@
     return m;
   }
 
+  // Cámara: esquina, tamaño, forma y espejo (en ventana y pantalla se mueve dentro del
+  // video; en pestaña y área, la burbuja de la página).
+  const CORNERS = { tl: [7, 9.5], tr: [17, 9.5], bl: [7, 14.5], br: [17, 14.5] };
+  const PLACES = { tl: { x: 0, y: 0 }, tr: { x: 1, y: 0 }, bl: { x: 0, y: 1 }, br: { x: 1, y: 1 } };
+
+  function buildCamPop() {
+    const m = document.createElement('div');
+    m.className = 'pop';
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = t('tbCamPlace');
+    const corners = document.createElement('div');
+    corners.className = 'row';
+    for (const [c, [cx, cy]] of Object.entries(CORNERS)) {
+      const icon = `<svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="${cx}" cy="${cy}" r="2.6" fill="currentColor" stroke="none"/></svg>`;
+      corners.append(popButton(`corner:${c}`, icon, t(`corner${c.toUpperCase()}`)));
+    }
+    const sizes = document.createElement('div');
+    sizes.className = 'row';
+    for (const [k, txt] of [['s', 'S'], ['m', 'M'], ['l', 'L'], ['xl', 'XL']]) sizes.append(popButton(`size:${k}`, `<b class="txt">${txt}</b>`, t(`size${k.toUpperCase()}`)));
+    const shapes = document.createElement('div');
+    shapes.className = 'row';
+    shapes.append(popButton('shape:circle', I.circle, t('shapeCircle')), popButton('shape:rect', I.rectShape, t('shapeRect')), popButton('mirror', I.mirror, t('camMirror')));
+    m.append(label, corners, sizes, shapes);
+    m.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-act]');
+      if (!b) return;
+      const [act, val] = b.dataset.act.split(':');
+      if (act === 'corner') op('cam:set', { patch: { corner: val } });
+      else if (act === 'size') op('cam:set', { patch: { size: val } });
+      else if (act === 'shape') op('cam:set', { patch: { shape: val } });
+      else if (act === 'mirror') op('cam:set', { patch: { mirror: settings.camMirror === false } });
+    });
+    ui.append(m);
+    return m;
+  }
+
   function renderPops() {
     if (!toolbar || rec.status === 'saving') { closePops(); return; }
-    if (openPop === 'palette') {
+    if (openPop !== 'cam' && camPop) {
+      camPop.remove();
+      camPop = null;
+    }
+    if (openPop === 'cam') {
+      camPop ||= buildCamPop();
+      palette?.remove();
+      menu?.remove();
+      palette = menu = null;
+      const place = settings.camPlace || {};
+      for (const b of camPop.querySelectorAll('button[data-act]')) {
+        const [act, val] = b.dataset.act.split(':');
+        const on = (act === 'corner' && PLACES[val].x === place.x && PLACES[val].y === place.y) || (act === 'size' && settings.camSize === val) || (act === 'shape' && settings.camShape === val) || (act === 'mirror' && settings.camMirror !== false);
+        b.classList.toggle('on', on);
+      }
+    } else if (openPop === 'palette') {
       palette ||= buildPalette();
       menu?.remove();
       menu = null;
@@ -715,9 +779,9 @@
   }
 
   function placePops() {
-    const pop = palette || menu;
+    const pop = palette || menu || camPop;
     if (!pop || !toolbar) return;
-    const anchor = (palette ? els.palette : els.effects).getBoundingClientRect();
+    const anchor = (palette ? els.palette : menu ? els.effects : els.camMenu).getBoundingClientRect();
     const tb = toolbar.getBoundingClientRect();
     const w = pop.offsetWidth;
     const h = pop.offsetHeight;
@@ -965,6 +1029,7 @@
       if (msg.cmd === 'clear') drawing?.clear();
       else if (msg.cmd === 'undo') drawing?.undo();
       else if (msg.cmd === 'unblur') effects?.clearBlur();
+      else if (msg.cmd === 'camPlace') bubble?.place(msg.place);
     }
   }
   chrome.runtime.onMessage.addListener(onMessage);

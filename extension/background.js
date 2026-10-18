@@ -4,7 +4,7 @@
 // atajos de teclado. El estado vive en chrome.storage.session: si Chrome detiene el
 // service worker a mitad de una grabación, al despertar sigue donde estaba.
 
-import { DEFAULT_SETTINGS, MODES, PHONE, getSettings, initialUi, normalizeSettings, elapsedOf, originPattern } from './config.js';
+import { DEFAULT_SETTINGS, MODES, PHONE, CAM_SIZES, CAM_CORNERS, getSettings, initialUi, normalizeSettings, normalizePlace, elapsedOf, originPattern } from './config.js';
 
 const OFFSCREEN_PATH = 'offscreen.html';
 const RECORDER_PATH = 'grabador.html';
@@ -79,7 +79,7 @@ async function broadcast() {
 
 function updateBadge() {
   const s = rec?.status || 'idle';
-  const text = s === 'recording' ? 'REC' : s === 'paused' ? '❚❚' : s === 'countdown' ? '…' : s === 'saving' ? '…' : '';
+  const text = s === 'recording' ? 'REC' : s === 'paused' ? '❚❚' : ['countdown', 'saving', 'placing'].includes(s) ? '…' : '';
   chrome.action.setBadgeText({ text });
   chrome.action.setBadgeBackgroundColor({ color: s === 'paused' ? '#FF9F0A' : '#FF3B30' });
   chrome.action.setBadgeTextColor?.({ color: '#FFFFFF' });
@@ -349,6 +349,14 @@ async function recorderJob(sender) {
     }
     const tab = await chrome.tabs.get(rec.tabId).catch(() => null);
     job.tabTitle = tab?.title || '';
+    // Tamaño real de la pestaña (en píxeles de la pantalla): la captura no debe pedir más.
+    try {
+      const [{ result }] = await chrome.scripting.executeScript({
+        target: { tabId: rec.tabId },
+        func: () => ({ w: innerWidth, h: innerHeight, dpr: devicePixelRatio }),
+      });
+      if (result?.w > 0 && result?.h > 0) job.view = result;
+    } catch {}
   }
   return job;
 }
@@ -363,14 +371,32 @@ async function recorderReady(msg, sender) {
     return { ok: true };
   }
   if (rec.mode === 'window' || rec.mode === 'screen') {
-    // La pestaña del grabador se fija a la izquierda y se vuelve a la página.
-    chrome.tabs.update(rec.recorderTabId, { pinned: true }).catch(() => {});
-    if (Number.isInteger(rec.tabId)) {
-      await chrome.tabs.update(rec.tabId, { active: true }).catch(() => {});
-      if (Number.isInteger(rec.windowId)) chrome.windows.update(rec.windowId, { focused: true }).catch(() => {});
+    // Primero se elige dónde va la cámara dentro del video (en la pestaña del grabador).
+    if (msg.place === true) {
+      await setRec({ status: 'placing' });
+      return { ok: true };
     }
+    await backToWork();
   }
   return beginCountdown();
+}
+
+// La pestaña del grabador se fija a la izquierda y se vuelve a la página.
+async function backToWork() {
+  chrome.tabs.update(rec.recorderTabId, { pinned: true }).catch(() => {});
+  if (Number.isInteger(rec.tabId)) {
+    await chrome.tabs.update(rec.tabId, { active: true }).catch(() => {});
+    if (Number.isInteger(rec.windowId)) chrome.windows.update(rec.windowId, { focused: true }).catch(() => {});
+  }
+}
+
+// La cámara ya está ubicada (botón del grabador, popup, celular o atajo).
+async function placedRecording() {
+  await ready();
+  if (rec.status !== 'placing') return snapshot();
+  await backToWork();
+  await beginCountdown();
+  return snapshot();
 }
 
 async function beginCountdown() {
@@ -420,7 +446,7 @@ async function togglePause() {
 async function stopRecording() {
   await ready();
   if (rec.status === 'countdown') return discardRecording();
-  if (rec.status === 'area' || rec.status === 'starting' || rec.status === 'picking') return discardRecording();
+  if (['area', 'starting', 'picking', 'placing'].includes(rec.status)) return discardRecording();
   if (!ACTIVE.has(rec.status)) return snapshot();
   await setRec({ status: 'saving', elapsed: elapsedOf(rec), resumedAt: 0 });
   await setUi({ tool: null, zoom: false, spotlight: false, blur: false, talking: false });
@@ -456,6 +482,7 @@ async function discardRecording() {
 async function toggleRecording(opts) {
   await ready();
   if (rec.status === 'idle') return startRecording(opts);
+  if (rec.status === 'placing') return placedRecording();
   return stopRecording();
 }
 
@@ -559,7 +586,7 @@ chrome.runtime.onConnect.addListener((port) => {
     await ready();
     if (rec.status !== 'idle') return;
     await chrome.storage.session.set({ prepTab: tabId });
-    const ok = settings.camera && settings.mode !== 'camera' ? await inject(tabId) : false;
+    const ok = settings.camera && needsTab(settings.mode) ? await inject(tabId) : false;
     if (ok) ensureOffscreen();
     port.postMessage({ t: 'prepared', ok });
     broadcast();
@@ -616,7 +643,27 @@ const OPS = {
   'ui:unblur': () => { overlayCmd('unblur'); return snapshot(); },
   ptt: (m) => patchUi({ talking: m.down === true }),
   'prefs:set': (m) => setSourcePrefs(m.patch),
+  'rec:placed': () => placedRecording(),
+  'cam:set': (m) => setCamPrefs(m.patch),
 };
+
+// Dónde va la cámara y cómo se ve (esquina o posición, tamaño, forma y espejo). En los
+// modos ventana y pantalla la aplica el grabador (va dentro del video); en pestaña y
+// área se mueve la burbuja de la página.
+async function setCamPrefs(raw = {}) {
+  await ready();
+  const patch = {};
+  const place = CAM_CORNERS[raw.corner] ? { ...CAM_CORNERS[raw.corner] } : normalizePlace(raw.place);
+  if (place) patch.camPlace = place;
+  if (Object.hasOwn(CAM_SIZES, raw.size)) patch.camSize = raw.size;
+  if (['circle', 'rect'].includes(raw.shape)) patch.camShape = raw.shape;
+  if (typeof raw.mirror === 'boolean') patch.camMirror = raw.mirror;
+  if (!Object.keys(patch).length) return snapshot();
+  settings = normalizeSettings({ ...(await getSettings()), ...patch });
+  await chrome.storage.sync.set({ settings });
+  if (place) overlayCmd('camPlace', { place });
+  return snapshot();
+}
 
 // El celular puede pasar a ser la cámara o el micrófono de la grabación (y volver a los
 // de la computadora).
@@ -651,6 +698,11 @@ const handlers = {
   // Grabador
   'rec:job': (msg, sender) => recorderJob(sender),
   'rec:ready': (msg, sender) => recorderReady(msg, sender),
+  'rec:placed': async (msg, sender) => {
+    await ready();
+    if (sender.tab?.id !== rec.recorderTabId) return { ok: false };
+    return placedRecording();
+  },
   'rec:started': async (msg, sender) => {
     await ready();
     if (sender.tab?.id !== rec.recorderTabId || rec.status !== 'countdown') return { ok: false };
@@ -699,7 +751,7 @@ const handlers = {
 };
 
 // Capa sobre la página (script de contenido): solo órdenes de la interfaz.
-const CONTENT_OPS = new Set(['rec:stop', 'rec:pause', 'rec:resume', 'rec:togglePause', 'rec:restart', 'rec:discard', 'ui:set', 'ui:toggle', 'ptt']);
+const CONTENT_OPS = new Set(['rec:stop', 'rec:pause', 'rec:resume', 'rec:togglePause', 'rec:restart', 'rec:discard', 'ui:set', 'ui:toggle', 'ptt', 'cam:set']);
 const contentHandlers = {
   'overlay:hello': async (msg, sender) => {
     await ready();

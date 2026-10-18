@@ -44,6 +44,11 @@ export const LIMITS = [0, 1, 3, 5, 10, 15, 30, 60]; // minutos (0 = sin límite)
 
 // Burbuja de la cámara (diámetro o ancho en px).
 export const CAM_SIZES = { s: 150, m: 210, l: 290, xl: 400 };
+// Cámara dentro del video (modos ventana y pantalla): alto en proporción al del video.
+export const CAM_OVERLAY = { s: 0.18, m: 0.25, l: 0.33, xl: 0.44 };
+// Esquinas para colocar la cámara (posición dentro del espacio libre: 0 = izquierda o
+// arriba, 1 = derecha o abajo).
+export const CAM_CORNERS = { tl: { x: 0, y: 0 }, tr: { x: 1, y: 0 }, bl: { x: 0, y: 1 }, br: { x: 1, y: 1 } };
 export const CAM_EFFECTS = ['none', 'blur', 'blur-strong', 'bg-grabazo', 'bg-atardecer', 'bg-oceano', 'bg-bosque', 'bg-grafito', 'bg-estudio'];
 export const CAM_FILTERS = ['none', 'bw', 'warm', 'cool', 'vivid', 'retro'];
 
@@ -68,6 +73,9 @@ export const DEFAULT_SETTINGS = {
   camMirror: true,
   camEffect: 'none',
   camFilter: 'none',
+  // Dónde va la cámara en los modos ventana y pantalla, y si se pregunta antes de grabar.
+  camPlace: { x: 0, y: 1 },
+  camAsk: true,
   // Grabación
   countdown: 3,
   timeLimit: 0,
@@ -115,7 +123,17 @@ export function normalizeSettings(raw) {
   s.zoomLevel = pick(Number(s.zoomLevel), [1.5, 2, 2.5, 3], 2);
   s.pttKey = typeof s.pttKey === 'string' && /^[A-Za-z0-9]{1,24}$/.test(s.pttKey) ? s.pttKey : 'Backquote';
   for (const k of ['micId', 'camId']) s[k] = typeof s[k] === 'string' ? s[k].slice(0, 200) : '';
+  s.camPlace = normalizePlace(s.camPlace) || { ...DEFAULT_SETTINGS.camPlace };
+  s.camAsk = s.camAsk !== false;
   return s;
+}
+
+// Posición de la cámara ({ x, y } entre 0 y 1), o null si no es válida.
+export function normalizePlace(p) {
+  const n = (v) => (Number.isFinite(v) ? Math.round(Math.min(1, Math.max(0, v)) * 1000) / 1000 : null);
+  const x = n(p?.x);
+  const y = n(p?.y);
+  return x === null || y === null ? null : { x, y };
 }
 
 // Estado de las herramientas durante la sesión (dibujo, efectos, cámara, micrófono).

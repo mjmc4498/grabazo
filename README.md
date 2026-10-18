@@ -6,7 +6,7 @@
 <p align="center">Graba tu pantalla, tu cámara y tus anotaciones desde Chrome, sin marcas de agua ni límites.<br>
 Dibuja, haz zoom y difumina datos mientras grabas, recorta y exporta en MP4, WebM o GIF,<br>
 y usa tu celular como control remoto, teleprompter y cámara con solo escanear un QR.</p>
-<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.0.0 · hermano de <a href="https://github.com/mjmc4498/mando">Presentazo</a>, <a href="https://github.com/mjmc4498/botonazo">Botonazo</a>, <a href="https://github.com/mjmc4498/capturazo">Capturazo</a> y <a href="https://github.com/mjmc4498/preguntazo">Preguntazo</a></sub></p>
+<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0 · hermano de <a href="https://github.com/mjmc4498/mando">Presentazo</a>, <a href="https://github.com/mjmc4498/botonazo">Botonazo</a>, <a href="https://github.com/mjmc4498/capturazo">Capturazo</a> y <a href="https://github.com/mjmc4498/preguntazo">Preguntazo</a></sub></p>
 
 ---
 
@@ -15,7 +15,7 @@ y usa tu celular como control remoto, teleprompter y cámara con solo escanear u
 | | |
 |---|---|
 | **Modos de captura** | Pestaña (con su sonido), área personalizada de la pestaña (con proporciones libres, 16:9, 9:16, 1:1 o 4:3), ventana, pantalla completa o solo la cámara. Hasta 4K y 60 cuadros por segundo, en MP4 (H.264, cuando Chrome puede) o WebM. Sin marcas de agua, sin límite de duración y sin cuentas. |
-| **Cámara** | Burbuja flotante y arrastrable sobre la página (círculo o rectángulo, cuatro tamaños, modo espejo), fondo desenfocado (suave o fuerte) o seis fondos virtuales generados, con segmentación de personas de MediaPipe en la propia computadora, y filtros de color. Se puede sacar a una ventana flotante (Picture-in-Picture) para que se vea sobre otras apps al grabar la pantalla. |
+| **Cámara** | Burbuja flotante y arrastrable sobre la página (círculo o rectángulo, cuatro tamaños, modo espejo), fondo desenfocado (suave o fuerte) o seis fondos virtuales generados, con segmentación de personas de MediaPipe en la propia computadora, y filtros de color. Al grabar una **ventana o la pantalla completa**, la cámara va **dentro del video**: antes de grabar aparece «Ubica tu cámara» (vista previa real donde la arrastras o eliges esquina, tamaño y forma) y mientras grabas la mueves con suavidad desde la barra, el celular o la pestaña del grabador, o la dejas fija. Sales en la grabación aunque cambies de app. |
 | **Audio** | Micrófono y sonido de la pestaña o del sistema a la vez, mezclados en una pista, con reducción de ruido. **Pulsar para hablar**: el micrófono graba solo mientras mantienes una tecla (por defecto, la que está a la izquierda del 1), el botón de la barra o «Hablar» en el celular. |
 | **Dibujo y anotación** | Lápiz, resaltador, flechas, rectángulos, círculos (Shift: perfectos), texto y borrador; 8 colores y 3 grosores; deshacer, rehacer, borrar todo y tinta que se desvanece. |
 | **Cursor y pantalla** | Resaltado de clics, foco de luz que oscurece el resto, cursor oculto cuando no se mueve, **zoom dinámico** que sigue al cursor con movimiento suave (1,5× a 3×, o automático en cada clic) y **difuminar** en tiempo real (clic sobre un elemento o arrastrar una zona). |
@@ -24,7 +24,7 @@ y usa tu celular como control remoto, teleprompter y cámara con solo escanear u
 | **Tu celular (QR)** | **Control remoto**: grabar, pausar, reiniciar, descartar, elegir herramienta, color y grosor, zoom, foco, clics, difuminar, cámara, micrófono y barra, sin tocar el mouse. **Teleprompter**: tu guion con desplazamiento automático que empieza solo al grabar, velocidad, tamaño de letra y modo espejo. **Cámara**: la cámara y el micrófono del celular como burbuja de la grabación. |
 | **Conexión** | WebRTC directo y cifrado entre el celular y la computadora; retransmisión de Cloudflare para redes restrictivas; reconexión automática; el celular recuerda la computadora. |
 
-Probado de principio a fin con **77 comprobaciones automáticas** (extensión real grabando pestañas, áreas y la cámara; el flujo real de clic en el ícono, popup y «Grabar»; página de ejemplo con la capa encima; celular real conectado por PeerJS como control remoto, teleprompter y cámara) y **51 del estudio** (recortes, cortes, exportación a MP4, WebM y GIF, recuperación).
+Probado de principio a fin con **102 comprobaciones automáticas** (extensión real grabando pestañas, áreas, la pantalla con la cámara dentro del video y la cámara; el flujo real de clic en el ícono, popup y «Grabar»; página de ejemplo con la capa encima; celular real conectado por PeerJS como control remoto, teleprompter y cámara) y **51 del estudio** (recortes, cortes, exportación a MP4, WebM y GIF, recuperación).
 
 ## Cómo funciona
 
@@ -133,7 +133,7 @@ Para un `.crx` instalable fuera de la tienda: `./scripts/build.sh --crx` (la cla
 ### 4. Sube a la Chrome Web Store
 
 1. Entra al [Panel del desarrollador](https://chrome.google.com/webstore/devconsole) (la misma cuenta de Presentazo, Botonazo, Capturazo y Preguntazo; el registro de USD 5 ya está pagado).
-2. **Nuevo elemento** → sube `dist/grabazo-1.0.0.zip`.
+2. **Nuevo elemento** → sube `dist/grabazo-1.1.0.zip`.
 3. Completa las pestañas copiando los textos de [`store/LISTING.md`](store/LISTING.md) y sube las imágenes de `store/`.
 4. **Enviar para revisión.** El acceso a los sitios es un permiso opcional que se pide en tiempo de ejecución, así que el paquete no declara permisos de host; las justificaciones de cada permiso ya están redactadas en `LISTING.md`.
 
@@ -157,7 +157,7 @@ Detalles (dominio, redirecciones, cabeceras de seguridad) en [`landing/README.md
 ```bash
 npm install                 # Puppeteer (solo para pruebas y capturas)
 npm run serve               # servidor local en http://localhost:8769 (otra terminal)
-npm run test:e2e            # prueba completa extensión ↔ página ↔ celular (77 comprobaciones)
+npm run test:e2e            # prueba completa extensión ↔ página ↔ celular (102 comprobaciones)
 npm run test:estudio        # estudio: recortes, cortes y exportación (51 comprobaciones)
 npm run textos              # regenera _locales/es/messages.json desde scripts/textos.py y textos_estudio.py
 npm run icons               # regenera íconos y favicon desde design/*.svg
@@ -213,7 +213,8 @@ Mientras dibujas: `Esc` vuelve al mouse, `Ctrl/⌘+Z` deshace y `Shift+Ctrl/⌘+
 
 - Chrome no permite extensiones en `chrome://` ni en la Chrome Web Store: ahí solo se puede grabar una ventana, la pantalla o la cámara, y no aparece la barra.
 - El sonido del sistema al grabar la pantalla o una ventana depende de lo que ofrezca Chrome en cada sistema (en Windows y ChromeOS suele estar; en macOS, según la versión). El sonido de una pestaña siempre se puede grabar.
-- La barra, los dibujos y los efectos se dibujan sobre las páginas web: al grabar la pantalla, se ven mientras la página está a la vista. La burbuja de la cámara puede salir a una ventana flotante para verse sobre otras apps.
+- La barra, los dibujos y los efectos se dibujan sobre las páginas web: al grabar la pantalla, se ven mientras la página está a la vista. La cámara, en cambio, va dentro del video y se ve siempre.
+- Al grabar una pestaña o un área, el video no supera los píxeles reales de la pestaña (en una pantalla Retina, el doble de su tamaño): si se pidiera más, Chrome la volvería a dibujar ampliada y la burbuja de la cámara saldría recortada.
 - El zoom en los modos ventana y pantalla se centra con la posición del cursor sobre la pantalla donde está Chrome; con varias pantallas puede no coincidir exactamente.
 - Las exportaciones se arman en memoria: un video muy largo necesita aproximadamente el doble de su tamaño en RAM. Exportar con cambios vuelve a codificar todo el video.
 - La conexión directa del celular necesita que ambos puedan encontrarse; si la red lo impide, se usa la retransmisión de Cloudflare, o el celular puede usar sus datos móviles.

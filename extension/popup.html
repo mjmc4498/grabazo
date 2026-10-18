@@ -6,6 +6,7 @@
   <title>Grabazo</title>
   <link rel="stylesheet" href="ui.css">
   <link rel="stylesheet" href="popup.css">
+  <script src="lib/relay.js"></script>
   <script src="popup.js" type="module"></script>
 </head>
 <body data-view="idle">
@@ -55,6 +56,11 @@
           <select class="input" id="cam-select" data-i18n-aria="cameraLabel"></select>
         </div>
         <div class="cam-opts" id="cam-opts">
+          <button class="cam-preview" id="cam-preview" type="button" data-i18n-title="camPreview">
+            <video id="cam-video" muted playsinline autoplay></video>
+            <span class="spinner"></span>
+            <b class="cam-err">!</b>
+          </button>
           <div class="seg" id="cam-shape" role="radiogroup">
             <button type="button" role="radio" data-v="circle" data-i18n-title="shapeCircle">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
@@ -115,6 +121,10 @@
         <span class="live-dot"></span>
         <span class="live-state" id="live-state"></span>
         <span class="live-time" id="live-time">0:00</span>
+      </div>
+      <div class="placing" id="placing">
+        <p class="muted small" data-i18n="placingPopup"></p>
+        <button class="rec-btn" id="placed" type="button"><i></i><span data-i18n="placeStart"></span></button>
       </div>
       <div class="controls">
         <button class="ctl" id="pause" type="button">
