@@ -10,6 +10,7 @@
 
 import { ICE_ENDPOINT, FALLBACK_ICE, PHONE } from './config.js';
 import { createEffects, isPassThrough } from './lib/efectos.js';
+import { openPcCamera, cameraError } from './lib/camara-pc.js';
 
 const ICE_REFRESH_MS = 3 * 60 * 60 * 1000; // las credenciales duran 4 h
 const RELAY_PORT = 'grabazo-relay';
@@ -390,15 +391,8 @@ async function ensurePcCamera() {
   const live = pcStream?.getVideoTracks()[0];
   if (live && live.readyState === 'live' && pcDevice === want) return;
   stopPcCamera();
-  const video = { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } };
   try {
-    try {
-      pcStream = await navigator.mediaDevices.getUserMedia({ video: want ? { ...video, deviceId: { exact: want } } : video, audio: false });
-    } catch (err) {
-      // La cámara elegida ya no está conectada: se usa la predeterminada.
-      if (!want || !['OverconstrainedError', 'NotFoundError'].includes(err.name)) throw err;
-      pcStream = await navigator.mediaDevices.getUserMedia({ video, audio: false });
-    }
+    pcStream = await openPcCamera(want);
     pcDevice = want;
     camError = null;
     pcStream.getVideoTracks()[0].addEventListener('ended', () => {
@@ -408,7 +402,7 @@ async function ensurePcCamera() {
     });
   } catch (err) {
     pcStream = null;
-    camError = err.name === 'NotAllowedError' || err.name === 'SecurityError' ? 'denied' : err.name === 'NotFoundError' ? 'notfound' : err.name === 'NotReadableError' ? 'busy' : 'camera';
+    camError = cameraError(err);
   }
 }
 
@@ -550,6 +544,10 @@ function post(c, msg) {
 }
 
 chrome.runtime.onConnect.addListener((port) => {
+  if (port.name === 'grabazo-cursor') {
+    port.disconnect();
+    return;
+  }
   if (port.name !== RELAY_PORT || port.sender?.id !== chrome.runtime.id) return;
   const c = { id: ++consumerSeq, port, pc: null, video: null, audio: null, joined: false, kind: 'bubble', wantsVideo: true };
   consumers.set(c.id, c);
@@ -571,7 +569,7 @@ function onConsumerMessage(c, msg) {
       break;
     case 'answer':
       if (c.pc && msg.sdp?.type === 'answer' && typeof msg.sdp.sdp === 'string') {
-        c.pc.setRemoteDescription({ type: 'answer', sdp: fastStart(msg.sdp.sdp) }).catch(() => restartRelay(c));
+        c.pc.setRemoteDescription({ type: 'answer', sdp: fastStart(msg.sdp.sdp, profileOf(c).sdp) }).catch(() => restartRelay(c));
       }
       break;
     case 'ice':
@@ -596,14 +594,11 @@ async function startRelay(c) {
   try {
     await pc.setLocalDescription(await pc.createOffer());
     if (c.pc !== pc) return;
-    // Conexión local: se permite mucha más calidad que por internet.
-    for (const [t, max] of [[c.videoTx, 12_000_000], [c.audioTx, 256_000]]) {
-      const params = t.sender.getParameters();
-      if (!params.encodings?.length) params.encodings = [{}];
-      params.encodings[0].maxBitrate = max;
-      if (t === c.videoTx) params.degradationPreference = 'maintain-framerate';
-      await t.sender.setParameters(params).catch(() => {});
-    }
+    await tuneVideo(c);
+    const audio = c.audioTx.sender.getParameters();
+    if (!audio.encodings?.length) audio.encodings = [{}];
+    audio.encodings[0].maxBitrate = 256_000;
+    await c.audioTx.sender.setParameters(audio).catch(() => {});
     post(c, { t: 'offer', sdp: pc.localDescription.toJSON() });
     post(c, { t: 'state', state: relayState() });
   } catch (err) {
@@ -621,8 +616,28 @@ function restartRelay(c) {
 
 function applySource(c) {
   if (!c.pc) return;
-  c.videoTx.sender.replaceTrack(c.video ? outVideo : null).catch(() => {});
+  c.videoTx.sender.replaceTrack(c.video ? outVideo : null).then(() => tuneVideo(c), () => {});
   c.audioTx.sender.replaceTrack(outAudio).catch(() => {});
+}
+
+
+function tuneVideo(c) {
+  // En orden: dos cambios a la vez se pisan («InvalidModificationError»).
+  c.tuning = (c.tuning || Promise.resolve()).then(async () => {
+    const sender = c.pc && c.videoTx?.sender;
+    if (!sender) return;
+    const params = sender.getParameters();
+    if (!params.encodings?.length) return; // todavía sin negociar
+    const prof = profileOf(c);
+    const width = (fxInput || outVideo)?.getSettings?.().width || 0;
+    const enc = params.encodings[0];
+    enc.maxBitrate = prof.bitrate;
+    enc.scaleResolutionDownBy = prof.width && width > prof.width ? width / prof.width : 1;
+    if (prof.fps) enc.maxFramerate = prof.fps;
+    params.degradationPreference = 'maintain-framerate';
+    await sender.setParameters(params).catch(() => {});
+  });
+  return c.tuning;
 }
 
 function dropConsumer(c) {
@@ -639,6 +654,17 @@ function dropConsumer(c) {
 const FAST_START = 'x-google-start-bitrate=6000;x-google-min-bitrate=2500;x-google-max-bitrate=12000';
 // Celular → computadora: casi siempre es la misma red Wi-Fi; se empieza alto sin fijar un mínimo.
 const PHONE_START = 'x-google-start-bitrate=2000';
+
+// Cada consumidor recibe la cámara al tamaño que usa: la burbuja de la página se ve a lo
+// sumo a 400 px (800 en una pantalla Retina) y la vista previa del popup a 64 px. Codificar
+// menos píxeles usa menos procesador y llega antes. El grabador (cámara del celular) la
+// recibe entera.
+const RELAY_PROFILES = {
+  bubble: { width: 960, fps: 30, bitrate: 6_000_000, sdp: FAST_START },
+  preview: { width: 320, fps: 20, bitrate: 700_000, sdp: 'x-google-start-bitrate=600' },
+  recorder: { width: 0, fps: 0, bitrate: 12_000_000, sdp: FAST_START },
+};
+const profileOf = (c) => RELAY_PROFILES[c.kind] || RELAY_PROFILES.recorder;
 
 function sdpLines(sdp) {
   const nl = sdp.includes('\r\n') ? '\r\n' : '\n';
@@ -759,6 +785,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ ok: true });
       break;
     }
+    case 'camera:release':
+      // El grabador va a abrir la cámara de la computadora: si aquí nadie la usa (la vista
+      // previa del popup o la burbuja de hace un momento), se suelta ya. Si dos la abren a
+      // la vez, la segunda puede quedarse sin imagen.
+      refreshing = refreshing.then(() => {
+        if (wantsVideo() || !pcStream) return;
+        clearTimeout(releaseTimer);
+        stopFx();
+        stopPcCamera();
+        setOutputs(null, phoneAudio());
+      });
+      refreshing.then(() => sendResponse({ ok: true }), () => sendResponse({ ok: true }));
+      return true;
     case 'stop':
       stopped = true;
       stopLink(msg.reason || 'stopped');

@@ -13,13 +13,13 @@ Es un sitio **100 % estático**: HTML, CSS y JavaScript propios, sin frameworks,
 - [`404.html`](./404.html) — Página de error con el mismo estilo (no indexable).
 - [`assets/`](./assets/) — `logo.svg`, `logo-small.svg`, `og-image.svg` y su versión `og-image.png` (1200×630) para redes sociales.
 - Íconos: `favicon.svg`, `favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `favicon-48x48.png`, `apple-touch-icon.png`, `icon.svg`, `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` (copiados de `design/`, `remote/` y `extension/icons/`).
-- [`downloads/`](./downloads/) — Aquí va el paquete de la extensión: **`grabazo-chrome-v1.1.0.zip`** (los botones «Agregar a Chrome» apuntan a esa ruta).
+- [`downloads/`](./downloads/) — Aquí va el paquete de la extensión: **`grabazo-chrome-v1.2.0.zip`** (los botones «Agregar a Chrome» apuntan a esa ruta).
 - [`robots.txt`](./robots.txt), [`sitemap.xml`](./sitemap.xml) y [`manifest.webmanifest`](./manifest.webmanifest) — Indexación (Google Search Console) y PWA.
 - [`wrangler.toml`](./wrangler.toml), [`_headers`](./_headers) y [`_redirects`](./_redirects) — Configuración para **Cloudflare Pages**: cabeceras de seguridad (CSP, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, HSTS), caché y redirecciones cortas (`/descargar`, `/privacidad`, `/control`, `/github`, `/simulador`).
 
 ## Antes de publicar
 
-1. **Copia el ZIP de la extensión** a `downloads/grabazo-chrome-v1.1.0.zip` (el paquete que genera `npm run build` en `dist/`). Si cambia la versión, actualiza el nombre en `index.html` (botones, diálogo y JSON-LD `downloadUrl`/`softwareVersion`) y en `_redirects`.
+1. **Copia el ZIP de la extensión** a `downloads/grabazo-chrome-v1.2.0.zip` (el paquete que genera `npm run build` en `dist/`). Si cambia la versión, actualiza el nombre en `index.html` (botones, diálogo y JSON-LD `downloadUrl`/`softwareVersion`) y en `_redirects`.
 2. **Chrome Web Store:** cuando la ficha esté publicada, cambia los botones «Agregar a Chrome» para que apunten a la tienda, quita los avisos «Próximamente en la Chrome Web Store», agrega `installUrl` y la URL de la tienda en `sameAs` del JSON-LD y descomenta la regla `/chrome` de `_redirects`.
 3. **Familia «-azo»:** solo Presentazo tiene enlace. Cuando Botonazo, Capturazo y Preguntazo tengan su web, convierte sus tarjetas (sección `#familia`) y los elementos del pie de página en enlaces.
 4. Si cambias `styles.css` o `app.js`, sube el parámetro `?v=` en `index.html` y `404.html` para renovar la caché.

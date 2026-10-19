@@ -32,13 +32,16 @@ export const TOOLS = ['pen', 'highlighter', 'arrow', 'rect', 'ellipse', 'text', 
 export const COLORS = ['#FF453A', '#FF9F0A', '#FFD60A', '#30D158', '#0A84FF', '#BF5AF2', '#FFFFFF', '#1C1C1E'];
 export const WIDTHS = [3, 6, 11];
 
-// Calidad de la grabación: tamaño máximo y bits por segundo del video.
+// Calidad de la grabación: tamaño máximo del video. «auto» elige 1080p o 720p según lo
+// que la computadora codifique sin esfuerzo (lib/calidad.js); la tasa de bits sale del
+// tamaño real.
 export const QUALITIES = {
-  720: { w: 1280, h: 720, bitrate: 5_000_000 },
-  1080: { w: 1920, h: 1080, bitrate: 8_000_000 },
-  1440: { w: 2560, h: 1440, bitrate: 14_000_000 },
-  2160: { w: 3840, h: 2160, bitrate: 25_000_000 },
+  720: { w: 1280, h: 720 },
+  1080: { w: 1920, h: 1080 },
+  1440: { w: 2560, h: 1440 },
+  2160: { w: 3840, h: 2160 },
 };
+export const QUALITY_KEYS = ['auto', '720', '1080', '1440', '2160'];
 export const COUNTDOWNS = [0, 3, 5, 10];
 export const LIMITS = [0, 1, 3, 5, 10, 15, 30, 60]; // minutos (0 = sin límite)
 
@@ -79,7 +82,7 @@ export const DEFAULT_SETTINGS = {
   // Grabación
   countdown: 3,
   timeLimit: 0,
-  quality: '1080',
+  quality: 'auto',
   fps: 30,
   format: 'auto',
   openStudio: true,
@@ -116,7 +119,7 @@ export function normalizeSettings(raw) {
   s.camFilter = pick(s.camFilter, CAM_FILTERS, 'none');
   s.countdown = pick(Number(s.countdown), COUNTDOWNS, 3);
   s.timeLimit = pick(Number(s.timeLimit), LIMITS, 0);
-  s.quality = pick(String(s.quality), Object.keys(QUALITIES), '1080');
+  s.quality = pick(String(s.quality), QUALITY_KEYS, 'auto');
   s.fps = pick(Number(s.fps), [24, 30, 60], 30);
   s.format = pick(s.format, ['auto', 'webm'], 'auto');
   s.spotlightSize = pick(s.spotlightSize, ['s', 'm', 'l'], 'm');

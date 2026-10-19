@@ -6,7 +6,7 @@
 <p align="center">Graba tu pantalla, tu cámara y tus anotaciones desde Chrome, sin marcas de agua ni límites.<br>
 Dibuja, haz zoom y difumina datos mientras grabas, recorta y exporta en MP4, WebM o GIF,<br>
 y usa tu celular como control remoto, teleprompter y cámara con solo escanear un QR.</p>
-<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0 · hermano de <a href="https://github.com/mjmc4498/mando">Presentazo</a>, <a href="https://github.com/mjmc4498/botonazo">Botonazo</a>, <a href="https://github.com/mjmc4498/capturazo">Capturazo</a> y <a href="https://github.com/mjmc4498/preguntazo">Preguntazo</a></sub></p>
+<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.2.0 · hermano de <a href="https://github.com/mjmc4498/mando">Presentazo</a>, <a href="https://github.com/mjmc4498/botonazo">Botonazo</a>, <a href="https://github.com/mjmc4498/capturazo">Capturazo</a> y <a href="https://github.com/mjmc4498/preguntazo">Preguntazo</a></sub></p>
 
 ---
 
@@ -15,6 +15,7 @@ y usa tu celular como control remoto, teleprompter y cámara con solo escanear u
 | | |
 |---|---|
 | **Modos de captura** | Pestaña (con su sonido), área personalizada de la pestaña (con proporciones libres, 16:9, 9:16, 1:1 o 4:3), ventana, pantalla completa o solo la cámara. Hasta 4K y 60 cuadros por segundo, en MP4 (H.264, cuando Chrome puede) o WebM. Sin marcas de agua, sin límite de duración y sin cuentas. |
+| **Calidad y rendimiento** | La calidad se elige en el popup, junto a «Grabar»: **Auto** (1080p si la tarjeta de video lo codifica sin esfuerzo; si no, 720p), 720p, 1080p, 1440p o 4K, a 24, 30 o 60 cuadros. El popup avisa si se codificará **por hardware** (sin cargar el procesador) o por software. El grabador elige el códec por hardware cuando existe, calcula la tasa de bits según el tamaño real del video y nunca graba más grande que lo que se ve. La cámara de la computadora llega directo al grabador (sin volver a codificarse), la burbuja y la vista previa reciben la imagen a su tamaño y el cursor viaja por un canal propio: menos procesador y menos retraso. |
 | **Cámara** | Burbuja flotante y arrastrable sobre la página (círculo o rectángulo, cuatro tamaños, modo espejo), fondo desenfocado (suave o fuerte) o seis fondos virtuales generados, con segmentación de personas de MediaPipe en la propia computadora, y filtros de color. Al grabar una **ventana o la pantalla completa**, la cámara va **dentro del video**: antes de grabar aparece «Ubica tu cámara» (vista previa real donde la arrastras o eliges esquina, tamaño y forma) y mientras grabas la mueves con suavidad desde la barra, el celular o la pestaña del grabador, o la dejas fija. Sales en la grabación aunque cambies de app. |
 | **Audio** | Micrófono y sonido de la pestaña o del sistema a la vez, mezclados en una pista, con reducción de ruido. **Pulsar para hablar**: el micrófono graba solo mientras mantienes una tecla (por defecto, la que está a la izquierda del 1), el botón de la barra o «Hablar» en el celular. |
 | **Dibujo y anotación** | Lápiz, resaltador, flechas, rectángulos, círculos (Shift: perfectos), texto y borrador; 8 colores y 3 grosores; deshacer, rehacer, borrar todo y tinta que se desvanece. |
@@ -24,7 +25,7 @@ y usa tu celular como control remoto, teleprompter y cámara con solo escanear u
 | **Tu celular (QR)** | **Control remoto**: grabar, pausar, reiniciar, descartar, elegir herramienta, color y grosor, zoom, foco, clics, difuminar, cámara, micrófono y barra, sin tocar el mouse. **Teleprompter**: tu guion con desplazamiento automático que empieza solo al grabar, velocidad, tamaño de letra y modo espejo. **Cámara**: la cámara y el micrófono del celular como burbuja de la grabación. |
 | **Conexión** | WebRTC directo y cifrado entre el celular y la computadora; retransmisión de Cloudflare para redes restrictivas; reconexión automática; el celular recuerda la computadora. |
 
-Probado de principio a fin con **102 comprobaciones automáticas** (extensión real grabando pestañas, áreas, la pantalla con la cámara dentro del video y la cámara; el flujo real de clic en el ícono, popup y «Grabar»; página de ejemplo con la capa encima; celular real conectado por PeerJS como control remoto, teleprompter y cámara) y **51 del estudio** (recortes, cortes, exportación a MP4, WebM y GIF, recuperación).
+Probado de principio a fin con **107 comprobaciones automáticas** (extensión real grabando pestañas, áreas, la pantalla con la cámara dentro del video y la cámara; el flujo real de clic en el ícono, popup y «Grabar»; página de ejemplo con la capa encima; celular real conectado por PeerJS como control remoto, teleprompter y cámara) y **51 del estudio** (recortes, cortes, exportación a MP4, WebM y GIF, recuperación).
 
 ## Cómo funciona
 
@@ -133,7 +134,7 @@ Para un `.crx` instalable fuera de la tienda: `./scripts/build.sh --crx` (la cla
 ### 4. Sube a la Chrome Web Store
 
 1. Entra al [Panel del desarrollador](https://chrome.google.com/webstore/devconsole) (la misma cuenta de Presentazo, Botonazo, Capturazo y Preguntazo; el registro de USD 5 ya está pagado).
-2. **Nuevo elemento** → sube `dist/grabazo-1.1.0.zip`.
+2. **Nuevo elemento** → sube `dist/grabazo-1.2.0.zip`.
 3. Completa las pestañas copiando los textos de [`store/LISTING.md`](store/LISTING.md) y sube las imágenes de `store/`.
 4. **Enviar para revisión.** El acceso a los sitios es un permiso opcional que se pide en tiempo de ejecución, así que el paquete no declara permisos de host; las justificaciones de cada permiso ya están redactadas en `LISTING.md`.
 
@@ -157,7 +158,7 @@ Detalles (dominio, redirecciones, cabeceras de seguridad) en [`landing/README.md
 ```bash
 npm install                 # Puppeteer (solo para pruebas y capturas)
 npm run serve               # servidor local en http://localhost:8769 (otra terminal)
-npm run test:e2e            # prueba completa extensión ↔ página ↔ celular (102 comprobaciones)
+npm run test:e2e            # prueba completa extensión ↔ página ↔ celular (107 comprobaciones)
 npm run test:estudio        # estudio: recortes, cortes y exportación (51 comprobaciones)
 npm run textos              # regenera _locales/es/messages.json desde scripts/textos.py y textos_estudio.py
 npm run icons               # regenera íconos y favicon desde design/*.svg

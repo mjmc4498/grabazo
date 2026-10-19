@@ -88,28 +88,73 @@
       }
     }
 
+    // La posición del cursor va al grabador por un canal propio (un mensaje general
+    // despertaría a todas las partes de la extensión decenas de veces por segundo). Se
+    // manda a lo sumo una vez por intervalo, y la última posición siempre llega.
+    let port = null;
+    let pending = null;
+    let trailTimer = 0;
+    let retryAt = 0;
+
+    function channel() {
+      if (port) return port;
+      // Sin grabador que escuche, el canal se cierra enseguida: se espera antes de reabrirlo.
+      if (performance.now() < retryAt) return null;
+      try {
+        const p = chrome.runtime.connect({ name: 'grabazo-cursor' });
+        p.onDisconnect.addListener(() => {
+          void chrome.runtime.lastError;
+          if (port === p) port = null;
+          retryAt = performance.now() + 1000;
+        });
+        port = p;
+      } catch {
+        port = null;
+      }
+      return port;
+    }
+
+    function post(msg) {
+      try { channel()?.postMessage(msg); } catch { port = null; }
+    }
+
+    function snapshot(e, click) {
+      return {
+        type: 'cursor',
+        click,
+        x: e.clientX / innerWidth,
+        y: e.clientY / innerHeight,
+        sx: e.screenX,
+        sy: e.screenY,
+        sw: screen.width,
+        sh: screen.height,
+        wx: window.screenX,
+        wy: window.screenY,
+        ow: outerWidth,
+        oh: outerHeight,
+      };
+    }
+
     function send(e, click = false) {
       if (!opts.reporting) return;
+      const gap = opts.fast ? 33 : 180;
       const now = performance.now();
-      if (!click && now - lastReport < (opts.fast ? 33 : 180)) return;
-      lastReport = now;
-      try {
-        chrome.runtime.sendMessage({
-          to: 'rec',
-          type: 'cursor',
-          click,
-          x: e.clientX / innerWidth,
-          y: e.clientY / innerHeight,
-          sx: e.screenX,
-          sy: e.screenY,
-          sw: screen.width,
-          sh: screen.height,
-          wx: window.screenX,
-          wy: window.screenY,
-          ow: outerWidth,
-          oh: outerHeight,
-        }).catch(() => {});
-      } catch {}
+      pending = snapshot(e, click);
+      if (!click && now - lastReport < gap) {
+        // La última posición sale al terminar el intervalo.
+        if (!trailTimer) trailTimer = setTimeout(() => { trailTimer = 0; if (pending) flush(); }, gap - (now - lastReport));
+        return;
+      }
+      flush();
+    }
+
+    function flush() {
+      clearTimeout(trailTimer);
+      trailTimer = 0;
+      lastReport = performance.now();
+      const msg = pending;
+      pending = null;
+      if (msg) post(msg);
     }
 
     function wake() {

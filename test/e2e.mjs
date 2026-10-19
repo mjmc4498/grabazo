@@ -284,6 +284,12 @@ try {
   await pop.setViewport({ width: 372, height: 760 });
   await pop.goto(`chrome-extension://${s.extId}/popup.html`);
   check('el popup muestra la vista previa de la cámara', await waitFor(() => pop.$eval('#cam-preview', (e) => e.classList.contains('live')), { timeout: 15000 }));
+  const hint = await waitFor(() => pop.$eval('#q-hint', (e) => (!e.hidden && e.textContent) || null), { timeout: 8000 });
+  check('el popup ofrece la calidad («Auto» por defecto) y dice cómo se codificará', (await pop.$eval('#quality', (e) => e.value)) === 'auto' && /fps/.test(hint || ''), hint);
+  await pop.select('#quality', '720');
+  await pop.click('#fps [data-v="60"]');
+  check('la calidad y los cuadros se eligen en el popup', await waitFor(async () => { const st = (await state()).settings; return st.quality === '720' && st.fps === 60; }, { timeout: 4000 }));
+  await setSettings({ quality: 'auto', fps: 30 });
   await pop.close();
   await demo.bringToFront();
 
@@ -310,6 +316,12 @@ try {
   check('empieza a grabar al terminar la cuenta regresiva', await waitFor(async () => (await state()).rec.status === 'recording', { timeout: 15000 }));
   const recStart = Date.now();
   check('el teleprompter arranca solo al grabar', await waitFor(() => phone.$eval('#p-play', (b) => b.getAttribute('aria-pressed') === 'true'), { timeout: 4000 }));
+  const camRecId = (await state()).rec.id;
+  const camRec = await (await s.browser.waitForTarget((t) => t.url().includes(`/grabador.html#${camRecId}`), { timeout: 5000 })).page();
+  const camDbg = await camRec.evaluate(() => ({ path: globalThis.__grabador.cam.path, relay: globalThis.__grabador.cam.relay, out: globalThis.__grabador.out }));
+  check('la cámara de la computadora va directa al grabador (sin reenvío)', camDbg.path === 'directa' && camDbg.relay === '', JSON.stringify(camDbg));
+  const recOut = (await state()).rec.out;
+  check('el grabador elige el códec y lo informa', !!camDbg.out?.codec && recOut?.w > 0 && recOut.codec === camDbg.out.codec, JSON.stringify(recOut));
   check('el celular muestra el tiempo de grabación', await waitFor(() => phone.$eval('#app', (a) => a.dataset.rec === 'recording')));
   await sleep(2500);
   await phone.click('#pause');
@@ -343,7 +355,7 @@ try {
   await rp.reload();
   check('en Pantalla, antes de grabar se pide ubicar la cámara', await waitFor(async () => (await rp.$eval('body', (b) => b.dataset.phase)) === 'placing' && (await state()).rec.status === 'placing', { timeout: 20000 }), (await state()).rec.status);
   check('el paso muestra los controles de la cámara y la burbuja arrastrable', await rp.$eval('#cam-panel', (e) => !e.hidden) && await waitFor(() => rp.$eval('#cam-handle', (e) => !e.hidden), { timeout: 5000 }));
-  check('la cámara llega al grabador y se compone dentro del video', await waitFor(() => rp.evaluate(() => globalThis.__grabador?.cam.live), { timeout: 20000 }));
+  check('la cámara llega al grabador y se compone dentro del video', await waitFor(() => rp.evaluate(() => globalThis.__grabador?.cam.live), { timeout: 20000 }), JSON.stringify(await rp.evaluate(() => globalThis.__grabador?.cam)));
   await sleep(600);
   let pts = await camPoints(rp);
   let px = await recorderPixels(rp, [pts.cam, pts.away]);
@@ -496,6 +508,8 @@ try {
   check('el celular activa el zoom', await waitFor(async () => (await state()).ui.zoom === true, { timeout: 3000 }));
   await demo.mouse.move(900, 500, { steps: 5 });
   await sleep(800);
+  const tabRec = (await s.browser.pages()).find((pg) => pg.url().includes('grabador.html'));
+  check('el cursor llega al grabador por su canal directo', (await tabRec?.evaluate(() => globalThis.__grabador.cursor)) > 0);
   await phone.click('#toggles [data-key="zoom"]');
   await phone.click('#toggles [data-key="blur"]');
   check('el celular activa el modo difuminar', await waitFor(() => demo.$eval(HOST, (h) => h.dataset.blur === 'true'), { timeout: 3000 }));
@@ -622,13 +636,27 @@ try {
     const c = new OffscreenCanvas(v.videoWidth, v.videoHeight);
     const x = c.getContext('2d');
     x.drawImage(v, 0, 0);
-    // Burbuja mediana (210 px) en su lugar inicial, en una pestaña de 1280×760.
+    // Burbuja mediana (210 px) en su lugar inicial, en una pestaña de 1280×760. Bien
+    // dibujada, el círculo verde claro de la cámara simulada llega a la mitad del radio;
+    // ampliada, hasta el borde de la burbuja.
     const k = v.videoWidth / 1280;
-    const [cx, cy, d] = [(28 + 105) * k, (760 - 210 - 96 + 105) * k, 22 * k];
-    return [[0, -d], [d, 0], [0, d], [-d, 0]].map(([dx, dy]) => [...x.getImageData(Math.round(cx + dx), Math.round(cy + dy), 1, 1).data].slice(0, 3));
+    const [cx, cy, rad] = [(28 + 105) * k, (760 - 210 - 96 + 105) * k, 105 * k];
+    const img = x.getImageData(Math.round(cx - rad), Math.round(cy - rad), Math.round(rad * 2), Math.round(rad * 2));
+    let count = 0;
+    let far = 0;
+    for (let yy = 0; yy < img.height; yy++) {
+      for (let xx = 0; xx < img.width; xx++) {
+        const i = (yy * img.width + xx) * 4;
+        if (img.data[i + 1] < 190 || img.data[i] > 170) continue;
+        const dist = Math.hypot(xx - rad, yy - rad) / rad;
+        if (dist > 0.92) continue; // borde blanco de la burbuja
+        count++;
+        far = Math.max(far, dist);
+      }
+    }
+    return { count, far: Math.round(far * 100) / 100 };
   }, (await state()).rec.lastId).catch((e) => e.message);
-  const bright = Array.isArray(bubblePx) ? bubblePx.filter(([r, g]) => g > 190 && r < 170).length : 0;
-  check('[clic] en el video, la cámara sale centrada en la burbuja (sin ampliar)', bright >= 3, JSON.stringify(bubblePx));
+  check('[clic] en el video, la cámara sale centrada en la burbuja (sin ampliar)', bubblePx?.count > 200 && bubblePx.far < 0.7, JSON.stringify(bubblePx));
 } catch (err) {
   check('[clic] el flujo real terminó sin excepciones', false, err.stack || String(err));
 } finally {

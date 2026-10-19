@@ -154,6 +154,19 @@ body[data-status="placing"] .toggles { display: none; }
 /* ---------- opciones */
 
 .opts { display: grid; grid-template-columns: 1.25fr 1fr; gap: 8px; }
+/* Cómo se codificará con la calidad elegida (verde: por hardware). */
+.q-hint {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: -2px 0 2px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.q-hint::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); }
+.q-hint[data-hw="true"]::before { background: var(--ok); }
+.live-out { margin: 0 0 2px; }
 .opt { display: flex; flex-direction: column; gap: 5px; }
 .opt .seg button { padding: 0 4px; }
 .opt select { width: 100%; }

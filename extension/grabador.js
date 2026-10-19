@@ -10,6 +10,9 @@
 import { QUALITIES, PHONE, CAM_OVERLAY, CAM_CORNERS, clock, elapsedOf, normalizeSettings, normalizePlace, saveSettings } from './config.js';
 import { saveChunk, clearChunks, chunksOf, putVideo, defaultTitle } from './lib/db.js';
 import { createCompositor } from './lib/compositor.js';
+import { outputLimit, bitrateFor, chooseEncoder } from './lib/calidad.js';
+import { openPcCamera, cameraError } from './lib/camara-pc.js';
+import { createEffects, isPassThrough } from './lib/efectos.js';
 import { t, applyI18n } from './lib/i18n.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -21,8 +24,12 @@ let settings = {};
 let ui = {};
 let rec = { status: 'starting' };
 let capture = null; // pantalla, ventana o pestaña
-let relay = null; // cámara (modo cámara) y micrófono del celular
+let relay = null; // cámara y micrófono del celular
+let relayKind = '';
 let relayState = null;
+let limit = null; // tamaño máximo del video según la calidad elegida
+let encoder = null; // códec elegido (por hardware si se puede)
+let bitrate = 0;
 let micStream = null;
 let mixer = null;
 let comp = null;
@@ -58,7 +65,7 @@ function pickDesktop(sources) {
 }
 
 async function openCapture() {
-  const q = QUALITIES[settings.quality] || QUALITIES[1080];
+  const q = limit || QUALITIES[1080];
   const fps = settings.fps || 30;
   if (job.mode === 'tab' || job.mode === 'area') {
     // En el modo área se captura con más detalle y luego se recorta. Nunca por encima de
@@ -110,16 +117,14 @@ function openRelay(kind) {
   return new Promise((resolve) => {
     let done = false;
     const finish = () => { if (!done) { done = true; resolve(); } };
+    relayKind = kind;
     relay = GrabazoRelay.connect({
       kind,
       onStream: (stream, track) => {
         // En el modo cámara la imagen es la del video; en ventana y pantalla va encima de la
         // captura. Con el micrófono del celular también llega una pista de video vacía que
         // no debe reemplazar a la captura.
-        if (kind === 'recorder' && track.kind === 'video' && comp) {
-          if (overlayCam) comp.setCamera(track);
-          else comp.setInput(track);
-        }
+        if (kind === 'recorder' && track.kind === 'video') useCamTrack(track);
         if (track.kind === 'audio') mixer?.addPhone(stream);
         if (kind === 'recorder' ? track.kind === 'video' : track.kind === 'audio') finish();
         renderCamWait();
@@ -133,6 +138,178 @@ function openRelay(kind) {
     });
     setTimeout(finish, kind === 'recorder' ? 20000 : 4000);
   });
+}
+
+// ================================================================ cámara de la computadora
+
+// La cámara de la computadora se abre aquí mismo, sin pasar por la conexión local con el
+// documento offscreen: no se vuelve a codificar y decodificar (menos procesador), llega
+// antes (mejor sincronía con la voz) y con toda su calidad. Los efectos (fondo y filtros)
+// se aplican aquí. La cámara del celular sí llega por esa conexión.
+const localCam = { stream: null, fx: null, track: null, error: null, retry: 0, seq: 0 };
+const phoneCam = () => settings.camId === PHONE;
+const phoneMic = () => settings.micId === PHONE && !!settings.mic;
+const wantsCam = () => job?.mode === 'camera' || overlayCam;
+
+// ¿La cámara entrega imagen? (abierta a la vez por otra parte, puede no hacerlo).
+async function hasFrame(track, ms) {
+  const probe = track.clone();
+  const reader = new MediaStreamTrackProcessor({ track: probe }).readable.getReader();
+  const timer = new Promise((r) => setTimeout(() => r(null), ms));
+  try {
+    const got = await Promise.race([reader.read(), timer]);
+    got?.value?.close();
+    return !!got?.value;
+  } catch {
+    return false;
+  } finally {
+    reader.cancel().catch(() => {});
+    probe.stop();
+  }
+}
+
+// El documento offscreen suelta la cámara si nadie la usa allí (espera corta).
+const releaseShared = () => Promise.race([toSW({ type: 'cam:release' }), new Promise((r) => setTimeout(r, 1500))]);
+
+async function openLocalCamera(attempt = 0) {
+  closeLocalCamera();
+  const seq = ++localCam.seq;
+  await releaseShared();
+  if (seq !== localCam.seq || finished) return null;
+  // Solo cámara: con la calidad del video. Dentro del video (círculo): 720p sobra.
+  const big = job.mode === 'camera';
+  const size = big && limit && limit.h >= 1080 ? { width: 1920, height: 1080 } : { width: 1280, height: 720 };
+  let stream;
+  try {
+    stream = await openPcCamera(settings.camId || '', { ...size, fps: big ? settings.fps || 30 : 30 });
+  } catch (err) {
+    if (seq !== localCam.seq) return null;
+    localCam.error = cameraError(err);
+    scheduleCamRetry();
+    renderCamWait();
+    renderHandle();
+    return null;
+  }
+  if (seq !== localCam.seq || finished) {
+    for (const tr of stream.getTracks()) tr.stop();
+    return null;
+  }
+  // Abierta pero sin imagen: se suelta y se vuelve a abrir.
+  if (!(await hasFrame(stream.getVideoTracks()[0], 2500))) {
+    for (const tr of stream.getTracks()) tr.stop();
+    if (seq !== localCam.seq || finished) return null;
+    if (attempt < 2) return openLocalCamera(attempt + 1);
+    localCam.error = 'busy';
+    scheduleCamRetry();
+    renderCamWait();
+    renderHandle();
+    return null;
+  }
+  if (seq !== localCam.seq || finished) {
+    for (const tr of stream.getTracks()) tr.stop();
+    return null;
+  }
+  localCam.stream = stream;
+  localCam.error = null;
+  stream.getVideoTracks()[0].addEventListener('ended', () => {
+    // Se desconectó la cámara: se vuelve a intentar.
+    if (localCam.stream !== stream || finished) return;
+    localCam.error = 'ended';
+    closeLocalCamera();
+    scheduleCamRetry();
+    renderCamWait();
+    renderHandle();
+  });
+  applyLocalEffects();
+  renderCamWait();
+  renderHandle();
+  return localCam.track;
+}
+
+// Fondo y filtro de la cámara; sin efectos, la imagen pasa tal cual.
+function applyLocalEffects() {
+  const raw = localCam.stream?.getVideoTracks()[0];
+  if (!raw) return null;
+  const opts = { effect: settings.camEffect || 'none', filter: settings.camFilter || 'none' };
+  if (isPassThrough(opts)) {
+    localCam.fx?.stop();
+    localCam.fx = null;
+    localCam.track = raw;
+  } else if (localCam.fx) {
+    localCam.fx.set(opts);
+  } else {
+    try {
+      localCam.fx = createEffects(raw, opts);
+      localCam.track = localCam.fx.track;
+    } catch {
+      localCam.fx = null;
+      localCam.track = raw;
+    }
+  }
+  return localCam.track;
+}
+
+function closeLocalCamera() {
+  clearTimeout(localCam.retry);
+  localCam.fx?.stop();
+  for (const tr of localCam.stream?.getTracks() || []) tr.stop();
+  Object.assign(localCam, { stream: null, fx: null, track: null });
+}
+
+// Sin cámara por un error pasajero (permiso aún no dado, otra app la usa): se reintenta.
+function scheduleCamRetry() {
+  clearTimeout(localCam.retry);
+  if (finished || !wantsCam() || phoneCam() || localCam.error === 'notfound') return;
+  localCam.retry = setTimeout(() => {
+    if (!localCam.stream && !phoneCam() && !finished) openLocalCamera().then(useCamTrack);
+  }, 3000);
+}
+
+// La imagen de la cámara cambió (otra cámara, el celular, otro efecto): sigue en el mismo
+// video, sin cortar la grabación.
+let camInput = null;
+function useCamTrack(track) {
+  if (!track || !comp || finished || track === camInput) return;
+  camInput = track;
+  if (job.mode === 'camera') comp.setInput(track);
+  else if (overlayCam) comp.setCamera(track);
+}
+
+// Se cambió entre la cámara de la computadora y la del celular (o de cámara) mientras se
+// prepara o se graba.
+async function switchCamera() {
+  if (!wantsCam() || finished) return;
+  if (phoneCam()) {
+    closeLocalCamera();
+    if (relayKind !== 'recorder') {
+      relay?.close();
+      relay = null;
+      openRelay('recorder');
+    }
+    return;
+  }
+  if (relayKind === 'recorder') {
+    relay?.close();
+    relay = null;
+    relayKind = '';
+    if (phoneMic()) openRelay('recorder-mic');
+  }
+  useCamTrack(await openLocalCamera());
+}
+
+// Estado de la cámara para los avisos (permiso, ocupada, esperando al celular).
+function camStatus() {
+  if (phoneCam()) return relayState || { source: 'phone' };
+  const live = localCam.stream?.getVideoTracks()[0]?.readyState === 'live';
+  return { source: 'pc', live: !!localCam.track && live, error: localCam.error };
+}
+
+for (const name of ['camera']) {
+  navigator.permissions?.query({ name }).then((status) => {
+    status.addEventListener('change', () => {
+      if (wantsCam() && !phoneCam() && !localCam.stream && !finished) openLocalCamera().then(useCamTrack);
+    });
+  }).catch(() => {});
 }
 
 async function openMic() {
@@ -156,7 +333,9 @@ async function openMic() {
 function createMixer({ mic, system, playSystem }) {
   let ctx;
   try {
-    ctx = new AudioContext({ sampleRate: 48000, latencyHint: 'interactive' });
+    // Al grabar una pestaña su sonido se vuelve a escuchar en vivo (poco retraso); si no,
+    // búferes más amplios usan menos procesador.
+    ctx = new AudioContext({ sampleRate: 48000, latencyHint: playSystem ? 'interactive' : 'balanced' });
   } catch {
     ctx = null;
   }
@@ -261,18 +440,32 @@ async function prepare() {
   place = normalizePlace(settings.camPlace) || place;
   renderInfo();
 
+  const fps = settings.fps || 30;
+  // Tamaño máximo según la calidad («Auto»: lo que la tarjeta de video codifica sin esfuerzo).
+  limit = await outputLimit(settings.quality, fps, settings.format);
+
   let videoTrack = null;
   try {
     if (job.mode === 'camera') {
-      await openRelay('recorder');
-      videoTrack = relay.stream.getVideoTracks()[0] || null;
-      if (!videoTrack) throw Object.assign(new Error('camera'), { reason: relayState?.error === 'denied' ? 'camera-denied' : 'camera' });
+      if (phoneCam()) {
+        await openRelay('recorder');
+        videoTrack = relay.stream.getVideoTracks()[0] || null;
+        if (!videoTrack) throw Object.assign(new Error('camera'), { reason: 'camera' });
+      } else {
+        videoTrack = await openLocalCamera();
+        if (!videoTrack) throw Object.assign(new Error('camera'), { reason: localCam.error === 'denied' ? 'camera-denied' : 'camera' });
+        if (phoneMic()) openRelay('recorder-mic');
+      }
     } else {
       capture = await openCapture();
       videoTrack = capture.getVideoTracks()[0];
-      // La cámara (y el micrófono del celular, si se usa) llegan por la misma conexión.
-      if (overlayCam) openRelay('recorder');
-      else if (settings.micId === PHONE && settings.mic) openRelay('recorder-mic');
+      // La cámara del celular (y su micrófono) llegan por la conexión local; la de la
+      // computadora se abre aquí.
+      if (overlayCam && phoneCam()) openRelay('recorder');
+      else {
+        if (overlayCam) openLocalCamera().then(useCamTrack);
+        if (phoneMic()) openRelay('recorder-mic');
+      }
     }
   } catch (err) {
     console.warn('[Grabazo] captura', err?.name, err?.message);
@@ -289,18 +482,17 @@ async function prepare() {
   if (relay?.stream.getAudioTracks().length) mixer.addPhone(relay.stream);
   mixer.setMic(micOpen());
 
-  const q = QUALITIES[settings.quality] || QUALITIES[1080];
   const crop = job.mode === 'area' && job.area ? normalizeArea(job.area) : null;
   comp = createCompositor(videoTrack, {
     crop,
     mirror: job.mode === 'camera' && settings.camMirror,
-    maxW: job.mode === 'area' ? q.w : undefined,
-    maxH: job.mode === 'area' ? q.h : undefined,
-    fps: settings.fps || 30,
+    maxW: job.mode === 'area' ? limit.w : undefined,
+    maxH: job.mode === 'area' ? limit.h : undefined,
+    fps,
   });
+  if (job.mode === 'camera') camInput = videoTrack;
   if (overlayCam) {
-    const camTrack = relay?.stream.getVideoTracks()[0];
-    if (camTrack) comp.setCamera(camTrack);
+    useCamTrack(phoneCam() ? relay?.stream.getVideoTracks()[0] : localCam.track);
     applyCam(true);
   }
   const preview = $('#preview');
@@ -316,11 +508,25 @@ async function prepare() {
     size = comp.size.width ? comp.size : await Promise.race([comp.ready, new Promise((r) => setTimeout(() => r(null), 6000))]);
   }
   if (!size) return fail('capture', 'sin imagen de la captura');
+  // El códec se elige ahora (no al pulsar «Grabar»): por hardware si la computadora puede,
+  // con la tasa de bits del tamaño real del video.
+  bitrate = bitrateFor(size.width, size.height, fps);
+  encoder = await chooseEncoder({ format: settings.format, width: size.width, height: size.height, fps, bitrate });
+  const out = { w: size.width, h: size.height, fps, codec: encoder.codec, hw: encoder.hw };
+  debug.out = out;
+  renderOut(out);
   // Con la cámara dentro del video, antes de grabar se elige dónde va (si no se pidió
   // saltar este paso).
   const ask = overlayCam && settings.camAsk !== false;
   setPhase(ask ? 'placing' : 'ready');
-  toSW({ type: 'rec:ready', ok: true, width: size.width, height: size.height, place: ask });
+  toSW({ type: 'rec:ready', ok: true, width: size.width, height: size.height, place: ask, out });
+}
+
+function renderOut(out) {
+  const el = $('#out');
+  el.textContent = `${out.w}×${out.h} · ${out.fps} fps${out.codec ? ` · ${out.codec} ${t(out.hw ? 'outHw' : 'outSw')}` : ''}`;
+  el.dataset.hw = String(!!out.hw);
+  el.hidden = false;
 }
 
 function normalizeArea(a) {
@@ -331,13 +537,6 @@ function normalizeArea(a) {
 
 // ================================================================ grabación
 
-function pickMime(format) {
-  const mp4 = ['video/mp4;codecs=avc1.640033,mp4a.40.2', 'video/mp4;codecs=avc1.4d0033,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4;codecs=avc1,opus', 'video/mp4'];
-  const webm = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
-  const order = format === 'webm' ? [...webm, ...mp4] : [...mp4, ...webm];
-  return order.find((m) => MediaRecorder.isTypeSupported(m)) || '';
-}
-
 // Estado interno para diagnóstico (lo leen las pruebas).
 const debug = {
   chunks: 0,
@@ -345,7 +544,9 @@ const debug = {
   audio: '',
   mixer: '',
   log: [],
-  get cam() { return { overlay: overlayCam, live: !!comp?.cameraLive, rect: comp?.cameraRect || null, size: comp?.size || null, place, visible: camVisible() }; },
+  get cam() { return { overlay: overlayCam, live: !!comp?.cameraLive, rect: comp?.cameraRect || null, size: comp?.size || null, place, visible: camVisible(), path: phoneCam() ? 'celular' : localCam.stream ? 'directa' : 'ninguna', relay: relayKind, error: localCam.error }; },
+  cursor: 0,
+  out: null,
   thumbnail: (w) => comp?.thumbnail(w),
 };
 globalThis.__grabador = debug;
@@ -356,12 +557,11 @@ function go() {
   debug.mixer = mixer?.running ? 'running' : 'suspended';
   debug.audio = audio.map((tr) => `${tr.label || tr.kind}:${tr.readyState}`).join(',');
   const tracks = [comp.track, ...audio];
-  const q = QUALITIES[settings.quality] || QUALITIES[1080];
-  mime = pickMime(settings.format);
+  mime = encoder?.mime || '';
   try {
     recorder = new MediaRecorder(new MediaStream(tracks), {
       mimeType: mime,
-      videoBitsPerSecond: Math.round(q.bitrate * (settings.fps === 60 ? 1.5 : 1)),
+      videoBitsPerSecond: bitrate || bitrateFor(comp.size.width, comp.size.height, settings.fps || 30),
       audioBitsPerSecond: 160_000,
       // Un cuadro clave cada 2 s: el MP4 sale por partes durante la grabación (y no
       // todo al final), así lo grabado se guarda en el disco sobre la marcha.
@@ -500,6 +700,7 @@ async function finalize(failed = false) {
 
 function stopAll() {
   clearTimeout(autoZoomTimer);
+  closeLocalCamera();
   for (const tr of capture?.getTracks() || []) tr.stop();
   for (const tr of micStream?.getTracks() || []) tr.stop();
   relay?.close();
@@ -522,6 +723,7 @@ function fail(code, detail = '') {
 
 function onCursor(m, sender) {
   if (!comp || job?.mode === 'camera' || typeof m.x !== 'number') return;
+  debug.cursor++;
   if ((job.mode === 'tab' || job.mode === 'area') && sender.tab?.id !== job.tabId) return;
   let nx;
   let ny;
@@ -605,7 +807,7 @@ function renderHandle() {
   const live = !!comp.cameraLive;
   el.classList.toggle('waiting', !live);
   if (!live) {
-    const s = relayState || {};
+    const s = camStatus();
     $('#cam-handle-msg').textContent = s.source === 'phone' ? t(s.linked && s.phones ? 'bubblePhoneWait' : 'bubblePhoneLink') : s.error === 'denied' ? t('bubbleDenied') : s.error === 'busy' ? t('bubbleBusy') : s.error ? t('bubbleFailed') : t('camStarting');
   }
 }
@@ -740,9 +942,14 @@ function placed() {
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'sync' || !changes.settings || !job) return;
   const next = normalizeSettings(changes.settings.newValue);
-  for (const k of ['camShape', 'camSize', 'camMirror', 'camAsk', 'zoomLevel', 'zoomOnClick']) settings[k] = next[k];
+  const before = { camId: settings.camId, camEffect: settings.camEffect, camFilter: settings.camFilter };
+  for (const k of ['camShape', 'camSize', 'camMirror', 'camAsk', 'zoomLevel', 'zoomOnClick', 'camId', 'camEffect', 'camFilter']) settings[k] = next[k];
   if (!dragging) place = next.camPlace;
   applyCam();
+  // Otra cámara u otros efectos mientras se prepara o se graba.
+  if (!wantsCam() || finished || !comp) return;
+  if (before.camId !== settings.camId) switchCamera();
+  else if (!phoneCam() && (before.camEffect !== settings.camEffect || before.camFilter !== settings.camFilter)) useCamTrack(applyLocalEffects());
 });
 
 // ================================================================ interfaz
@@ -806,10 +1013,10 @@ function renderClock() {
 function renderCamWait() {
   const box = $('#cam-wait');
   if (job?.mode !== 'camera') { box.hidden = true; return; }
-  const live = relay?.stream.getVideoTracks().some((tr) => tr.readyState === 'live') && relayState?.live;
+  const s = camStatus();
+  const live = phoneCam() ? relay?.stream.getVideoTracks().some((tr) => tr.readyState === 'live') && s.live : s.live;
   box.hidden = !!live;
   if (live) return;
-  const s = relayState || {};
   $('#cam-wait-text').textContent = s.source === 'phone' ? (s.linked ? t('camWaitPhone') : t('camWaitLink')) : s.error === 'denied' ? t('camDenied') : s.error ? t('camFailed') : t('camStarting');
 }
 
@@ -859,6 +1066,15 @@ addEventListener('beforeunload', (e) => {
 });
 
 // ================================================================ mensajes
+
+// Posición del cursor desde la capa de la página (canal propio, sin despertar a las demás
+// partes de la extensión).
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name !== 'grabazo-cursor' || port.sender?.id !== chrome.runtime.id) return;
+  port.onMessage.addListener((msg) => {
+    if (msg?.type === 'cursor') onCursor(msg, port.sender);
+  });
+});
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (sender.id !== chrome.runtime.id || !msg) return;

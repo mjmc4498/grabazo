@@ -750,10 +750,50 @@
     "message": "Calidad"
   },
   "qualitySub": {
-    "message": "Tamaño máximo del video. 1080p es ideal para tutoriales; 4K pide una computadora potente."
+    "message": "Tamaño máximo del video. «Auto» graba en 1080p si tu tarjeta de video lo codifica sin esfuerzo (si no, en 720p). Nunca se graba más grande que lo que se ve."
+  },
+  "qualityAuto": {
+    "message": "Auto (recomendada)"
+  },
+  "qHintHw": {
+    "message": "Hasta $RES$ · $FPS$ fps · $CODEC$ por hardware: no carga el procesador",
+    "placeholders": {
+      "res": {
+        "content": "$1"
+      },
+      "fps": {
+        "content": "$2"
+      },
+      "codec": {
+        "content": "$3"
+      }
+    }
+  },
+  "qHintSw": {
+    "message": "Hasta $RES$ · $FPS$ fps · $CODEC$ por software: puede ralentizar tu computadora",
+    "placeholders": {
+      "res": {
+        "content": "$1"
+      },
+      "fps": {
+        "content": "$2"
+      },
+      "codec": {
+        "content": "$3"
+      }
+    }
+  },
+  "outHw": {
+    "message": "por hardware"
+  },
+  "outSw": {
+    "message": "por software"
   },
   "fps": {
     "message": "Cuadros por segundo"
+  },
+  "fpsShort": {
+    "message": "Cuadros/s"
   },
   "fpsSub": {
     "message": "60 para animaciones y juegos; 30 para todo lo demás."

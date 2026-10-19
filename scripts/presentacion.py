@@ -244,7 +244,7 @@ foto(s, popup, 8.95, 0.55, h=6.5)
 s = nueva()
 cabecera(s, "Captura y audio", "Graba exactamente lo que quieres mostrar", w=6.4)
 lista(s, 0.7, 2.35, 6.0, [
-    ("Pestaña, área, ventana, pantalla o solo cámara", "Hasta 4K y 60 cuadros por segundo, en MP4 o WebM."),
+    ("Pestaña, área, ventana, pantalla o solo cámara", "Calidad al grabar: Auto, 720p, 1080p, 1440p o 4K, por hardware."),
     ("Micrófono y sonido a la vez", "La voz y el audio de la pestaña o del sistema, en una pista."),
     ("Pulsar para hablar", "El micrófono graba solo mientras mantienes una tecla o «Hablar» en el celular."),
     ("Cuenta regresiva y límite", "Pausa, reinicia o descarta; aviso 10 segundos antes del límite."),
@@ -362,14 +362,14 @@ for i, (t, c) in enumerate([
 # ---------------------------------------------------------------- 14. estado y publicación
 
 s = nueva()
-cabecera(s, "Estado · versión 1.1.0", "Listo para publicar")
+cabecera(s, "Estado · versión 1.2.0", "Listo para publicar")
 for i, (t, c) in enumerate([
-    ("Probado de punta a punta", "102 comprobaciones con la extensión real y un celular conectado, más 51 del estudio (recortes, cortes y exportación)."),
-    ("Paquete listo", "dist/grabazo-1.1.0.zip para la Chrome Web Store, Manifest V3, con acceso a sitios opcional."),
+    ("Probado de punta a punta", "107 comprobaciones con la extensión real y un celular conectado, más 51 del estudio (recortes, cortes y exportación)."),
+    ("Paquete listo", "dist/grabazo-1.2.0.zip para la Chrome Web Store, Manifest V3, con acceso a sitios opcional."),
     ("Ficha completa", "Textos, 5 capturas, 2 mosaicos, política de privacidad, justificación de permisos y landing page."),
 ]):
     tarjeta(s, 0.7 + i * 4.05, 2.25, 3.85, 2.6, t, c, numero=i + 1)
-texto(s, 0.7, 5.35, 11.9, 1.2, ["Siguiente paso: publicar la página del celular en mjmc4498.github.io/grabazo, la landing en grabazo.com y subir el ZIP 1.1.0 en el panel del desarrollador."], size=16, color=MUTED, line=1.3)
+texto(s, 0.7, 5.35, 11.9, 1.2, ["Siguiente paso: publicar la página del celular en mjmc4498.github.io/grabazo, la landing en grabazo.com y subir el ZIP 1.2.0 en el panel del desarrollador."], size=16, color=MUTED, line=1.3)
 
 # ---------------------------------------------------------------- 15. cierre
 

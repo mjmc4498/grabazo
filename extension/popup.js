@@ -6,6 +6,7 @@
 
 import { CAM_EFFECTS, CAM_FILTERS, LIMITS, PHONE, REMOTE_URL, buildRemoteUrl, clock, elapsedOf, getSettings, saveSettings } from './config.js';
 import { qrSvg } from './lib/qr.js';
+import { qualityReport } from './lib/calidad.js';
 import { t, applyI18n } from './lib/i18n.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -115,7 +116,35 @@ function renderSettings() {
   $('#ptt').checked = !!settings.pushToTalk;
   setSeg('countdown', settings.countdown);
   $('#limit').value = String(settings.timeLimit);
+  $('#quality').value = settings.quality;
+  setSeg('fps', settings.fps);
+  renderQualityHint();
   $('#record').disabled = blocked;
+}
+
+// Cómo se grabará con la calidad elegida en esta computadora: por hardware (la tarjeta de
+// video, sin cargar el procesador) o por software.
+const RES = { 720: '720p', 1080: '1080p', 1440: '1440p', 2160: '4K' };
+let hintSeq = 0;
+async function renderQualityHint() {
+  const seq = ++hintSeq;
+  const r = await qualityReport(settings.quality, settings.fps, settings.format).catch(() => null);
+  if (seq !== hintSeq) return;
+  const el = $('#q-hint');
+  if (!r?.codec) { el.hidden = true; return; }
+  const res = RES[r.label] || `${r.h}p`;
+  el.textContent = t(r.hw ? 'qHintHw' : 'qHintSw', [res, String(r.fps), r.codec]);
+  el.dataset.hw = String(r.hw);
+  el.hidden = false;
+}
+
+function renderLiveOut() {
+  const o = rec.out;
+  const el = $('#live-out');
+  el.hidden = !o?.w || rec.status === 'idle';
+  if (el.hidden) return;
+  el.textContent = `${o.w}×${o.h} · ${o.fps} fps${o.codec ? ` · ${o.codec} ${t(o.hw ? 'outHw' : 'outSw')}` : ''}`;
+  el.dataset.hw = String(!!o.hw);
 }
 
 async function save(patch) {
@@ -150,6 +179,8 @@ $('#system-audio').addEventListener('change', (e) => save({ systemAudio: e.targe
 $('#ptt').addEventListener('change', (e) => save({ pushToTalk: e.target.checked }));
 $('#countdown').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) save({ countdown: Number(b.dataset.v) }); });
 $('#limit').addEventListener('change', (e) => save({ timeLimit: Number(e.target.value) }));
+$('#quality').addEventListener('change', (e) => save({ quality: e.target.value }));
+$('#fps').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) save({ fps: Number(b.dataset.v) }); });
 $('#perm-banner').addEventListener('click', () => openPage('options.html#permisos'));
 
 // ================================================================ grabar
@@ -349,6 +380,7 @@ function apply(s) {
   if (s.link) link = s.link;
   if (s.settings) settings = s.settings;
   renderLive();
+  renderLiveOut();
   renderPhone();
   renderPreview();
 }

@@ -88,6 +88,22 @@ body[data-phase="paused"] .rec-dot { opacity: 1; background: var(--warn); box-sh
 .info h1 { font-size: 26px; font-weight: 750; letter-spacing: -.03em; }
 .info p { font-size: 14.5px; max-width: 42ch; }
 
+.info .out {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.info .out::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); }
+.info .out[data-hw="true"]::before { background: var(--ok); }
+
 .clock {
   margin-top: 14px;
   font-size: 54px;

@@ -3,6 +3,31 @@
 Todas las versiones de la extensión Grabazo. El número de versión de cada paquete
 debe ser mayor que el anterior para que la Chrome Web Store lo acepte.
 
+## 1.2.0 — 19 de octubre de 2026
+
+- **Eliges la calidad al grabar:** en el popup, junto a «Grabar», Auto · 720p · 1080p ·
+  1440p · 4K y 24 · 30 · 60 cuadros, con un aviso de cómo se codificará en tu
+  computadora (por hardware, sin cargar el procesador, o por software). Durante la
+  grabación, el popup y la pestaña del grabador muestran el tamaño, los cuadros y el códec.
+- **«Auto», la calidad nueva por defecto:** 1080p si la tarjeta de video lo codifica sin
+  esfuerzo; si no, 720p. Nunca se graba más grande que lo que se ve.
+- **Grabar sin afectar el rendimiento:**
+  - El códec se elige por hardware cuando la computadora lo tiene (Media Capabilities); sin
+    hardware, el más liviano (VP8 antes que VP9 en WebM).
+  - La tasa de bits sale del tamaño real del video (antes era fija por calidad).
+  - La cámara de la computadora llega directo al grabador en «Solo cámara» y en Ventana y
+    Pantalla: ya no se codifica y decodifica de nuevo por la conexión local.
+  - La burbuja de la página recibe la cámara a lo sumo a 960 px de ancho y la vista previa
+    del popup a 320 px (antes 1280×720 a 12 Mb/s cada una).
+  - El cursor va al grabador por un canal propio: ya no despierta a todas las partes de la
+    extensión hasta 30 veces por segundo.
+  - La mezcla de audio usa búferes más amplios cuando no hace falta oír la pestaña en vivo.
+- **Menos retraso:** la cámara directa llega antes (mejor sincronía con la voz) y con
+  toda su calidad; la última posición del cursor siempre llega al zoom.
+- Robustez: antes de abrir la cámara, el grabador pide al documento offscreen que la
+  suelte si nadie la usa, y si la cámara abierta no entrega imagen, se vuelve a abrir.
+- Pruebas: 107 de punta a punta y 51 del estudio.
+
 ## 1.1.0 — 18 de octubre de 2026
 
 - **Tu cámara dentro del video en Ventana y Pantalla.** Antes la burbuja vivía en la

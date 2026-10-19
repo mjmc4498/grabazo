@@ -8,7 +8,7 @@ Todo lo que pide el [Panel del desarrollador](https://chrome.google.com/webstore
 
 | Campo | Valor |
 |---|---|
-| Archivo para subir | `dist/grabazo-1.1.0.zip` · versión 1.1.0 |
+| Archivo para subir | `dist/grabazo-1.2.0.zip` · versión 1.2.0 |
 | Autor | Miguel Mogrovejo |
 
 > Antes de enviar a revisión publica el repositorio `grabazo` con GitHub Pages (ver README, paso 1): el QR abre `https://mjmc4498.github.io/grabazo/` en el celular y la política de privacidad vive en esa misma dirección.
@@ -39,6 +39,7 @@ Graba tutoriales, clases, demostraciones y mensajes en video directamente desde 
 🎬 GRABA LO QUE NECESITES
 • Una pestaña (con su sonido), un área elegida de la pestaña, una ventana, toda la pantalla o solo tu cámara.
 • Hasta 4K y 60 cuadros por segundo. Formato MP4 (H.264) o WebM.
+• Eliges la calidad al grabar (Auto, 720p, 1080p, 1440p o 4K): Grabazo usa la tarjeta de video para codificar, así grabas sin que la computadora se ponga lenta.
 • Cuenta regresiva, pausar y reanudar, reiniciar, descartar y límite de tiempo con aviso.
 
 🙂 TU CÁMARA EN UNA BURBUJA

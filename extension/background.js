@@ -370,6 +370,10 @@ async function recorderReady(msg, sender) {
     await endSession(error === 'canceled' ? null : error, typeof msg.detail === 'string' ? msg.detail.slice(0, 200) : '');
     return { ok: true };
   }
+  // Tamaño, cuadros y códec con que se graba (lo muestran el popup y el grabador).
+  const o = msg.out || {};
+  const n = (v) => (Number.isFinite(v) ? Math.round(v) : 0);
+  await setRec({ out: { w: n(o.w), h: n(o.h), fps: n(o.fps), codec: String(o.codec || '').slice(0, 12), hw: o.hw === true } });
   if (rec.mode === 'window' || rec.mode === 'screen') {
     // Primero se elige dónde va la cámara dentro del video (en la pestaña del grabador).
     if (msg.place === true) {
@@ -570,6 +574,11 @@ async function setScript(text) {
 // acomodarla antes de grabar. Al cerrarlo sin grabar, desaparece.
 chrome.runtime.onConnect.addListener((port) => {
   if (port.sender?.id !== chrome.runtime.id) return;
+  // El cursor va directo al grabador.
+  if (port.name === 'grabazo-cursor') {
+    port.disconnect();
+    return;
+  }
   // La burbuja o el grabador buscan la cámara y el documento offscreen todavía no existe:
   // el puerto llegó aquí. Se crea el documento y se suelta el puerto para que reintenten.
   if (port.name === 'grabazo-relay') {
@@ -748,6 +757,7 @@ const handlers = {
     return { ok: true };
   },
   'cam:wake': () => ensureOffscreen(),
+  'cam:release': async () => (await toOffscreen({ type: 'camera:release' })) || { ok: true },
 };
 
 // Capa sobre la página (script de contenido): solo órdenes de la interfaz.

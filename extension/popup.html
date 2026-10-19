@@ -95,6 +95,25 @@
 
       <div class="opts">
         <div class="opt">
+          <span class="label" data-i18n="quality"></span>
+          <select class="input" id="quality" data-i18n-aria="quality">
+            <option value="auto" data-i18n="qualityAuto"></option>
+            <option value="720">720p</option>
+            <option value="1080">1080p (Full HD)</option>
+            <option value="1440">1440p (2K)</option>
+            <option value="2160">2160p (4K)</option>
+          </select>
+        </div>
+        <div class="opt">
+          <span class="label" data-i18n="fpsShort"></span>
+          <div class="seg" id="fps" role="radiogroup" data-i18n-aria="fps">
+            <button type="button" role="radio" data-v="24">24</button>
+            <button type="button" role="radio" data-v="30">30</button>
+            <button type="button" role="radio" data-v="60">60</button>
+          </div>
+        </div>
+        <p class="q-hint" id="q-hint" hidden></p>
+        <div class="opt">
           <span class="label" data-i18n="countdown"></span>
           <div class="seg" id="countdown" role="radiogroup">
             <button type="button" role="radio" data-v="0" data-i18n="off"></button>
@@ -122,6 +141,7 @@
         <span class="live-state" id="live-state"></span>
         <span class="live-time" id="live-time">0:00</span>
       </div>
+      <p class="q-hint live-out" id="live-out" hidden></p>
       <div class="placing" id="placing">
         <p class="muted small" data-i18n="placingPopup"></p>
         <button class="rec-btn" id="placed" type="button"><i></i><span data-i18n="placeStart"></span></button>
